@@ -1,5 +1,6 @@
 const dev = {
     EDO_URL      : "https://edo-dev.happytravel.com/",
+    DC_URL       : "https://dc-dev.happytravel.com/",
     IDENTITY_URL : "https://identity-dev.happytravel.com/",
     SENTRY_DSN   : "https://21e4194b435946e0b2e20444d6948d25@sentry.dev.happytravel.com/4"
 };
@@ -9,6 +10,8 @@ let settings = {
 
     edo_url               : process.env.EDO_URL || dev.EDO_URL,
     edo_v1                : "/api/1.0",
+
+    dc_url                : process.env.DC_URL || dev.DC_URL,
 
     identity_url          : process.env.IDENTITY_URL || dev.IDENTITY_URL,
 
