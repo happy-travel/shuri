@@ -1,8 +1,8 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import { API } from 'matsumoto/src/core';
-import Table from "components/external/table";
-import { dateFormat, Loader } from "simple";
+import Table from 'matsumoto/src/components/external/table';
+import { dateFormat } from 'matsumoto/src/simple';
 import apiMethods from 'core/methods';
 
 const columns = [
@@ -58,7 +58,7 @@ class ContractsList extends React.Component {
         return (
             <div className="settings block">
                 <section>
-                    <h2><span class="brand"><span class="brand">Contracts list</span></span></h2>
+                    <h2><span className="brand"><span className="brand">Contracts list</span></span></h2>
 
                     <Table
                         data={this.state.list}

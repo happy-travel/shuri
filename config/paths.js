@@ -7,7 +7,7 @@ const url = require('url');
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
 const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 
 const envPublicUrl = process.env.PUBLIC_URL;
 
@@ -22,7 +22,7 @@ function ensureSlash(inputPath, needsSlash) {
   }
 }
 
-const getPublicUrl = appPackageJson =>
+const getPublicUrl = (appPackageJson) =>
   envPublicUrl || require(appPackageJson).homepage;
 
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
@@ -42,7 +42,7 @@ const moduleFileExtensions = ['web.mjs', 'mjs', 'web.js', 'js', 'json', 'web.jsx
 
 // Resolve file paths in the same order as webpack
 const resolveModule = (resolveFn, filePath) => {
-  const extension = moduleFileExtensions.find(extension =>
+  const extension = moduleFileExtensions.find((extension) =>
     fs.existsSync(resolveFn(`${filePath}.${extension}`))
   );
 
@@ -59,7 +59,6 @@ module.exports = {
   appPath: resolveApp('.'),
   appBuild: resolveApp('build'),
   appPublic: resolveApp('public'),
-  appHtml: resolveApp('node_modules/matsumoto/public/index.html'),
   appIndexJs: resolveModule(resolveApp, 'src/index'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
@@ -70,9 +69,9 @@ module.exports = {
   appNodeModules: resolveApp('src'),
   publicUrl: getPublicUrl(resolveApp('package.json')),
   servedPath: getServedPath(resolveApp('package.json')),
-  matsumoto: resolveApp('node_modules/matsumoto/src')
+  matsumoto: resolveApp('node_modules/matsumoto/src'),
+  appHtml: resolveApp('node_modules/matsumoto/public/index.html'),
+  matsumotoPublic: resolveApp('node_modules/matsumoto/public'),
 };
-
-
 
 module.exports.moduleFileExtensions = moduleFileExtensions;

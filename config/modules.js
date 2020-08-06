@@ -13,7 +13,7 @@ const chalk = require('react-dev-utils/chalk');
 function getAdditionalModulePaths(options = {}) {
   const baseUrl = options.baseUrl;
 
-  if (baseUrl == null) {
+  if (baseUrl === null) {
     // If there's no baseUrl set we respect NODE_PATH
     // Note that NODE_PATH is deprecated and will be removed
     // in the next major release of create-react-app.
@@ -38,7 +38,7 @@ function getAdditionalModulePaths(options = {}) {
   // Otherwise, throw an error.
   throw new Error(
     chalk.red.bold(
-      "Your project's `baseUrl` can only be set to `src` or `node_modules`." +
+      'Your project\'s `baseUrl` can only be set to `src` or `node_modules`.' +
         ' Create React App does not support other values at this time.'
     )
   );
