@@ -9,6 +9,7 @@ let settings = {
     edo_url: process.env.EDO_URL || dev.EDO_URL,
     edo_v1: '/api/1.0',
     identity_url: process.env.IDENTITY_URL || dev.IDENTITY_URL,
+    dc_url: process.env.DC_URL,
     auth_callback_host: window.location.origin,
     payment_callback_host: window.location.origin,
     payment_any_cb_host: window.location.origin,
