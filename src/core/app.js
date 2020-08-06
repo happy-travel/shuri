@@ -28,14 +28,17 @@ const App = () => {
                         <Route exact path="/auth/silent" component={ AuthSilent } />
                         <Route>
                             <Route component={ AuthDefault } />
-                            { canShowContent ? <React.Fragment>
-                                <div className="block-wrapper">
-                                    <Route component={ Header } />
-                                    <TopAlert />
-                                    <Routes />
-                                </div>
-                                <Route component={ Footer } />
-                            </React.Fragment> : <Loader page /> }
+                            { canShowContent ?
+                                <>
+                                    <div className="block-wrapper">
+                                        <Route component={ Header } />
+                                        <TopAlert />
+                                        <Routes />
+                                    </div>
+                                    <Route component={ Footer } />
+                                </> :
+                                <Loader page />
+                            }
                         </Route>
                     </Switch>
                 </div>
