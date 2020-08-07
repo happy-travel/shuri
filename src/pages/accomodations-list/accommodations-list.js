@@ -1,6 +1,6 @@
 import React from 'react';
-import { observer } from 'mobx-react';
-import { Link } from 'react-router-dom';
+import { withTranslation } from 'react-i18next';
+import propTypes from 'prop-types';
 import { API } from 'matsumoto/src/core';
 import Table from 'matsumoto/src/components/external/table';
 import { dateFormat } from 'matsumoto/src/simple';
@@ -29,27 +29,23 @@ const columns = [
         accessor: 'validTo',
         Cell: (item) => dateFormat.b(item.cell.value)
     },
-    /*{
+    {
         Header: 'Description',
         accessor: 'description',
-    },*/
+    },
 ];
 
-@observer
-class ContractsList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            list: []
-        };
+class AccommodationsList extends React.Component {
+    state = {
+        accommodationsList: []
     }
 
     componentDidMount() {
         API.get({
-            url: apiMethods.contracts(),
-            success: (result) => {
+            url: apiMethods.accommodationsList(),
+            success: (list) => {
                 this.setState({
-                    list: result
+                    accommodationsList: list
                 });
             }
         });
@@ -59,30 +55,28 @@ class ContractsList extends React.Component {
         return (
             <div className="settings block">
                 <section>
-                    <div class="add-new-button-holder">
-                        <Link to="/contract">
-                            <button class="button small">
-                                Add new contract
-                            </button>
-                        </Link>
-                    </div>
-
-                    <h2><span className="brand"><span className="brand">Contracts list</span></span></h2>
-
+                    <h2>
+                        <span className="brand">
+                            {this.props.t('accommodations-page-title')}
+                        </span>
+                    </h2>
                     <Table
-                        data={this.state.list}
-                        count={this.state.list?.length}
+                        data={this.state.accommodationsList}
+                        count={this.state.accommodationsList.length}
                         fetchData={()=>{}}
                         columns={columns}
                         pageIndex={0}
                         pageSize={10}
                         manualPagination
                     />
-
                 </section>
             </div>
         );
     }
 }
 
-export default ContractsList;
+AccommodationsList.propTypes = {
+    t: propTypes.func
+};
+
+export default withTranslation()(AccommodationsList);
