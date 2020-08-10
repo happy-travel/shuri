@@ -8,7 +8,12 @@ const Translations = {
         'add-contract': 'Add new contract',
         'create-contract-button': 'Create',
         'create-contract-title': 'Create new contract',
-        'enter-contract-name': 'Enter name'
+        'enter-contract-name': 'Enter name',
+        'contract-id': 'Contract Id',
+        'accommodation-id': 'Accommodation Id',
+        'name': 'Name',
+        'valid-from': 'Valid From',
+        'valid-to': 'Valid To'
     }
 };
 

@@ -14,17 +14,24 @@ const PAGE_SIZE = 10;
 class AccommodationsList extends React.Component {
     @observable accommodationsList = [];
     @observable tablePageIndex = 0;
-    @observable tableColumns = [
-        {
-            Header: 'Accommodation Id',
-            accessor: 'id',
-        },
-        {
-            Header: 'Name',
-            accessor: 'name',
-            Cell: (item) => item.cell.value[UIStore.editorLanguage]
-        }
-    ];
+    @observable tableColumns;
+
+    constructor(props) {
+        super(props);
+        const { t } = this.props;
+
+        this.tableColumns = [
+            {
+                Header: t('accommodation-id'),
+                accessor: 'id',
+            },
+            {
+                Header: t('name'),
+                accessor: 'name',
+                Cell: (item) => item.cell.value[UIStore.editorLanguage]
+            }
+        ];
+    }
 
     componentDidMount() {
         this.loadAccommodations();

@@ -9,37 +9,44 @@ import Table from 'matsumoto/src/components/external/table';
 import { dateFormat } from 'matsumoto/src/simple';
 import apiMethods from 'core/methods';
 
-const TABLE_COLUMNS = [
-    {
-        Header: 'Contract Id',
-        accessor: 'id',
-    },
-    {
-        Header: 'Accommodation Id',
-        accessor: 'accommodationId',
-    },
-    {
-        Header: 'Name',
-        accessor: 'name',
-    },
-    {
-        Header: 'Valid From',
-        accessor: 'validFrom',
-        Cell: (item) => dateFormat.b(item.cell.value)
-    },
-    {
-        Header: 'Valid To',
-        accessor: 'validTo',
-        Cell: (item) => dateFormat.b(item.cell.value)
-    }
-];
-
 const PAGE_SIZE = 10;
 
 @observer
 class ContractsList extends React.Component {
     @observable contractsList = [];
     @observable tablePageIndex = 0;
+    tableColumns;
+
+    constructor(props) {
+        super(props);
+        const { t } = this.props;
+
+        this.tableColumns = [
+            {
+                Header: t('contract-id'),
+                accessor: 'id',
+            },
+            {
+                Header: t('accommodation-id'),
+                accessor: 'accommodationId',
+            },
+            {
+                Header: t('name'),
+                accessor: 'name',
+            },
+            {
+                Header: t('valid-from'),
+                accessor: 'validFrom',
+                Cell: (item) => dateFormat.b(item.cell.value)
+            },
+            {
+                Header: t('valid-to'),
+                accessor: 'validTo',
+                Cell: (item) => dateFormat.b(item.cell.value)
+            }
+        ];
+
+    }
 
     componentDidMount() {
         this.loadContracts();
@@ -83,7 +90,7 @@ class ContractsList extends React.Component {
                         data={this.contractsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
                         count={this.contractsList.length}
                         fetchData={this.onPaginationClick}
-                        columns={TABLE_COLUMNS}
+                        columns={this.tableColumns}
                         pageIndex={this.tablePageIndex}
                         pageSize={PAGE_SIZE}
                         manualPagination
