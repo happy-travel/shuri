@@ -1,4 +1,6 @@
 import React from 'react';
+import { action, observable } from 'mobx';
+import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -32,32 +34,36 @@ const TABLE_COLUMNS = [
     }
 ];
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 
+@observer
 class ContractsList extends React.Component {
-    state = {
-        list: [],
-        pageIndex: 0
-    }
+    @observable contractsList = [];
+    @observable tablePageIndex = 0;
 
     componentDidMount() {
+        this.loadContracts();
+    }
+
+    loadContracts = () => {
         API.get({
             url: apiMethods.contractsList(),
-            success: (list) => {
-                this.setState({
-                    list: list
-                });
-            }
+            success: this.loadContractsSuccess
         });
     }
 
+    @action
+    loadContractsSuccess = (list) => {
+        this.contractsList = list;
+    }
+
+    @action
     onPaginationClick = ({ pageIndex }) => {
-        this.setState({ pageIndex });
+        this.tablePageIndex = pageIndex;
     }
 
     render() {
         const { t } = this.props;
-        const { list, pageIndex } = this.state;
         return (
             <div className="settings block">
                 <section>
@@ -74,11 +80,11 @@ class ContractsList extends React.Component {
                         </span>
                     </h2>
                     <Table
-                        data={list.slice(PAGE_SIZE * pageIndex, PAGE_SIZE * (pageIndex + 1))}
-                        count={list.length}
+                        data={this.contractsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
+                        count={this.contractsList.length}
                         fetchData={this.onPaginationClick}
                         columns={TABLE_COLUMNS}
-                        pageIndex={pageIndex}
+                        pageIndex={this.tablePageIndex}
                         pageSize={PAGE_SIZE}
                         manualPagination
                     />

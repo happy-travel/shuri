@@ -4,7 +4,7 @@ const apiBasePath = `${settings.dc_url}/api/1.0`;
 
 const apiMethods = {
     getAccommodationById: (accommodationId) => `${apiBasePath}/management/contracts/accommodations/${accommodationId}`,
-    accommodationsList: () => `${apiBasePath}/accommodations/availabilities`,
+    accommodationsList: () => `${apiBasePath}/management/contracts/accommodations`,
     contractsList: () => `${apiBasePath}/management/contracts`,
     contractById: (contractId) => `${apiBasePath}/management/contracts/${contractId}`,
 };

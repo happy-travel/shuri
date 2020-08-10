@@ -1,54 +1,50 @@
 import React from 'react';
+import { action, observable } from 'mobx';
+import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
 import { API } from 'matsumoto/src/core';
 import Table from 'matsumoto/src/components/external/table';
-import { dateFormat } from 'matsumoto/src/simple';
 import apiMethods from 'core/methods';
+import UIStore from 'stores/ui-store';
 
-const columns = [
-    {
-        Header: 'Contract Id',
-        accessor: 'id',
-    },
-    {
-        Header: 'Accommodation Id',
-        accessor: 'accommodationId',
-    },
-    {
-        Header: 'Name',
-        accessor: 'name',
-    },
-    {
-        Header: 'Valid From',
-        accessor: 'validFrom',
-        Cell: (item) => dateFormat.b(item.cell.value)
-    },
-    {
-        Header: 'Valid To',
-        accessor: 'validTo',
-        Cell: (item) => dateFormat.b(item.cell.value)
-    },
-    {
-        Header: 'Description',
-        accessor: 'description',
-    },
-];
+const PAGE_SIZE = 10;
 
+@observer
 class AccommodationsList extends React.Component {
-    state = {
-        accommodationsList: []
-    }
+    @observable accommodationsList = [];
+    @observable tablePageIndex = 0;
+    @observable tableColumns = [
+        {
+            Header: 'Accommodation Id',
+            accessor: 'id',
+        },
+        {
+            Header: 'Name',
+            accessor: 'name',
+            Cell: (item) => item.cell.value[UIStore.editorLanguage]
+        }
+    ];
 
     componentDidMount() {
+        this.loadAccommodations();
+    }
+
+    loadAccommodations = () => {
         API.get({
             url: apiMethods.accommodationsList(),
-            success: (list) => {
-                this.setState({
-                    accommodationsList: list
-                });
-            }
+            success: this.loadAccommodationsSuccess
         });
+    }
+
+    @action
+    loadAccommodationsSuccess = (list) => {
+        this.accommodationsList = list;
+    }
+
+    @action
+    onPaginationClick = ({ pageIndex }) => {
+        this.tablePageIndex = pageIndex;
     }
 
     render() {
@@ -61,12 +57,12 @@ class AccommodationsList extends React.Component {
                         </span>
                     </h2>
                     <Table
-                        data={this.state.accommodationsList}
-                        count={this.state.accommodationsList.length}
-                        fetchData={()=>{}}
-                        columns={columns}
-                        pageIndex={0}
-                        pageSize={10}
+                        data={this.accommodationsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
+                        count={this.accommodationsList.length}
+                        fetchData={this.onPaginationClick}
+                        columns={this.tableColumns}
+                        pageIndex={this.tablePageIndex}
+                        pageSize={PAGE_SIZE}
                         manualPagination
                     />
                 </section>
