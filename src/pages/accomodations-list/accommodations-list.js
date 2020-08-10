@@ -6,7 +6,7 @@ import propTypes from 'prop-types';
 import { API } from 'matsumoto/src/core';
 import Table from 'matsumoto/src/components/external/table';
 import apiMethods from 'core/methods';
-import UIStore from 'stores/ui-store';
+import UIStore from 'stores/shuri-ui-store';
 
 const PAGE_SIZE = 10;
 
