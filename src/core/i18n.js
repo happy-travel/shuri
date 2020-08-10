@@ -7,7 +7,7 @@ import shuriArabic from 'shuri/translation/english';
 import settings from 'settings';
 
 i18n.init({
-    lng: windowLocalStorage.get('locale') || settings.defaultCulture,
+    lng: windowLocalStorage.get('locale') || settings.default_culture,
     resources: {
         en: {
             translations: {

@@ -13,14 +13,14 @@ import TopAlert from 'matsumoto/src/parts/top-alert';
 import Modal from 'matsumoto/src/parts/modal';
 import { Loader } from 'matsumoto/src/simple';
 import { Authorized, isPageAvailableAuthorizedOnly } from 'matsumoto/src/core/auth';
-import internationalization from 'core/internationalization';
+import i18n from 'core/i18n';
 import Header from 'parts/header';
 import Routes from 'core/routes';
 
 const App = () => {
     const canShowContent = !isPageAvailableAuthorizedOnly() || Authorized();
     return (
-        <I18nextProvider i18n={internationalization}>
+        <I18nextProvider i18n={i18n}>
             <BrowserRouter>
                 <div className="body-wrapper">
                     <Switch>
@@ -28,14 +28,17 @@ const App = () => {
                         <Route exact path="/auth/silent" component={ AuthSilent } />
                         <Route>
                             <Route component={ AuthDefault } />
-                            { canShowContent ? <React.Fragment>
-                                <div className="block-wrapper">
-                                    <Route component={ Header } />
-                                    <TopAlert />
-                                    <Routes />
-                                </div>
-                                <Route component={ Footer } />
-                            </React.Fragment> : <Loader page /> }
+                            { canShowContent ?
+                                <>
+                                    <div className="block-wrapper">
+                                        <Route component={ Header } />
+                                        <TopAlert />
+                                        <Routes />
+                                    </div>
+                                    <Route component={ Footer } />
+                                </> :
+                                <Loader page />
+                            }
                         </Route>
                     </Switch>
                 </div>
