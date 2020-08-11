@@ -1,6 +1,6 @@
 import settings from 'settings';
 
-const apiBasePath = `${settings.dc_url}/api/1.0`;
+const apiBasePath = `${settings.dc_url}api/1.0`;
 
 const apiMethods = {
     accommodationById: (accommodationId) => `${apiBasePath}/management/contracts/accommodations/${accommodationId}`,
