@@ -7,12 +7,14 @@ import { API } from 'matsumoto/src/core';
 import Table from 'matsumoto/src/components/external/table';
 import apiMethods from 'core/methods';
 import UIStore from 'stores/shuri-ui-store';
+import { Link } from 'react-router-dom';
+import { Loader } from 'matsumoto/src/simple';
 
 const PAGE_SIZE = 10;
 
 @observer
 class AccommodationsList extends React.Component {
-    @observable accommodationsList = [];
+    @observable accommodationsList = null;
     @observable tablePageIndex = 0;
     @observable tableColumns;
 
@@ -29,7 +31,16 @@ class AccommodationsList extends React.Component {
                 Header: t('name'),
                 accessor: 'name',
                 Cell: (item) => item.cell.value[UIStore.editorLanguage]
-            }
+            },
+            {
+                Header: 'Id',
+                accessor: 'id',
+                Cell: (item) => {
+                    return <Link
+                        to={`/accommodation/${item.cell.value}`}
+                    ><span className='icon icon-action-pen-orange'/></Link>;
+                }
+            },
         ];
     }
 
@@ -58,11 +69,20 @@ class AccommodationsList extends React.Component {
         return (
             <div className="settings block">
                 <section>
+                    <div className="add-new-button-holder">
+                        <Link to="/accommodation">
+                            <button className="button small">
+                                Add new accommodation
+                            </button>
+                        </Link>
+                    </div>
                     <h2>
                         <span className="brand">
                             {this.props.t('accommodations-page-title')}
                         </span>
                     </h2>
+                    { this.accommodationsList === null ? <Loader /> :
+                    ( this.accommodationsList?.length ?
                     <Table
                         data={this.accommodationsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
                         count={this.accommodationsList.length}
@@ -71,7 +91,7 @@ class AccommodationsList extends React.Component {
                         pageIndex={this.tablePageIndex}
                         pageSize={PAGE_SIZE}
                         manualPagination
-                    />
+                    /> : "No results" )}
                 </section>
             </div>
         );

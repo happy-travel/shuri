@@ -5,6 +5,7 @@ const Translations = {
         'accommodations-page-title': 'Accommodations List',
         'header-accommodations-link': 'Accommodations',
         'header-contracts-link': 'Contracts',
+        'Rooms': 'Rooms',
         'add-contract': 'Add new contract',
         'create-contract-button': 'Create',
         'create-contract-title': 'Create new contract',

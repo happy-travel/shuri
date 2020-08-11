@@ -6,11 +6,15 @@ import { withTranslation } from 'react-i18next';
 
 class Header extends React.Component {
     get isOnAccommodationsPage() {
-        return this.props.location.pathname === '/accommodations';
+        return this.props.location.pathname === '/';
     }
 
     get isOnContractsPage() {
         return this.props.location.pathname === '/contracts';
+    }
+
+    get isOnRoomsPage() {
+        return this.props.location.pathname === '/rooms';
     }
 
     render() {
@@ -25,7 +29,7 @@ class Header extends React.Component {
                         <li>
                             <Link
                                 className={this.isOnAccommodationsPage ? 'selected' : ''}
-                                to="/accommodations"
+                                to="/"
                             >
                                 {t('header-accommodations-link')}
                             </Link>
@@ -38,6 +42,14 @@ class Header extends React.Component {
                                 {t('header-contracts-link')}
                             </Link>
                         </li>
+                        { /* <li>
+                            <Link
+                                className={this.isOnRoomsPage ? 'selected' : ''}
+                                to="/rooms"
+                            >
+                                {t('Rooms')}
+                            </Link>
+                        </li> */ }
                     </nav>
                     <UserMenu />
                 </section>
