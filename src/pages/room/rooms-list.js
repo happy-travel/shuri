@@ -2,60 +2,54 @@ import React from 'react';
 import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
-import propTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { API } from 'matsumoto/src/core';
 import Table from 'matsumoto/src/components/external/table';
-import { dateFormat } from 'matsumoto/src/simple';
 import apiMethods from 'core/methods';
+import UIStore from 'stores/shuri-ui-store';
+import { Link } from 'react-router-dom';
+import { Loader } from 'matsumoto/src/simple';
 
 const PAGE_SIZE = 10;
 
 @observer
 class RoomsList extends React.Component {
-    @observable roomsList = [];
+    @observable roomsList = null;
     @observable tablePageIndex = 0;
-    tableColumns;
+    @observable tableColumns;
 
     constructor(props) {
         super(props);
         const { t } = this.props;
-
         this.state = {
             accommodationId: this.props.match.params.accommodationId
         };
 
         this.tableColumns = [
             {
-                Header: t('contract-id'),
+                Header: "Room Id",
                 accessor: 'id',
-            },
-            {
-                Header: t('accommodation-id'),
-                accessor: 'accommodationId',
             },
             {
                 Header: t('name'),
                 accessor: 'name',
+                Cell: (item) => item.cell.value[UIStore.editorLanguage]
             },
             {
-                Header: t('valid-from'),
-                accessor: 'validFrom',
-                Cell: (item) => dateFormat.b(item.cell.value)
+                Header: 'Actions',
+                accessor: 'id',
+                Cell: (item) => {
+                    return <Link
+                        to={`/accommodation/${this.state.accommodationId}/room/${item.cell.value}`}
+                    ><span className='icon icon-action-pen-orange'/></Link>;
+                }
             },
-            {
-                Header: t('valid-to'),
-                accessor: 'validTo',
-                Cell: (item) => dateFormat.b(item.cell.value)
-            }
         ];
-
     }
 
     componentDidMount() {
         API.get({
             url: apiMethods.roomsList(this.state.accommodationId),
-            success: (result) => this.roomsList = result
+            success: list => this.roomsList = list
         });
     }
 
@@ -65,42 +59,36 @@ class RoomsList extends React.Component {
     }
 
     render() {
-        const { t } = this.props;
         return (
             <div className="settings block">
                 <section>
                     <div className="add-new-button-holder">
-                        <Link to={`/accommodations/${this.state.accommodationId}/room`}>
+                        <Link to={`/accommodation/${this.state.accommodationId}/room`}>
                             <button className="button small">
-                                Add New Room
+                                Add new room
                             </button>
                         </Link>
                     </div>
                     <h2>
                         <span className="brand">
-                            Rooms
+                            Rooms list In Accommodation #{this.state.accommodationId}
                         </span>
                     </h2>
-                    {/*<Table
-                        data={this.roomsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
-                        count={this.roomsList.length}
-                        fetchData={this.onPaginationClick}
-                        columns={this.tableColumns}
-                        pageIndex={this.tablePageIndex}
-                        pageSize={PAGE_SIZE}
-                        manualPagination
-                    />*/ }
-                    <pre>
-                        {JSON.stringify(this.roomsList,1,2)}
-                    </pre>
+                    { this.roomsList === null ? <Loader /> :
+                        ( this.roomsList?.length ?
+                            <Table
+                                data={this.roomsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
+                                count={this.roomsList.length}
+                                fetchData={this.onPaginationClick}
+                                columns={this.tableColumns}
+                                pageIndex={this.tablePageIndex}
+                                pageSize={PAGE_SIZE}
+                                manualPagination
+                            /> : "No results" )}
                 </section>
             </div>
         );
     }
 }
-
-RoomsList.propTypes = {
-    t: propTypes.func
-};
 
 export default withTranslation()(RoomsList);

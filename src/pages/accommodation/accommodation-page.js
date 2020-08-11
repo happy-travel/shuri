@@ -30,13 +30,33 @@ class AccommodationPage extends React.Component {
         })
     }
 
+    reformatValues = (values) => {
+        values.description = values.textualDescription;
+
+        if (!values.occupancyDefinition) values.occupancyDefinition = {};
+        const agesReformat = (k1, k2, def) => {
+            let value = parseInt(values.occupancyDefinition?.[k1]?.[k2]);
+            if (value !== 0) value = value || def;
+            if (!values.occupancyDefinition[k1]) values.occupancyDefinition[k1] = {};
+            values.occupancyDefinition[k1][k2] = value;
+        };
+        agesReformat('infant', 'lowerBound', 0);
+        agesReformat('infant', 'upperBound', 3);
+        agesReformat('child', 'lowerBound', 4);
+        agesReformat('child', 'upperBound', 11);
+        agesReformat('adult', 'lowerBound', 12);
+        agesReformat('adult', 'upperBound', 200);
+
+        return values;
+    }
+
     submit = (values) => {
         const method = this.state.id ? "put" : "post",
               url = this.state.id ? apiMethods.accommodationById(this.state.id) : apiMethods.accommodationsList();
 
-        API.post({
-            url: apiMethods.contractsList(),
-            body: values,
+        API[method]({
+            url: url,
+            body: this.reformatValues(values),
             success: (result) => {
                 this.setState({ redirect: true });
             }
@@ -54,6 +74,7 @@ class AccommodationPage extends React.Component {
                         id={`name.${UI.editorLanguage}`}
                         label={"Accommodation Name"}
                         placeholder={"Enter Accommodation Name"}
+                        required
                     />
                 </div>
                 <div className="row">
@@ -61,6 +82,7 @@ class AccommodationPage extends React.Component {
                         id={`address.${UI.editorLanguage}`}
                         label={"Accommodation Address"}
                         placeholder={"Enter Accommodation Address"}
+                        required
                     />
                 </div>
                 <div className="row">
@@ -80,6 +102,7 @@ class AccommodationPage extends React.Component {
                         id={`textualDescription.${UI.editorLanguage}.description`}
                         label={"Accommodation Description"}
                         placeholder={"Enter Accommodation Description"}
+                        required
                     />
                 </div>
                 <div className="row">
@@ -101,11 +124,13 @@ class AccommodationPage extends React.Component {
                          id="checkInTime"
                          label={"Check In Time"}
                          placeholder={"16:00"}
+                         required
                     />
                     <FieldText formik={formik} clearable
                          id="checkOutTime"
                          label={"Check Out Time"}
                          placeholder={"11:00"}
+                         required
                     />
                 </div>
                 <div className="row">
@@ -118,6 +143,13 @@ class AccommodationPage extends React.Component {
                                id="contactInfo.phone"
                                label={"Contact Phone"}
                                placeholder={"Enter Contact Phone"}
+                               required
+                    />
+                    <FieldText formik={formik} clearable
+                               id="contactInfo.website"
+                               label={"Website"}
+                               placeholder={"Enter Website"}
+                               required
                     />
                 </div>
                 <div className="row">
@@ -137,6 +169,13 @@ class AccommodationPage extends React.Component {
                                id={`additionalInfo.${UI.editorLanguage}`}
                                label={"Additional Information"}
                                placeholder={"Additional Information"}
+                    />
+                </div>
+                <div className="row">
+                    <FieldText formik={formik} clearable
+                               id={`amenities.${UI.editorLanguage}.0`}
+                               label={"Amenities"}
+                               placeholder={"Amenities"}
                     />
                 </div>
                 <div className="row">
@@ -173,6 +212,21 @@ class AccommodationPage extends React.Component {
                                id={"occupancyDefinition.adult.upperBound"}
                                label={"Occupancy Adult Age Upper Bound"}
                                placeholder={"200"}
+                    />
+                </div>
+                <h3>PICTURES</h3>
+                <div className="row">
+                    <FieldText formik={formik} clearable
+                               id={`pictures.${UI.editorLanguage}.0.source`}
+                               label={"Picture source link"}
+                               placeholder={"https://domain/image.jpg"}
+                    />
+                </div>
+                <div className="row">
+                    <FieldText formik={formik} clearable
+                               id={`pictures.${UI.editorLanguage}.0.caption`}
+                               label={"Picture caption"}
+                               placeholder={"Enter picture text description"}
                     />
                 </div>
 
