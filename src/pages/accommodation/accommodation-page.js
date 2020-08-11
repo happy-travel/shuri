@@ -100,12 +100,12 @@ class AccommodationPage extends React.Component {
                     <FieldText formik={formik} clearable
                          id="checkInTime"
                          label={"Check In Time"}
-                         placeholder={"!!! SELECTER"}
+                         placeholder={"16:00"}
                     />
                     <FieldText formik={formik} clearable
                          id="checkOutTime"
                          label={"Check Out Time"}
-                         placeholder={"!!! SELECTER"}
+                         placeholder={"11:00"}
                     />
                 </div>
                 <div className="row">
@@ -121,10 +121,15 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldText formik={formik} clearable
-                               id="propertyType"
-                               label={"Property Type"}
-                               placeholder={"!!! SELECTER"}
+                    <FieldSelect formik={formik}
+                                 id="propertyType"
+                                 label={"Property Type"}
+                                 placeholder={"Choose property type"}
+                                 options={[
+                                     {value: "any", text: "Any"},
+                                     {value: "hotels", text: "Hotels"},
+                                     {value: "apartments", text: "Apartments"},
+                                 ]}
                     />
                 </div>
                 <div className="row">

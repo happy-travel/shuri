@@ -13,7 +13,7 @@ import RoomPage from 'pages/room/room-page';
 const Routes = () => (
     <Switch>
         <Route exact path="/" component={AccommodationsList} />
-        <Route path={['/accommodation/:accommodationId/room', '/accommodation/:accommodationId/room/:id']} component={RoomsList} />
+        <Route path={['/accommodation/:accommodationId/room/:id', '/accommodation/:accommodationId/room']} component={RoomPage} />
         <Route path='/accommodation/:accommodationId/rooms' component={RoomsList} />
         <Route path={['/accommodation/:id', '/accommodation']} component={AccommodationPage} />
         <Route path="/contracts" component={ContractsList} />

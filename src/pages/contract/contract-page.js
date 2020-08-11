@@ -109,6 +109,7 @@ class ContractPage extends React.Component {
                         formik={formik}
                         id="accommodationId"
                         label={t('Accommodation')}
+                        placeholder="Select contract accommodation"
                         options={
                             this.state.accommodationsList?.map((item) => ({
                                 value: item.id,
