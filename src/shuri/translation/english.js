@@ -14,7 +14,14 @@ const Translations = {
         'accommodation-id': 'Accommodation Id',
         'name': 'Name',
         'valid-from': 'Valid From',
-        'valid-to': 'Valid To'
+        'valid-to': 'Valid To',
+        'Remove contract': 'Remove contract',
+        'Removing contract': 'Removing contract',
+        'Are you sure you want to proceed?': 'Are you sure you want to proceed?',
+        'Yes': 'Yes',
+        'No contracts found': 'No contracts found',
+        'No': 'No',
+        'Save changes': 'Save changes'
     }
 };
 
