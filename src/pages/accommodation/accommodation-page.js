@@ -220,6 +220,7 @@ class AccommodationPage extends React.Component {
                                id={`pictures.${UI.editorLanguage}.0.source`}
                                label={"Picture source link"}
                                placeholder={"https://domain/image.jpg"}
+                               required
                     />
                 </div>
                 <div className="row">
@@ -227,6 +228,7 @@ class AccommodationPage extends React.Component {
                                id={`pictures.${UI.editorLanguage}.0.caption`}
                                label={"Picture caption"}
                                placeholder={"Enter picture text description"}
+                               required
                     />
                 </div>
 

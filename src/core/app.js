@@ -20,7 +20,6 @@ import Routes from 'core/routes';
 
 const App = () => {
     const canShowContent = Authorized();
-    console.log('csc:'+ canShowContent);
     return (
         <I18nextProvider i18n={i18n}>
             <BrowserRouter>
