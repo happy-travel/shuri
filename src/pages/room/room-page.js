@@ -5,8 +5,10 @@ import {
     CachedForm, FieldSelect,
     FieldText
 } from 'matsumoto/src/components/form';
+import Breadcrumbs from 'components/breadcrumbs';
 import { API } from 'matsumoto/src/core';
 import apiMethods from 'core/methods';
+import UI from 'stores/shuri-ui-store';
 
 class RoomPage extends React.Component {
     state = {
@@ -36,16 +38,31 @@ class RoomPage extends React.Component {
     }
 
     submit = (values) => {
-        const { id } = this.state;
+        const {
+            id,
+            accommodationId,
+        } = this.state;
         const method = id ? 'put' : 'post';
-        const url = id ? apiMethods.roomById(this.state.id) : apiMethods.roomsList();
+        const url = id ?
+            apiMethods.roomById(accommodationId, this.state.id) :
+            apiMethods.roomsList(accommodationId);
+
+        if (!values.occupancyConfigurations)
+            value.occupancyConfigurations = [
+                {
+                    "adults": 2,
+                    "teenagers": 1,
+                    "children": 0,
+                    "infants": 0
+                }
+            ];
 
         this.setState({ isLoading: true });
         API[method]({
             url: url,
             body: values,
             success: () => {
-                this.setState({ redirectUrl: '/rooms' });
+                this.setState({ redirectUrl: `/accommodation/${accommodationId}/rooms` });
             },
             after: () => {
                 this.setState({ isLoading: false })
@@ -60,16 +77,14 @@ class RoomPage extends React.Component {
             <div className="form app-settings">
                 <div className="row">
                     <FieldText formik={formik} clearable
-                               id="name"
-                               label="Name"
-                               placeholder={t('enter-room-name')}
+                        id={`name.${UI.editorLanguage}`}
+                        label="Name"
+                        placeholder="Enter room name"
                     />
                 </div>
                 <div className="row">
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id="description"
+                    <FieldText formik={formik} clearable
+                        id={`description.${UI.editorLanguage}`}
                         label="Description"
                         placeholder="Enter room description"
                     />
@@ -83,16 +98,6 @@ class RoomPage extends React.Component {
                             >
                                 {id ? t('Save changes') : t('create-room-button')}
                             </button>
-                            {id ?
-                                <button
-                                    type="button"
-                                    onClick={this.openRemoveModal}
-                                    className="button gray remove-room-button"
-                                >
-                                    {t('Remove room')}
-                                </button> :
-                                null
-                            }
                         </div>
                     </div>
                 </div>
@@ -102,7 +107,11 @@ class RoomPage extends React.Component {
 
     render() {
         const { t } = this.props;
-        const { redirectUrl, id } = this.state;
+        const {
+            redirectUrl,
+            id,
+            accommodationId,
+        } = this.state;
 
         if (redirectUrl) {
             return <Redirect push to={redirectUrl} />;
@@ -112,12 +121,28 @@ class RoomPage extends React.Component {
             <>
                 <div className="settings block">
                     <section>
+                        <Breadcrumbs
+                            backLink={`/accommodation/${accommodationId}/rooms`}
+                            items={[
+                                {
+                                    text: 'Accommodations list',
+                                    link: '/'
+                                }, {
+                                    text: 'Accommodation',
+                                    link: `/accommodation/${accommodationId}`
+                                }, {
+                                    text: 'Rooms list',
+                                    link: `/accommodation/${accommodationId}/rooms`
+                                }, {
+                                    text: 'Room'
+                                },
+                            ]}
+                        />
                         <h2>
                             <span className="brand">
-                                {id ? `Edit room #${id}` : "Create new room"}
+                                {id ? `Edit room #${id}` : 'Create new room'}
                             </span>
                         </h2>
-                        {JSON.stringify(this.state.room)}
                         <CachedForm
                             initialValues={this.state.room}
                             onSubmit={!this.state.isLoading ? this.submit : undefined}

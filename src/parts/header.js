@@ -6,15 +6,12 @@ import { withTranslation } from 'react-i18next';
 
 class Header extends React.Component {
     get isOnAccommodationsPage() {
-        return this.props.location.pathname === '/';
+        return (this.props.location.pathname.includes('/accommodation')) ||
+               (this.props.location.pathname === '/');
     }
 
     get isOnContractsPage() {
-        return this.props.location.pathname === '/contracts';
-    }
-
-    get isOnRoomsPage() {
-        return this.props.location.pathname === '/rooms';
+        return this.props.location.pathname.includes('/contract');
     }
 
     render() {

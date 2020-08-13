@@ -3,6 +3,7 @@ import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import { API } from 'matsumoto/src/core';
+import Breadcrumbs from 'components/breadcrumbs';
 import Table from 'matsumoto/src/components/external/table';
 import apiMethods from 'core/methods';
 import UIStore from 'stores/shuri-ui-store';
@@ -59,17 +60,35 @@ class RoomsList extends React.Component {
     }
 
     render() {
+        const {
+            accommodationId
+        } = this.state;
+
         return (
             <div className="settings block">
                 <section>
-                    <div className="add-new-button-holder">
-                        <Link to={`/accommodation/${this.state.accommodationId}/room`}>
-                            <button className="button small">
-                                Add new room
-                            </button>
-                        </Link>
-                    </div>
+                    <Breadcrumbs
+                        backLink={`/accommodation/${accommodationId}`}
+                        items={[
+                            {
+                                text: 'Accommodations list',
+                                link: '/'
+                            }, {
+                                text: 'Accommodation',
+                                link: `/accommodation/${accommodationId}`
+                            }, {
+                                text: 'Rooms list'
+                            }
+                        ]}
+                    />
                     <h2>
+                        <div className="add-new-button-holder">
+                            <Link to={`/accommodation/${this.state.accommodationId}/room`}>
+                                <button className="button small">
+                                    Add new room
+                                </button>
+                            </Link>
+                        </div>
                         <span className="brand">
                             Rooms list In Accommodation #{this.state.accommodationId}
                         </span>

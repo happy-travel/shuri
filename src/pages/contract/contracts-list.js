@@ -83,14 +83,14 @@ class ContractsList extends React.Component {
         return (
             <div className="settings block">
                 <section>
-                    <div className="add-new-button-holder">
-                        <Link to="/contract">
-                            <button className="button small">
-                                {t('add-contract')}
-                            </button>
-                        </Link>
-                    </div>
                     <h2>
+                        <div className="add-new-button-holder">
+                            <Link to="/contract">
+                                <button className="button small">
+                                    {t('add-contract')}
+                                </button>
+                            </Link>
+                        </div>
                         <span className="brand">
                             {t('contracts-page-title')}
                         </span>

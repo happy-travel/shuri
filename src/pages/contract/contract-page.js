@@ -6,6 +6,7 @@ import {
     CachedForm, FieldSelect,
     FieldText
 } from 'matsumoto/src/components/form';
+import Breadcrumbs from 'components/breadcrumbs';
 import FieldDatepicker from 'matsumoto/src/components/complex/field-datepicker';
 import { API } from 'matsumoto/src/core';
 import apiMethods from 'core/methods';
@@ -197,6 +198,17 @@ class ContractPage extends React.Component {
             <>
                 <div className="settings block">
                     <section>
+                        <Breadcrumbs
+                            backLink={'/contracts'}
+                            items={[
+                                {
+                                    text: 'Contracts list',
+                                    link: '/contracts'
+                                }, {
+                                    text: 'Contract'
+                                }
+                            ]}
+                        />
                         <h2>
                             <span className="brand">
                                 {id ? `Edit contract #${id}` : t('create-contract-title')}

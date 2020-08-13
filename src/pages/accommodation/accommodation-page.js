@@ -7,6 +7,7 @@ import {
     FieldSelect
 } from 'matsumoto/src/components/form';
 import { Stars } from 'matsumoto/src/simple';
+import Breadcrumbs from 'components/breadcrumbs';
 import { API } from 'matsumoto/src/core';
 import apiMethods from 'core/methods';
 import UI from 'stores/shuri-ui-store';
@@ -256,6 +257,17 @@ class AccommodationPage extends React.Component {
         return (
             <div className="settings block">
                 <section>
+                    <Breadcrumbs
+                        backLink={'/'}
+                        items={[
+                            {
+                                text: 'Accommodations list',
+                                link: '/'
+                            }, {
+                                text: 'Accommodation'
+                            }
+                        ]}
+                    />
                     <h2>
                         <span className="brand">
                             {
