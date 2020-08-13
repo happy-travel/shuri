@@ -269,6 +269,13 @@ class AccommodationPage extends React.Component {
                         ]}
                     />
                     <h2>
+                        { this.state.id && <div>
+                            <Link to={`/accommodation/${this.state.id}/rooms`}>
+                                <button className="button go-to-rooms">
+                                    Rooms management ({this.state.accommodation?.roomIds?.length || 0})
+                                </button>
+                            </Link>
+                        </div> }
                         <span className="brand">
                             {
                                 this.state.id ?
@@ -283,14 +290,6 @@ class AccommodationPage extends React.Component {
                         render={this.renderForm}
                         enableReinitialize
                     />
-                    <div>
-                        <h2>Room management</h2>
-                        <Link to={`/accommodation/${this.state.id}/rooms`}>
-                            <button className="button go-to-rooms">
-                                Rooms available: {this.state.accommodation?.roomIds?.length || 0}
-                            </button>
-                        </Link>
-                    </div>
                 </section>
             </div>
         );

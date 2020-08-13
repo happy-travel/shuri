@@ -12,7 +12,12 @@ import UI from 'stores/shuri-ui-store';
 
 class RoomPage extends React.Component {
     state = {
-        room: {},
+        room: {
+            "name": {"ar": "", "en": "", "ru": ""},
+            "description": {"ar": "", "en": "", "ru": ""},
+            "amenities": {"ar": [], "en": [], "ru": []},
+            "pictures": {},
+        },
         id: this.props.match.params.id,
         accommodationId: this.props.match.params.accommodationId,
         redirectUrl: undefined,
@@ -48,7 +53,7 @@ class RoomPage extends React.Component {
             apiMethods.roomsList(accommodationId);
 
         if (!values.occupancyConfigurations)
-            value.occupancyConfigurations = [
+            values.occupancyConfigurations = [
                 {
                     "adults": 2,
                     "teenagers": 1,
@@ -60,7 +65,7 @@ class RoomPage extends React.Component {
         this.setState({ isLoading: true });
         API[method]({
             url: url,
-            body: values,
+            body: [values],
             success: () => {
                 this.setState({ redirectUrl: `/accommodation/${accommodationId}/rooms` });
             },
@@ -96,7 +101,7 @@ class RoomPage extends React.Component {
                                 type="submit"
                                 className="button"
                             >
-                                {id ? t('Save changes') : t('create-room-button')}
+                                {id ? t('Save changes') : 'Create room'}
                             </button>
                         </div>
                     </div>
