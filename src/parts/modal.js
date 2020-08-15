@@ -33,7 +33,7 @@ class Modal extends React.Component {
 }
 
 Modal.propTypes = {
-    children: propTypes.array,
+    children: propTypes.object,
     title: propTypes.string,
     onCloseClick: propTypes.func
 };

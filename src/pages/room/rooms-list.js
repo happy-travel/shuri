@@ -7,7 +7,7 @@ import Breadcrumbs from 'components/breadcrumbs';
 import Table from 'matsumoto/src/components/external/table';
 import apiMethods from 'core/methods';
 import UIStore from 'stores/shuri-ui-store';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Loader } from 'matsumoto/src/simple';
 import DialogModal from '../../parts/dialog-modal';
 
@@ -19,6 +19,7 @@ class RoomsList extends React.Component {
     @observable tablePageIndex = 0;
     @observable tableColumns;
     @observable isRemoveModalShown = false;
+    @observable redirectUrl = undefined;
 
     constructor(props) {
         super(props);
@@ -62,15 +63,14 @@ class RoomsList extends React.Component {
 
     @action
     onRoomsRemove = () => {
+        const { accommodationId } = this.state;
         this.isRequestingApi = true;
         API.delete({
-            url: apiMethods.roomsList(this.state.accommodationId),
-            body: {
-                ids: this.roomsIds
-            },
-            success: () => {
-                this.setState({ redirectUrl: '/contracts' });
-            },
+            url: apiMethods.roomsList(accommodationId),
+            body: this.roomsIds,
+            success: runInAction(() => {
+                this.redirectUrl = `/accommodation/${accommodationId}`;
+            }),
             after: runInAction(() => {
                 this.isRequestingApi = false;
             })
@@ -97,6 +97,10 @@ class RoomsList extends React.Component {
         const {
             accommodationId
         } = this.state;
+
+        if (this.redirectUrl) {
+            return <Redirect push to={this.redirectUrl} />;
+        }
 
         return (
             <>
