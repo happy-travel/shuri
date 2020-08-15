@@ -1,5 +1,5 @@
 import React from 'react';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import { API } from 'matsumoto/src/core';
@@ -9,6 +9,7 @@ import apiMethods from 'core/methods';
 import UIStore from 'stores/shuri-ui-store';
 import { Link } from 'react-router-dom';
 import { Loader } from 'matsumoto/src/simple';
+import DialogModal from '../../parts/dialog-modal';
 
 const PAGE_SIZE = 10;
 
@@ -17,6 +18,7 @@ class RoomsList extends React.Component {
     @observable roomsList = null;
     @observable tablePageIndex = 0;
     @observable tableColumns;
+    @observable isRemoveModalShown = false;
 
     constructor(props) {
         super(props);
@@ -54,58 +56,109 @@ class RoomsList extends React.Component {
         });
     }
 
+    get roomsIds() {
+        return this.roomsList?.map((room) => room.id);
+    }
+
+    @action
+    onRoomsRemove = () => {
+        this.isRequestingApi = true;
+        API.delete({
+            url: apiMethods.roomsList(this.state.accommodationId),
+            body: {
+                ids: this.roomsIds
+            },
+            success: () => {
+                this.setState({ redirectUrl: '/contracts' });
+            },
+            after: runInAction(() => {
+                this.isRequestingApi = false;
+            })
+        })
+    }
+
     @action
     onPaginationClick = ({ pageIndex }) => {
         this.tablePageIndex = pageIndex;
     }
 
+    @action
+    onOpenRemoveModal = () => {
+        this.isRemoveModalShown = true;
+    }
+
+    @action
+    onCloseRemoveModal = () => {
+        this.isRemoveModalShown = false;
+    }
+
     render() {
+        const { t } = this.props;
         const {
             accommodationId
         } = this.state;
 
         return (
-            <div className="settings block">
-                <section>
-                    <Breadcrumbs
-                        backLink={`/accommodation/${accommodationId}`}
-                        items={[
-                            {
-                                text: 'Accommodations list',
-                                link: '/'
-                            }, {
-                                text: 'Accommodation',
-                                link: `/accommodation/${accommodationId}`
-                            }, {
-                                text: 'Rooms list'
-                            }
-                        ]}
-                    />
-                    <h2>
-                        <div className="add-new-button-holder">
-                            <Link to={`/accommodation/${this.state.accommodationId}/room`}>
-                                <button className="button small">
-                                    Add new room
+            <>
+                <div className="settings block">
+                    <section>
+                        <Breadcrumbs
+                            backLink={`/accommodation/${accommodationId}`}
+                            items={[
+                                {
+                                    text: 'Accommodations list',
+                                    link: '/'
+                                }, {
+                                    text: 'Accommodation',
+                                    link: `/accommodation/${accommodationId}`
+                                }, {
+                                    text: 'Rooms list'
+                                }
+                            ]}
+                        />
+                        <h2>
+                            <div className="add-new-button-holder">
+                                <Link to={`/accommodation/${this.state.accommodationId}/room`}>
+                                    <button className="button small">
+                                        Add new room
+                                    </button>
+                                </Link>
+                                <button
+                                    type="button"
+                                    disabled={!this.roomsList?.length}
+                                    onClick={this.onOpenRemoveModal}
+                                    className="button small gray remove-button"
+                                >
+                                    {t('Remove rooms')}
                                 </button>
-                            </Link>
-                        </div>
-                        <span className="brand">
-                            Rooms list In Accommodation #{this.state.accommodationId}
-                        </span>
-                    </h2>
-                    { this.roomsList === null ? <Loader /> :
-                        ( this.roomsList?.length ?
-                            <Table
-                                data={this.roomsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
-                                count={this.roomsList.length}
-                                fetchData={this.onPaginationClick}
-                                columns={this.tableColumns}
-                                pageIndex={this.tablePageIndex}
-                                pageSize={PAGE_SIZE}
-                                manualPagination
-                            /> : "No results" )}
-                </section>
-            </div>
+                            </div>
+                            <span className="brand">
+                                Rooms list In Accommodation #{this.state.accommodationId}
+                            </span>
+                        </h2>
+                        { this.roomsList === null ? <Loader /> :
+                            ( this.roomsList?.length ?
+                                <Table
+                                    data={this.roomsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
+                                    count={this.roomsList.length}
+                                    fetchData={this.onPaginationClick}
+                                    columns={this.tableColumns}
+                                    pageIndex={this.tablePageIndex}
+                                    pageSize={PAGE_SIZE}
+                                    manualPagination
+                                /> : "No results" )}
+                    </section>
+                </div>
+                {this.isRemoveModalShown ?
+                    <DialogModal
+                        title={t('Removing rooms')}
+                        text={t('Are you sure you want to proceed?')}
+                        onNoClick={this.onCloseRemoveModal}
+                        onYesClick={!this.state.isRequestingApi ? this.onRoomsRemove : undefined}
+                    /> :
+                    null
+                }
+            </>
         );
     }
 }
