@@ -71,7 +71,7 @@ module.exports = {
   servedPath: getServedPath(resolveApp('package.json')),
   matsumoto: resolveApp('node_modules/matsumoto/src'),
   appHtml: resolveApp('node_modules/matsumoto/public/index.html'),
-  matsumotoPublic: resolveApp('node_modules/matsumoto/public'),
+  matsumotoPublic: resolveApp('node_modules/matsumoto/public')
 };
 
 module.exports.moduleFileExtensions = moduleFileExtensions;

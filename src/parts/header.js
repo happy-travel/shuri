@@ -28,7 +28,7 @@ class Header extends React.Component {
                                 className={this.isOnAccommodationsPage ? 'selected' : ''}
                                 to="/"
                             >
-                                {t('header-accommodations-link')}
+                                {t('Accommodations')}
                             </Link>
                         </li>
                         <li>
@@ -36,17 +36,9 @@ class Header extends React.Component {
                                 className={this.isOnContractsPage ? 'selected' : ''}
                                 to="/contracts"
                             >
-                                {t('header-contracts-link')}
+                                {t('Contracts')}
                             </Link>
                         </li>
-                        { /* <li>
-                            <Link
-                                className={this.isOnRoomsPage ? 'selected' : ''}
-                                to="/rooms"
-                            >
-                                {t('Rooms')}
-                            </Link>
-                        </li> */ }
                     </nav>
                     <UserMenu />
                 </section>

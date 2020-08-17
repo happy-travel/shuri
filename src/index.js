@@ -1,18 +1,16 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
+import { windowLocalStorage } from 'matsumoto/src/core/misc/window-storage';
 import { initApplication } from 'matsumoto/src/core/init';
 import App from 'core/app';
 
-window.setPageDirectionFromLS = () => {
-    var dir = window.localStorage.getItem('direction');
-    if (['ltr', 'rtl'].includes(dir)) {
-        document.getElementsByTagName('html')[0].setAttribute('dir', dir);
-    }
-};
-window.setPageDirectionFromLS();
+const dir = windowLocalStorage.get('direction');
+if (['ltr', 'rtl'].includes(dir)) {
+    document.getElementsByTagName('html')[0].setAttribute('dir', dir);
+}
 
-// eslint-disable-next-line react/no-render-return-value
-window._renderTheApp = () => ReactDOM.render(<App />, document.getElementById('app'));
-window._renderTheApp();
+window.onload = function() {
+    render(<App />, document.getElementById('app'));
+}
 
 initApplication();

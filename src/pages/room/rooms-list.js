@@ -3,13 +3,14 @@ import { action, observable, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import { API } from 'matsumoto/src/core';
-import Breadcrumbs from 'components/breadcrumbs';
+import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import Table from 'matsumoto/src/components/external/table';
 import apiMethods from 'core/methods';
 import UIStore from 'stores/shuri-ui-store';
 import { Link, Redirect } from 'react-router-dom';
 import { Loader } from 'matsumoto/src/simple';
 import DialogModal from 'parts/dialog-modal';
+import propTypes from 'prop-types';
 
 const PAGE_SIZE = 10;
 
@@ -30,8 +31,8 @@ class RoomsList extends React.Component {
 
         this.tableColumns = [
             {
-                Header: "Room Id",
-                accessor: 'id',
+                Header: 'Room Id',
+                accessor: 'id'
             },
             {
                 Header: t('name'),
@@ -41,19 +42,19 @@ class RoomsList extends React.Component {
             {
                 Header: 'Actions',
                 accessor: 'id',
-                Cell: (item) => {
-                    return <Link
-                        to={`/accommodation/${this.state.accommodationId}/room/${item.cell.value}`}
-                    ><span className='icon icon-action-pen-orange'/></Link>;
-                }
-            },
+                Cell: (item) => (
+                    <Link to={`/accommodation/${this.state.accommodationId}/room/${item.cell.value}`}>
+                        <span className="icon icon-action-pen-orange"/>
+                    </Link>
+                )
+            }
         ];
     }
 
     componentDidMount() {
         API.get({
             url: apiMethods.roomsList(this.state.accommodationId),
-            success: list => this.roomsList = list
+            success: (list) => this.roomsList = list
         });
     }
 
@@ -92,11 +93,31 @@ class RoomsList extends React.Component {
         this.isRemoveModalShown = false;
     }
 
+    renderContent = () => {
+        if (this.roomsList === null) {
+            return <Loader />;
+        }
+        const tableData = this.roomsList.slice(
+            PAGE_SIZE * this.tablePageIndex,
+            PAGE_SIZE * (this.tablePageIndex + 1)
+        );
+
+        return this.roomsList.length ?
+            <Table
+                data={tableData}
+                count={this.roomsList.length}
+                fetchData={this.onPaginationClick}
+                columns={this.tableColumns}
+                pageIndex={this.tablePageIndex}
+                pageSize={PAGE_SIZE}
+                manualPagination
+            /> :
+            'No results';
+    }
+
     render() {
         const { t } = this.props;
-        const {
-            accommodationId
-        } = this.state;
+        const { accommodationId } = this.state;
 
         if (this.redirectUrl) {
             return <Redirect push to={this.redirectUrl} />;
@@ -140,17 +161,7 @@ class RoomsList extends React.Component {
                                 Rooms list In Accommodation #{this.state.accommodationId}
                             </span>
                         </h2>
-                        { this.roomsList === null ? <Loader /> :
-                            ( this.roomsList?.length ?
-                                <Table
-                                    data={this.roomsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
-                                    count={this.roomsList.length}
-                                    fetchData={this.onPaginationClick}
-                                    columns={this.tableColumns}
-                                    pageIndex={this.tablePageIndex}
-                                    pageSize={PAGE_SIZE}
-                                    manualPagination
-                                /> : "No results" )}
+                        {this.renderContent()}
                     </section>
                 </div>
                 {this.isRemoveModalShown ?
@@ -166,5 +177,10 @@ class RoomsList extends React.Component {
         );
     }
 }
+
+RoomsList.propTypes = {
+    t: propTypes.func,
+    match: propTypes.object
+};
 
 export default withTranslation()(RoomsList);

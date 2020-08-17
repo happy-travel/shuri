@@ -1,23 +1,24 @@
 import React from 'react';
+import propTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import {
-    CachedForm, FieldSelect,
+    CachedForm,
     FieldText
 } from 'matsumoto/src/components/form';
-import Breadcrumbs from 'components/breadcrumbs';
+import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import { API } from 'matsumoto/src/core';
 import apiMethods from 'core/methods';
 import UI from 'stores/shuri-ui-store';
-import DialogModal from '../../parts/dialog-modal';
+import DialogModal from 'parts/dialog-modal';
 
 class RoomPage extends React.Component {
     state = {
         room: {
-            "name": {"ar": "", "en": "", "ru": ""},
-            "description": {"ar": "", "en": "", "ru": ""},
-            "amenities": {"ar": [], "en": [], "ru": []},
-            "pictures": {},
+            'name': { 'ar': '', 'en': '', 'ru': '' },
+            'description': { 'ar': '', 'en': '', 'ru': '' },
+            'amenities': { 'ar': [], 'en': [], 'ru': [] },
+            'pictures': {}
         },
         id: this.props.match.params.id,
         accommodationId: this.props.match.params.accommodationId,
@@ -35,8 +36,8 @@ class RoomPage extends React.Component {
         API.get({
             url: apiMethods.roomsList(accommodationId),
             success: (rooms) => {
-                rooms.forEach(item => {
-                    if (item.id == id)
+                rooms.forEach((item) => {
+                    if (item.id === id)
                         this.setState({ room: item });
                 })
             }
@@ -71,7 +72,7 @@ class RoomPage extends React.Component {
     submit = (values) => {
         const {
             id,
-            accommodationId,
+            accommodationId
         } = this.state;
         const method = id ? 'put' : 'post';
         const url = id ?
@@ -81,10 +82,10 @@ class RoomPage extends React.Component {
         if (!values.occupancyConfigurations)
             values.occupancyConfigurations = [
                 {
-                    "adults": 2,
-                    "teenagers": 1,
-                    "children": 0,
-                    "infants": 0
+                    'adults': 2,
+                    'teenagers': 1,
+                    'children': 0,
+                    'infants': 0
                 }
             ];
 
@@ -151,7 +152,7 @@ class RoomPage extends React.Component {
         const {
             redirectUrl,
             id,
-            accommodationId,
+            accommodationId
         } = this.state;
 
         if (redirectUrl) {
@@ -176,7 +177,7 @@ class RoomPage extends React.Component {
                                     link: `/accommodation/${accommodationId}/rooms`
                                 }, {
                                     text: 'Room'
-                                },
+                                }
                             ]}
                         />
                         <h2>
@@ -205,5 +206,10 @@ class RoomPage extends React.Component {
         );
     }
 }
+
+RoomPage.propTypes = {
+    t: propTypes.func,
+    match: propTypes.object
+};
 
 export default withTranslation()(RoomPage);

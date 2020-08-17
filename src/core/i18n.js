@@ -20,7 +20,7 @@ i18n.init({
                 ...matsumotoArabic.translations,
                 ...shuriArabic.translations
             }
-        },
+        }
     },
     fallbackLng: 'en',
     // eslint-disable-next-line no-undef

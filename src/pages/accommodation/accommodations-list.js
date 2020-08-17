@@ -24,23 +24,23 @@ class AccommodationsList extends React.Component {
 
         this.tableColumns = [
             {
-                Header: t('accommodation-id'),
-                accessor: 'id',
+                Header: t('Accommodation Id'),
+                accessor: 'id'
             },
             {
-                Header: t('name'),
+                Header: t('Name'),
                 accessor: 'name',
                 Cell: (item) => item.cell.value[UIStore.editorLanguage]
             },
             {
                 Header: 'Id',
                 accessor: 'id',
-                Cell: (item) => {
-                    return <Link
-                        to={`/accommodation/${item.cell.value}`}
-                    ><span className='icon icon-action-pen-orange'/></Link>;
-                }
-            },
+                Cell: (item) =>(
+                    <Link to={`/accommodation/${item.cell.value}`}>
+                        <span className="icon icon-action-pen-orange"/>
+                    </Link>
+                )
+            }
         ];
     }
 
@@ -65,6 +65,28 @@ class AccommodationsList extends React.Component {
         this.tablePageIndex = pageIndex;
     }
 
+    renderContent = () => {
+        if (this.accommodationsList === null) {
+            return <Loader />;
+        }
+        const tableData = this.accommodationsList.slice(
+            PAGE_SIZE * this.tablePageIndex,
+            PAGE_SIZE * (this.tablePageIndex + 1)
+        );
+
+        return this.accommodationsList.length ?
+            <Table
+                data={tableData}
+                count={this.accommodationsList.length}
+                fetchData={this.onPaginationClick}
+                columns={this.tableColumns}
+                pageIndex={this.tablePageIndex}
+                pageSize={PAGE_SIZE}
+                manualPagination
+            /> :
+            'No results';
+    }
+
     render() {
         return (
             <div className="settings block">
@@ -78,20 +100,10 @@ class AccommodationsList extends React.Component {
                     </div>
                     <h2>
                         <span className="brand">
-                            {this.props.t('accommodations-page-title')}
+                            {this.props.t('Accommodations List')}
                         </span>
                     </h2>
-                    { this.accommodationsList === null ? <Loader /> :
-                    ( this.accommodationsList?.length ?
-                    <Table
-                        data={this.accommodationsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
-                        count={this.accommodationsList.length}
-                        fetchData={this.onPaginationClick}
-                        columns={this.tableColumns}
-                        pageIndex={this.tablePageIndex}
-                        pageSize={PAGE_SIZE}
-                        manualPagination
-                    /> : "No results" )}
+                    {this.renderContent()}
                 </section>
             </div>
         );
