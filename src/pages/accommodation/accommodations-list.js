@@ -35,7 +35,7 @@ class AccommodationsList extends React.Component {
             {
                 Header: 'Id',
                 accessor: 'id',
-                Cell: (item) =>(
+                Cell: (item) => (
                     <Link to={`/accommodation/${item.cell.value}`}>
                         <span className="icon icon-action-pen-orange"/>
                     </Link>

@@ -66,6 +66,13 @@
         "eqeqeq": "error",
         "comma-dangle": ["error", "never"],
         "no-var": "error",
-        "react/jsx-wrap-multilines": "error"
+        "react/jsx-wrap-multilines": "error",
+        "arrow-spacing": [
+            "error",
+            {
+                "before": true,
+                "after": true
+            }
+        ]
     }
 }
