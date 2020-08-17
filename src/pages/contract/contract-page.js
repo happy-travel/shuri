@@ -179,7 +179,7 @@ class ContractPage extends React.Component {
                         />
                         <h2>
                             <span className="brand">
-                                {id ? t('Edit contract #')(id) : t('create-contract-title')}
+                                {id ? `Edit contract #${id}` : t('create-contract-title')}
                             </span>
                         </h2>
                         {!this.state.accommodationsList?.length ?

@@ -22,7 +22,6 @@ const Translations = {
         'No contracts found': 'No contracts found',
         'No': 'No',
         'Save changes': 'Save changes',
-        'Edit contract #': (id) => `Edit contract #${id}`,
         'Remove accommodation': 'Remove accommodation',
         'Removing accommodation': 'Removing accommodation',
         'Remove room': 'Remove room',
