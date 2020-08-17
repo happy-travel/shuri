@@ -9,7 +9,7 @@ import apiMethods from 'core/methods';
 import UIStore from 'stores/shuri-ui-store';
 import { Link, Redirect } from 'react-router-dom';
 import { Loader } from 'matsumoto/src/simple';
-import DialogModal from '../../parts/dialog-modal';
+import DialogModal from 'parts/dialog-modal';
 
 const PAGE_SIZE = 10;
 
