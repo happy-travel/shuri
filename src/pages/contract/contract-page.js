@@ -6,12 +6,12 @@ import {
     CachedForm, FieldSelect,
     FieldText
 } from 'matsumoto/src/components/form';
-import Breadcrumbs from 'components/breadcrumbs';
+import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import FieldDatepicker from 'matsumoto/src/components/complex/field-datepicker';
 import { API } from 'matsumoto/src/core';
 import apiMethods from 'core/methods';
 import UI from 'stores/shuri-ui-store';
-import Modal from 'parts/modal';
+import DialogModal from 'parts/dialog-modal';
 
 class ContractPage extends React.Component {
     state = {
@@ -19,7 +19,7 @@ class ContractPage extends React.Component {
         accommodationsList: null,
         id: this.props.match.params.id,
         redirectUrl: undefined,
-        isLoading: false,
+        isRequestingApi: false,
         isRemoveModalShown: false
     };
 
@@ -42,24 +42,24 @@ class ContractPage extends React.Component {
         })
     }
 
-    openRemoveModal = () => {
+    onOpenRemoveModal = () => {
         this.setState({
             isRemoveModalShown: true
         });
     }
 
-    closeRemoveModal = () => {
+    onCloseRemoveModal = () => {
         this.setState({
             isRemoveModalShown: false
         });
     }
 
-    submit = (values) => {
+    onSubmit = (values) => {
         const { id } = this.state;
         const method = id ? 'put' : 'post';
         const url = id ? apiMethods.contractById(this.state.id) : apiMethods.contractsList();
 
-        this.setState({ isLoading: true });
+        this.setState({ isRequestingApi: true });
         API[method]({
             url: url,
             body: values,
@@ -67,20 +67,20 @@ class ContractPage extends React.Component {
                 this.setState({ redirectUrl: '/contracts' });
             },
             after: () => {
-                this.setState({ isLoading: false })
+                this.setState({ isRequestingApi: false })
             }
         })
     }
 
-    removeContract = () => {
-        this.setState({ isLoading: true });
+    onContractRemove = () => {
+        this.setState({ isRequestingApi: true });
         API.delete({
             url: apiMethods.contractById(this.state.id),
             success: () => {
                 this.setState({ redirectUrl: '/contracts' });
             },
             after: () => {
-                this.setState({ isLoading: false })
+                this.setState({ isRequestingApi: false })
             }
         })
     }
@@ -140,8 +140,8 @@ class ContractPage extends React.Component {
                             {id ?
                                 <button
                                     type="button"
-                                    onClick={this.openRemoveModal}
-                                    className="button gray remove-contract-button"
+                                    onClick={this.onOpenRemoveModal}
+                                    className="button gray remove-button"
                                 >
                                     {t('Remove contract')}
                                 </button> :
@@ -151,38 +151,6 @@ class ContractPage extends React.Component {
                     </div>
                 </div>
             </div>
-        );
-    }
-
-    renderRemoveModal = () => {
-        const { t } = this.props;
-        if (!this.state.isRemoveModalShown) {
-            return null;
-        }
-
-        return (
-            <Modal
-                onCloseClick={this.closeRemoveModal}
-                title={t('Removing contract')}
-            >
-                <div className="modal-content">
-                    <span>{t('Are you sure you want to proceed?')}</span>
-                    <div className="modal-actions">
-                        <button
-                            onClick={!this.state.isLoading ? this.removeContract : undefined}
-                            className="button small"
-                        >
-                            {t('Yes')}
-                        </button>
-                        <button
-                            onClick={this.closeRemoveModal}
-                            className="button small gray"
-                        >
-                            {t('No')}
-                        </button>
-                    </div>
-                </div>
-            </Modal>
         );
     }
 
@@ -218,14 +186,22 @@ class ContractPage extends React.Component {
                             t('No contracts found') :
                             <CachedForm
                                 initialValues={this.state.contract}
-                                onSubmit={!this.state.isLoading ? this.submit : undefined}
+                                onSubmit={!this.state.isRequestingApi ? this.onSubmit : undefined}
                                 render={this.renderForm}
                                 enableReinitialize
                             />
                         }
                     </section>
                 </div>
-                {this.renderRemoveModal()}
+                {this.state.isRemoveModalShown ?
+                    <DialogModal
+                        title={t('Removing contract')}
+                        text={t('Are you sure you want to proceed?')}
+                        onNoClick={this.onCloseRemoveModal}
+                        onYesClick={!this.state.isRequestingApi ? this.onContractRemove : undefined}
+                    /> :
+                    null
+                }
             </>
         );
     }

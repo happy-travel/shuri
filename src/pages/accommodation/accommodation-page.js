@@ -11,12 +11,14 @@ import Breadcrumbs from 'components/breadcrumbs';
 import { API } from 'matsumoto/src/core';
 import apiMethods from 'core/methods';
 import UI from 'stores/shuri-ui-store';
+import DialogModal from '../../parts/dialog-modal';
 
 class AccommodationPage extends React.Component {
     state = {
         accommodation: {},
         id: this.props.match.params.id,
-        redirect: false
+        redirectUrl: undefined,
+        isRemoveModalShown: false
     };
 
     componentDidMount() {
@@ -27,6 +29,31 @@ class AccommodationPage extends React.Component {
             url: apiMethods.accommodationById(this.state.id),
             success: (result) => {
                 this.setState({ accommodation: result });
+            }
+        })
+    }
+
+    onOpenRemoveModal = () => {
+        this.setState({
+            isRemoveModalShown: true
+        });
+    }
+
+    onCloseRemoveModal = () => {
+        this.setState({
+            isRemoveModalShown: false
+        });
+    }
+
+    onAccommodationRemove = () => {
+        this.setState({ isRequestingApi: true });
+        API.delete({
+            url: apiMethods.accommodationById(this.state.id),
+            success: () => {
+                this.setState({ redirectUrl: '/' });
+            },
+            after: () => {
+                this.setState({ isRequestingApi: false })
             }
         })
     }
@@ -59,13 +86,14 @@ class AccommodationPage extends React.Component {
             url: url,
             body: this.reformatValues(values),
             success: (result) => {
-                this.setState({ redirect: true });
+                this.setState({ redirectUrl: '/' });
             }
         })
     }
 
     renderForm = (formik) => {
         const { t } = this.props;
+        const { id } = this.state;
         return (
             <div className="form app-settings">
                 { /* TODO: pictures */ }
@@ -238,60 +266,85 @@ class AccommodationPage extends React.Component {
                         <div className="inner">
                             <button type="submit" className="button">
                                 {
-                                    this.state.id ?
+                                    id ?
                                         'Save changes' :
                                         'Create accommodation'
                                 }
                             </button>
                         </div>
                     </div>
+                    {id ?
+                        <button
+                            type="button"
+                            onClick={this.onOpenRemoveModal}
+                            className="button gray remove-button"
+                        >
+                            {t('Remove accommodation')}
+                        </button> :
+                        null
+                    }
                 </div>
             </div>
         );
     }
 
     render() {
-        if (this.state.redirect)
-            return <Redirect push to="/" />;
+        const { t } = this.props;
+        const { redirectUrl } = this.state;
+
+        if (redirectUrl) {
+            return <Redirect push to={redirectUrl} />;
+        }
 
         return (
-            <div className="settings block">
-                <section>
-                    <Breadcrumbs
-                        backLink={'/'}
-                        items={[
-                            {
-                                text: 'Accommodations list',
-                                link: '/'
-                            }, {
-                                text: 'Accommodation'
-                            }
-                        ]}
-                    />
-                    <h2>
-                        { this.state.id && <div>
-                            <Link to={`/accommodation/${this.state.id}/rooms`}>
-                                <button className="button go-to-rooms">
-                                    Rooms management ({this.state.accommodation?.roomIds?.length || 0})
-                                </button>
-                            </Link>
-                        </div> }
-                        <span className="brand">
-                            {
-                                this.state.id ?
-                                    `Edit accommodation #${this.state.id}`  :
-                                    "Create new accommodation"
-                            }
-                        </span>
-                    </h2>
-                    <CachedForm
-                        initialValues={this.state.accommodation}
-                        onSubmit={this.submit}
-                        render={this.renderForm}
-                        enableReinitialize
-                    />
-                </section>
-            </div>
+            <>
+                <div className="settings block">
+                    <section>
+                        <Breadcrumbs
+                            backLink={'/'}
+                            items={[
+                                {
+                                    text: 'Accommodations list',
+                                    link: '/'
+                                }, {
+                                    text: 'Accommodation'
+                                }
+                            ]}
+                        />
+                        <h2>
+                            { this.state.id && <div>
+                                <Link to={`/accommodation/${this.state.id}/rooms`}>
+                                    <button className="button go-to-rooms">
+                                        Rooms management ({this.state.accommodation?.roomIds?.length || 0})
+                                    </button>
+                                </Link>
+                            </div> }
+                            <span className="brand">
+                                {
+                                    this.state.id ?
+                                        `Edit accommodation #${this.state.id}`  :
+                                        "Create new accommodation"
+                                }
+                            </span>
+                        </h2>
+                        <CachedForm
+                            initialValues={this.state.accommodation}
+                            onSubmit={this.submit}
+                            render={this.renderForm}
+                            enableReinitialize
+                        />
+                    </section>
+                </div>
+                {this.state.isRemoveModalShown ?
+                    <DialogModal
+                        title={t('Removing accommodation')}
+                        text={t('Are you sure you want to proceed?')}
+                        onNoClick={this.onCloseRemoveModal}
+                        onYesClick={!this.state.isRequestingApi ? this.onAccommodationRemove : undefined}
+                    /> :
+                    null
+                }
+            </>
         );
     }
 }

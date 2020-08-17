@@ -9,6 +9,7 @@ import Breadcrumbs from 'components/breadcrumbs';
 import { API } from 'matsumoto/src/core';
 import apiMethods from 'core/methods';
 import UI from 'stores/shuri-ui-store';
+import DialogModal from '../../parts/dialog-modal';
 
 class RoomPage extends React.Component {
     state = {
@@ -21,7 +22,7 @@ class RoomPage extends React.Component {
         id: this.props.match.params.id,
         accommodationId: this.props.match.params.accommodationId,
         redirectUrl: undefined,
-        isLoading: false,
+        isRequestingApi: false,
         isRemoveModalShown: false
     };
 
@@ -38,6 +39,31 @@ class RoomPage extends React.Component {
                     if (item.id == id)
                         this.setState({ room: item });
                 })
+            }
+        })
+    }
+
+    onOpenRemoveModal = () => {
+        this.setState({
+            isRemoveModalShown: true
+        });
+    }
+
+    onCloseRemoveModal = () => {
+        this.setState({
+            isRemoveModalShown: false
+        });
+    }
+
+    onRoomRemove = () => {
+        this.setState({ isRequestingApi: true });
+        API.delete({
+            url: apiMethods.roomById(this.state.accommodationId, this.state.id),
+            success: () => {
+                this.setState({ redirectUrl: `/accommodation/${this.state.accommodationId}/rooms` });
+            },
+            after: () => {
+                this.setState({ isRequestingApi: false })
             }
         })
     }
@@ -62,7 +88,7 @@ class RoomPage extends React.Component {
                 }
             ];
 
-        this.setState({ isLoading: true });
+        this.setState({ isRequestingApi: true });
         API[method]({
             url: url,
             body: [values],
@@ -70,7 +96,7 @@ class RoomPage extends React.Component {
                 this.setState({ redirectUrl: `/accommodation/${accommodationId}/rooms` });
             },
             after: () => {
-                this.setState({ isLoading: false })
+                this.setState({ isRequestingApi: false })
             }
         })
     }
@@ -103,6 +129,16 @@ class RoomPage extends React.Component {
                             >
                                 {id ? t('Save changes') : 'Create room'}
                             </button>
+                            {id ?
+                                <button
+                                    type="button"
+                                    onClick={this.onOpenRemoveModal}
+                                    className="button gray remove-button"
+                                >
+                                    {t('Remove room')}
+                                </button> :
+                                null
+                            }
                         </div>
                     </div>
                 </div>
@@ -150,12 +186,21 @@ class RoomPage extends React.Component {
                         </h2>
                         <CachedForm
                             initialValues={this.state.room}
-                            onSubmit={!this.state.isLoading ? this.submit : undefined}
+                            onSubmit={!this.state.isRequestingApi ? this.submit : undefined}
                             render={this.renderForm}
                             enableReinitialize
                         />
                     </section>
                 </div>
+                {this.state.isRemoveModalShown ?
+                    <DialogModal
+                        title={t('Removing room')}
+                        text={t('Are you sure you want to proceed?')}
+                        onNoClick={this.onCloseRemoveModal}
+                        onYesClick={!this.state.isRequestingApi ? this.onRoomRemove : undefined}
+                    /> :
+                    null
+                }
             </>
         );
     }

@@ -21,7 +21,13 @@ const Translations = {
         'Yes': 'Yes',
         'No contracts found': 'No contracts found',
         'No': 'No',
-        'Save changes': 'Save changes'
+        'Save changes': 'Save changes',
+        'Remove accommodation': 'Remove accommodation',
+        'Removing accommodation': 'Removing accommodation',
+        'Remove room': 'Remove room',
+        'Remove rooms': 'Remove rooms',
+        'Removing room': 'Removing room',
+        'Removing rooms': 'Removing rooms'
     }
 };
 
