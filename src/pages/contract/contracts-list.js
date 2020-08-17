@@ -6,7 +6,7 @@ import propTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { API } from 'matsumoto/src/core';
 import Table from 'matsumoto/src/components/external/table';
-import {dateFormat, Loader} from 'matsumoto/src/simple';
+import { dateFormat, Loader } from 'matsumoto/src/simple';
 import apiMethods from 'core/methods';
 
 const PAGE_SIZE = 10;
@@ -22,37 +22,29 @@ class ContractsList extends React.Component {
         const { t } = this.props;
 
         this.tableColumns = [
-            /* {
-                Header: t('contract-id'),
-                accessor: 'id',
-            },
-            {
-                Header: t('accommodation-id'),
-                accessor: 'accommodationId',
-            }, */
             {
                 Header: t('name'),
-                accessor: 'name',
+                accessor: 'name'
             },
             {
-                Header: t('valid-from'),
+                Header: t('Valid from'),
                 accessor: 'validFrom',
                 Cell: (item) => dateFormat.b(item.cell.value)
             },
             {
-                Header: t('valid-to'),
+                Header: t('Valid to'),
                 accessor: 'validTo',
                 Cell: (item) => dateFormat.b(item.cell.value)
             },
             {
                 Header: 'Id',
                 accessor: 'id',
-                Cell: (item) => {
-                    return <Link
-                        to={`/contract/${item.cell.value}`}
-                    ><span className='icon icon-action-pen-orange'/></Link>;
-                }
-            },
+                Cell: (item) => (
+                    <Link to={`/contract/${item.cell.value}`}>
+                        <span className="icon icon-action-pen-orange"/>
+                    </Link>
+                )
+            }
         ];
 
     }
@@ -78,6 +70,28 @@ class ContractsList extends React.Component {
         this.tablePageIndex = pageIndex;
     }
 
+    renderContent = () => {
+        if (this.contractsList === null) {
+            return <Loader />;
+        }
+        const tableData = this.contractsList.slice(
+            PAGE_SIZE * this.tablePageIndex,
+            PAGE_SIZE * (this.tablePageIndex + 1)
+        );
+
+        return this.contractsList.length ?
+            <Table
+                data={tableData}
+                count={this.contractsList.length}
+                fetchData={this.onPaginationClick}
+                columns={this.tableColumns}
+                pageIndex={this.tablePageIndex}
+                pageSize={PAGE_SIZE}
+                manualPagination
+            /> :
+            'No results';
+    }
+
     render() {
         const { t } = this.props;
         return (
@@ -87,25 +101,15 @@ class ContractsList extends React.Component {
                         <div className="add-new-button-holder">
                             <Link to="/contract">
                                 <button className="button small">
-                                    {t('add-contract')}
+                                    {t('Add new contract')}
                                 </button>
                             </Link>
                         </div>
                         <span className="brand">
-                            {t('contracts-page-title')}
+                            {t('Contracts list')}
                         </span>
                     </h2>
-                    { this.contractsList === null ? <Loader /> :
-                    ( this.contractsList?.length ?
-                    <Table
-                        data={this.contractsList.slice(PAGE_SIZE * this.tablePageIndex, PAGE_SIZE * (this.tablePageIndex + 1))}
-                        count={this.contractsList.length}
-                        fetchData={this.onPaginationClick}
-                        columns={this.tableColumns}
-                        pageIndex={this.tablePageIndex}
-                        pageSize={PAGE_SIZE}
-                        manualPagination
-                    /> : "No results" )}
+                    {this.renderContent()}
                 </section>
             </div>
         );

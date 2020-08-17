@@ -8,7 +8,8 @@ const apiMethods = {
     contractsList: () => `${apiBasePath}/management/contracts`,
     contractById: (contractId) => `${apiBasePath}/management/contracts/${contractId}`,
     roomsList: (accommodationId) => `${apiBasePath}/management/contracts/accommodations/${accommodationId}/rooms`,
-    roomById: (accommodationId, roomId) => `${apiBasePath}/management/contracts/accommodations/${accommodationId}/rooms/${roomId}`,
+    roomById: (accommodationId, roomId) =>
+        `${apiBasePath}/management/contracts/accommodations/${accommodationId}/rooms/${roomId}`
 };
 
 export default apiMethods;

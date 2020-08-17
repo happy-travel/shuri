@@ -26,7 +26,7 @@ const {
   choosePort,
   createCompiler,
   prepareProxy,
-  prepareUrls,
+  prepareUrls
 } = require('react-dev-utils/WebpackDevServerUtils');
 const paths = require('../paths');
 const configFactory = require('../webpack.config');
@@ -83,7 +83,7 @@ checkBrowsers(paths.appPath, isInteractive)
       warnings: (warnings) =>
         devServer.sockWrite(devServer.sockets, 'warnings', warnings),
       errors: (errors) =>
-        devServer.sockWrite(devServer.sockets, 'errors', errors),
+        devServer.sockWrite(devServer.sockets, 'errors', errors)
     };
     // Create a webpack compiler that is configured with custom messages.
     const compiler = createCompiler({
@@ -92,7 +92,7 @@ checkBrowsers(paths.appPath, isInteractive)
       devSocket,
       urls,
       useYarn,
-      webpack,
+      webpack
     });
     // Load proxy config
     const proxySetting = require(paths.appPackageJson).proxy;

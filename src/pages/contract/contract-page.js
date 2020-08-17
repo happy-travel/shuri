@@ -91,10 +91,12 @@ class ContractPage extends React.Component {
         return (
             <div className="form app-settings">
                 <div className="row">
-                    <FieldText formik={formik} clearable
+                    <FieldText
+                        formik={formik}
+                        clearable
                         id="name"
                         label="Name"
-                        placeholder={t('enter-contract-name')}
+                        placeholder={t('Enter name')}
                     />
                     <FieldDatepicker
                         formik={formik}
@@ -135,7 +137,7 @@ class ContractPage extends React.Component {
                                 type="submit"
                                 className="button"
                             >
-                                {id ? t('Save changes') : t('create-contract-button')}
+                                {id ? t('Save changes') : t('Create')}
                             </button>
                             {id ?
                                 <button
@@ -179,7 +181,7 @@ class ContractPage extends React.Component {
                         />
                         <h2>
                             <span className="brand">
-                                {id ? `Edit contract #${id}` : t('create-contract-title')}
+                                {id ? `Edit contract #${id}` : t('Create new contract')}
                             </span>
                         </h2>
                         {!this.state.accommodationsList?.length ?
