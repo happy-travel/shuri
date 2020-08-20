@@ -1,3 +1,5 @@
+/* eslint-disable quote-props */
+
 const Translations = {
     translations: {
         'Contracts list': 'Contracts List',

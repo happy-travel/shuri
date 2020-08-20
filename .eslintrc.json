@@ -73,6 +73,10 @@
                 "before": true,
                 "after": true
             }
+        ],
+        "quote-props": [
+            "error",
+            "as-needed"
         ]
     }
 }
