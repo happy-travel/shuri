@@ -73,16 +73,12 @@ class SeasonsList extends React.Component {
                         </span>
                     </h2>
                     {this.renderContent()}
-                    <div className="row controls">
-                        <div className="field">
-                            <div className="row">
-                                <Link to={`/contract/${this.contractId}/calendar`}>
-                                    <button className="button wide">
-                                        {t('Go to calendar')}
-                                    </button>
-                                </Link>
-                            </div>
-                        </div>
+                    <div className="row">
+                        <Link to={`/contract/${this.contractId}/calendar`}>
+                            <button className="button wide">
+                                {t('Go to calendar')}
+                            </button>
+                        </Link>
                     </div>
                 </section>
             </div>
