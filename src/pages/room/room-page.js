@@ -15,10 +15,10 @@ import DialogModal from 'parts/dialog-modal';
 class RoomPage extends React.Component {
     state = {
         room: {
-            'name': { 'ar': '', 'en': '', 'ru': '' },
-            'description': { 'ar': '', 'en': '', 'ru': '' },
-            'amenities': { 'ar': [], 'en': [], 'ru': [] },
-            'pictures': {}
+            name: { ar: '', en: '', ru: '' },
+            description: { ar: '', en: '', ru: '' },
+            amenities: { ar: [], en: [], ru: [] },
+            pictures: {}
         },
         id: this.props.match.params.id,
         accommodationId: this.props.match.params.accommodationId,
@@ -82,10 +82,10 @@ class RoomPage extends React.Component {
         if (!values.occupancyConfigurations)
             values.occupancyConfigurations = [
                 {
-                    'adults': 2,
-                    'teenagers': 1,
-                    'children': 0,
-                    'infants': 0
+                    adults: 2,
+                    teenagers: 1,
+                    children: 0,
+                    infants: 0
                 }
             ];
 
