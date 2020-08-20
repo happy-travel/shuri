@@ -9,7 +9,10 @@ import { Link, Redirect } from 'react-router-dom';
 import { Loader } from 'matsumoto/src/simple';
 import DialogModal from 'parts/dialog-modal';
 import propTypes from 'prop-types';
-import { getAccommodationRooms, removeAccommodationRooms } from '../../providers/api';
+import {
+    getAccommodationRooms,
+    removeAccommodationRooms
+} from 'providers/api';
 
 const PAGE_SIZE = 10;
 
