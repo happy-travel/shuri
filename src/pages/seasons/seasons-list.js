@@ -7,11 +7,10 @@ import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import { API } from 'matsumoto/src/core';
 import { Loader } from 'matsumoto/src/simple';
 import apiMethods from 'core/methods';
-import Table from 'matsumoto/src/components/external/table';
 
 @observer
 class SeasonsList extends React.Component {
-    @observable seasonsList = undefined;
+    @observable seasonsList;
     contractId;
 
     constructor(props) {
