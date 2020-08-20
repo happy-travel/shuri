@@ -1,5 +1,6 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
@@ -60,7 +61,8 @@ class SeasonsList extends React.Component {
                             {
                                 text: `Contract #${this.contractId}`,
                                 link: `/contract/${this.contractId}`
-                            }, {
+                            },
+                            {
                                 text: t('Seasons')
                             }
                         ]}
@@ -71,6 +73,17 @@ class SeasonsList extends React.Component {
                         </span>
                     </h2>
                     {this.renderContent()}
+                    <div className="row controls">
+                        <div className="field">
+                            <div className="row">
+                                <Link to={`/contract/${this.contractId}/calendar`}>
+                                    <button className="button wide">
+                                        {t('Go to calendar')}
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
                 </section>
             </div>
         );

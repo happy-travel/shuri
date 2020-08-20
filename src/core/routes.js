@@ -9,6 +9,7 @@ import ContractPage from 'pages/contract/contract-page';
 import RoomsList from 'pages/room/rooms-list';
 import RoomPage from 'pages/room/room-page';
 import SeasonsList from 'pages/seasons/seasons-list';
+import Calendar from 'pages/calendar/calendar';
 
 const Routes = () => (
     <Switch>
@@ -41,6 +42,10 @@ const Routes = () => (
         <Route
             path="/contract/:id/seasons"
             component={SeasonsList}
+        />
+        <Route
+            path="/contract/:id/calendar"
+            component={Calendar}
         />
         <Route component={ErrorPage}/>
     </Switch>
