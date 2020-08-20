@@ -8,6 +8,7 @@ import ContractsList from 'pages/contract/contracts-list';
 import ContractPage from 'pages/contract/contract-page';
 import RoomsList from 'pages/room/rooms-list';
 import RoomPage from 'pages/room/room-page';
+import SeasonsList from 'pages/seasons/seasons-list';
 
 const Routes = () => (
     <Switch>
@@ -33,8 +34,13 @@ const Routes = () => (
             component={ContractsList}
         />
         <Route
+            exact
             path={['/contract/:id', '/contract']}
             component={ContractPage}
+        />
+        <Route
+            path="/contract/:id/seasons"
+            component={SeasonsList}
         />
         <Route component={ErrorPage}/>
     </Switch>
