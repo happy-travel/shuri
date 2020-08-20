@@ -1,0 +1,86 @@
+import React from 'react';
+import { withTranslation } from 'react-i18next';
+import { action, observable } from 'mobx';
+import { observer } from 'mobx-react';
+import propTypes from 'prop-types';
+import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
+import { API } from 'matsumoto/src/core';
+import { Loader } from 'matsumoto/src/simple';
+import apiMethods from 'core/methods';
+import Table from 'matsumoto/src/components/external/table';
+
+@observer
+class SeasonsList extends React.Component {
+    @observable seasonsList = undefined;
+    contractId;
+
+    constructor(props) {
+        super(props);
+        this.contractId = this.props.match.params.id;
+    }
+
+    componentDidMount() {
+        this.loadSeasons();
+    }
+
+    loadSeasons = () => {
+        API.get({
+            url: apiMethods.contractSeasonsById(this.contractId),
+            success: this.loadSeasonsSuccess
+        })
+    }
+
+    @action
+    loadSeasonsSuccess = (list) => {
+        this.seasonsList = list;
+    }
+
+    renderContent = () => {
+        if (this.seasonsList === undefined) {
+            return <Loader />;
+        }
+
+        return this.seasonsList.length ?
+            // To be updated.
+            `There are ${this.seasonsList.length} seasons for given contract` :
+            'No results';
+    }
+
+    render() {
+        const { t } = this.props;
+        return (
+            <div className="settings block">
+                <section>
+                    <Breadcrumbs
+                        backLink={`/contract/${this.contractId}`}
+                        items={[
+                            {
+                                text: this.props.t('Contracts list'),
+                                link: '/contracts'
+                            },
+                            {
+                                text: `Contract #${this.contractId}`,
+                                link: `/contract/${this.contractId}`
+                            }, {
+                                text: t('Seasons')
+                            }
+                        ]}
+                    />
+                    <h2>
+                        <span className="brand">
+                            {`Seasons for contract #${this.contractId}`}
+                        </span>
+                    </h2>
+                    {this.renderContent()}
+                </section>
+            </div>
+        );
+    }
+}
+
+SeasonsList.propTypes = {
+    t: propTypes.func,
+    match: propTypes.object
+};
+
+export default withTranslation()(SeasonsList);

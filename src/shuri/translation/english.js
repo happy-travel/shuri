@@ -26,7 +26,9 @@ const Translations = {
         'Remove room': 'Remove room',
         'Remove rooms': 'Remove rooms',
         'Removing room': 'Removing room',
-        'Removing rooms': 'Removing rooms'
+        'Removing rooms': 'Removing rooms',
+        'Seasons': 'Seasons',
+        'Go to seasons': 'Go to seasons'
     }
 };
 
