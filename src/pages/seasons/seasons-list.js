@@ -54,7 +54,7 @@ class SeasonsList extends React.Component {
                         backLink={`/contract/${this.contractId}`}
                         items={[
                             {
-                                text: this.props.t('Contracts list'),
+                                text: t('Contracts list'),
                                 link: '/contracts'
                             },
                             {
