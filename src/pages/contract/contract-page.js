@@ -8,10 +8,15 @@ import {
 } from 'matsumoto/src/components/form';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import FieldDatepicker from 'matsumoto/src/components/complex/field-datepicker';
-import { API } from 'matsumoto/src/core';
-import apiMethods from 'core/methods';
 import UI from 'stores/shuri-ui-store';
 import DialogModal from 'parts/dialog-modal';
+import {
+    getContract,
+    createContract,
+    updateContract,
+    removeContract,
+    getAccommodations
+} from 'providers/api';
 
 class ContractPage extends React.Component {
     state = {
@@ -25,21 +30,34 @@ class ContractPage extends React.Component {
 
     componentDidMount() {
         const { id } = this.state;
-        API.get({
-            url: apiMethods.accommodationsList(),
-            success: (accommodationsList) => this.setState({ accommodationsList })
-        })
+
+        getAccommodations().then(this.getAccommodationsSuccess);
 
         if (!id) {
             return;
         }
 
-        API.get({
-            url: apiMethods.contractById(id),
-            success: (contract) => {
-                this.setState({ contract });
-            }
-        })
+        getContract({ urlParams: { id } }).then(this.getContractSuccess);
+    }
+
+    getAccommodationsSuccess = (accommodationsList) => {
+        this.setState({ accommodationsList });
+    }
+
+    getContractSuccess = (contract) => {
+        this.setState({ contract });
+    }
+
+    setRedirectUrl = () => {
+        this.setState({ redirectUrl: '/contracts' });
+    }
+
+    setRequestingApiStatus = () => {
+        this.setState({ isRequestingApi: true });
+    }
+
+    unsetRequestingApiStatus = () => {
+        this.setState({ isRequestingApi: false });
     }
 
     onOpenRemoveModal = () => {
@@ -54,35 +72,35 @@ class ContractPage extends React.Component {
         });
     }
 
-    onSubmit = (values) => {
-        const { id } = this.state;
-        const method = id ? 'put' : 'post';
-        const url = id ? apiMethods.contractById(this.state.id) : apiMethods.contractsList();
+    onCreateSubmit = (values) => {
+        if (this.state.isRequestingApi) {
+            return;
+        }
+        this.setRequestingApiStatus();
+        createContract({ body: values })
+            .then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+    }
 
-        this.setState({ isRequestingApi: true });
-        API[method]({
-            url: url,
-            body: values,
-            success: () => {
-                this.setState({ redirectUrl: '/contracts' });
+    onUpdateSubmit = (values) => {
+        if (this.state.isRequestingApi) {
+            return;
+        }
+        this.setRequestingApiStatus();
+        updateContract({
+            urlParams: {
+                id: this.state.id
             },
-            after: () => {
-                this.setState({ isRequestingApi: false })
-            }
-        })
+            body: values
+        }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
     }
 
     onContractRemove = () => {
         this.setState({ isRequestingApi: true });
-        API.delete({
-            url: apiMethods.contractById(this.state.id),
-            success: () => {
-                this.setState({ redirectUrl: '/contracts' });
-            },
-            after: () => {
-                this.setState({ isRequestingApi: false })
+        removeContract({
+            urlParams: {
+                id: this.state.id
             }
-        })
+        }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
     }
 
     renderForm = (formik) => {
@@ -198,7 +216,7 @@ class ContractPage extends React.Component {
                             t('No contracts found') :
                             <CachedForm
                                 initialValues={this.state.contract}
-                                onSubmit={!this.state.isRequestingApi ? this.onSubmit : undefined}
+                                onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
                                 render={this.renderForm}
                                 enableReinitialize
                             />

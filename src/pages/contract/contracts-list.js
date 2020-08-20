@@ -4,10 +4,9 @@ import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { API } from 'matsumoto/src/core';
 import Table from 'matsumoto/src/components/external/table';
 import { dateFormat, Loader } from 'matsumoto/src/simple';
-import apiMethods from 'core/methods';
+import { getContracts } from 'providers/api';
 
 const PAGE_SIZE = 10;
 
@@ -50,18 +49,11 @@ class ContractsList extends React.Component {
     }
 
     componentDidMount() {
-        this.loadContracts();
-    }
-
-    loadContracts = () => {
-        API.get({
-            url: apiMethods.contractsList(),
-            success: this.loadContractsSuccess
-        });
+        getContracts().then(this.getContractsSuccess);
     }
 
     @action
-    loadContractsSuccess = (list) => {
+    getContractsSuccess = (list) => {
         this.contractsList = list;
     }
 

@@ -3,12 +3,11 @@ import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
-import { API } from 'matsumoto/src/core';
 import Table from 'matsumoto/src/components/external/table';
-import apiMethods from 'core/methods';
 import UIStore from 'stores/shuri-ui-store';
 import { Link } from 'react-router-dom';
 import { Loader } from 'matsumoto/src/simple';
+import { getAccommodations } from 'providers/api';
 
 const PAGE_SIZE = 10;
 
@@ -45,18 +44,11 @@ class AccommodationsList extends React.Component {
     }
 
     componentDidMount() {
-        this.loadAccommodations();
-    }
-
-    loadAccommodations = () => {
-        API.get({
-            url: apiMethods.accommodationsList(),
-            success: this.loadAccommodationsSuccess
-        });
+        getAccommodations().then(this.getAccommodationsSuccess);
     }
 
     @action
-    loadAccommodationsSuccess = (list) => {
+    getAccommodationsSuccess = (list) => {
         this.accommodationsList = list;
     }
 
