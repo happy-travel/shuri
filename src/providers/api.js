@@ -124,6 +124,21 @@ function getSeasons({ urlParams }) {
     })
 }
 
+function createSeason({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/contracts/${urlParams.id}/seasons`,
+        method: 'POST',
+        body
+    })
+}
+
+function removeSeason({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/contracts/${urlParams.id}/seasons/${urlParams.id}`,
+        method: 'DELETE'
+    })
+}
+
 export {
     getAccommodations,
     createAccommodation,
@@ -141,5 +156,7 @@ export {
     getAccommodationRoom,
     updateAccommodationRoom,
     removeAccommodationRoom,
-    getSeasons
+    getSeasons,
+    createSeason,
+    removeSeason
 };

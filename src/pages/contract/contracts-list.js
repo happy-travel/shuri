@@ -22,7 +22,7 @@ class ContractsList extends React.Component {
 
         this.tableColumns = [
             {
-                Header: t('name'),
+                Header: t('Name'),
                 accessor: 'name'
             },
             {
@@ -36,7 +36,7 @@ class ContractsList extends React.Component {
                 Cell: (item) => dateFormat.b(item.cell.value)
             },
             {
-                Header: 'Id',
+                Header: t('Id'),
                 accessor: 'id',
                 Cell: (item) => (
                     <Link to={`/contract/${item.cell.value}`}>
@@ -81,7 +81,7 @@ class ContractsList extends React.Component {
                 pageSize={PAGE_SIZE}
                 manualPagination
             /> :
-            'No results';
+            this.props.t('No results');
     }
 
     render() {

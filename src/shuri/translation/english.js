@@ -13,6 +13,7 @@ const Translations = {
         'Enter name': 'Enter name',
         'Contract Id': 'Contract Id',
         'Accommodation Id': 'Accommodation Id',
+        'Id': 'Id',
         'Name': 'Name',
         'Valid from': 'Valid From',
         'Valid to': 'Valid To',
@@ -32,7 +33,13 @@ const Translations = {
         'Seasons': 'Seasons',
         'Calendar': 'Calendar',
         'Go to seasons': 'Go to seasons',
-        'Go to calendar': 'Go to Calendar'
+        'Go to calendar': 'Go to Calendar',
+        'Create season': 'Create season',
+        'Season creation': 'Season creation',
+        'Season Name': 'Season Name',
+        'Enter Season Name': 'Enter Season Name',
+        'No result': 'No result',
+        'Removing season': 'Removing season'
     }
 };
 
