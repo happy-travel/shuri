@@ -19,8 +19,9 @@ let settings = {
 };
 
 // eslint-disable-next-line no-undef
-if (__localhost)
+if (__localhost) {
     settings.payment_callback_host = 'https://dev.happytravel.com';
+}
 
 settings.edo = (culture) => settings.edo_url + culture + settings.edo_v1;
 
