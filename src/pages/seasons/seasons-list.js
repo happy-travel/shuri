@@ -5,9 +5,8 @@ import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
-import { API } from 'matsumoto/src/core';
 import { Loader } from 'matsumoto/src/simple';
-import apiMethods from 'core/methods';
+import { getSeasons } from 'providers/api';
 
 @observer
 class SeasonsList extends React.Component {
@@ -24,14 +23,15 @@ class SeasonsList extends React.Component {
     }
 
     loadSeasons = () => {
-        API.get({
-            url: apiMethods.contractSeasonsById(this.contractId),
-            success: this.loadSeasonsSuccess
-        })
+        getSeasons({
+            urlParams: {
+                id: this.contractId
+            }
+        }).then(this.getSeasonsSuccess);
     }
 
     @action
-    loadSeasonsSuccess = (list) => {
+    getSeasonsSuccess = (list) => {
         this.seasonsList = list;
     }
 

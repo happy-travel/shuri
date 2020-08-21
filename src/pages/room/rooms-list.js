@@ -1,16 +1,18 @@
 import React from 'react';
-import { action, observable, runInAction } from 'mobx';
+import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
-import { API } from 'matsumoto/src/core';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import Table from 'matsumoto/src/components/external/table';
-import apiMethods from 'core/methods';
 import UIStore from 'stores/shuri-ui-store';
 import { Link, Redirect } from 'react-router-dom';
 import { Loader } from 'matsumoto/src/simple';
 import DialogModal from 'parts/dialog-modal';
 import propTypes from 'prop-types';
+import {
+    getAccommodationRooms,
+    removeAccommodationRooms
+} from 'providers/api';
 
 const PAGE_SIZE = 10;
 
@@ -20,14 +22,13 @@ class RoomsList extends React.Component {
     @observable tablePageIndex = 0;
     @observable tableColumns;
     @observable isRemoveModalShown = false;
-    @observable redirectUrl = undefined;
+    @observable redirectUrl;
+    @observable isRequestingApi = false;
+    @observable accommodationId = this.props.match.params.accommodationId;
 
     constructor(props) {
         super(props);
         const { t } = this.props;
-        this.state = {
-            accommodationId: this.props.match.params.accommodationId
-        };
 
         this.tableColumns = [
             {
@@ -43,7 +44,7 @@ class RoomsList extends React.Component {
                 Header: 'Actions',
                 accessor: 'id',
                 Cell: (item) => (
-                    <Link to={`/accommodation/${this.state.accommodationId}/room/${item.cell.value}`}>
+                    <Link to={`/accommodation/${this.accommodationId}/room/${item.cell.value}`}>
                         <span className="icon icon-action-pen-orange"/>
                     </Link>
                 )
@@ -52,10 +53,11 @@ class RoomsList extends React.Component {
     }
 
     componentDidMount() {
-        API.get({
-            url: apiMethods.roomsList(this.state.accommodationId),
-            success: (list) => this.roomsList = list
-        });
+        getAccommodationRooms({
+            urlParams: {
+                accommodationId: this.accommodationId
+            }
+        }).then(this.getAccommodationRoomsSuccess);
     }
 
     get roomsIds() {
@@ -63,19 +65,32 @@ class RoomsList extends React.Component {
     }
 
     @action
-    onRoomsRemove = () => {
-        const { accommodationId } = this.state;
+    getAccommodationRoomsSuccess = (list) => {
+        this.roomsList = list
+    }
+
+    setRedirectUrl = () => {
+        this.setState({ redirectUrl: `/accommodation/${this.accommodationId}` });
+    }
+
+    @action
+    setRequestingApiStatus = () => {
         this.isRequestingApi = true;
-        API.delete({
-            url: apiMethods.roomsList(accommodationId),
-            body: this.roomsIds,
-            success: runInAction(() => {
-                this.redirectUrl = `/accommodation/${accommodationId}`;
-            }),
-            after: runInAction(() => {
-                this.isRequestingApi = false;
-            })
-        })
+    }
+
+    @action
+    unsetRequestingApiStatus = () => {
+        this.isRequestingApi = false;
+    }
+
+    onRoomsRemove = () => {
+        this.setRequestingApiStatus();
+        removeAccommodationRooms({
+            urlParams: {
+                accommodationId: this.accommodationId
+            },
+            body: this.roomsIds
+        }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
     }
 
     @action
@@ -117,7 +132,6 @@ class RoomsList extends React.Component {
 
     render() {
         const { t } = this.props;
-        const { accommodationId } = this.state;
 
         if (this.redirectUrl) {
             return <Redirect push to={this.redirectUrl} />;
@@ -128,14 +142,14 @@ class RoomsList extends React.Component {
                 <div className="settings block">
                     <section>
                         <Breadcrumbs
-                            backLink={`/accommodation/${accommodationId}`}
+                            backLink={`/accommodation/${this.accommodationId}`}
                             items={[
                                 {
                                     text: 'Accommodations list',
                                     link: '/'
                                 }, {
                                     text: 'Accommodation',
-                                    link: `/accommodation/${accommodationId}`
+                                    link: `/accommodation/${this.accommodationId}`
                                 }, {
                                     text: 'Rooms list'
                                 }
@@ -143,7 +157,7 @@ class RoomsList extends React.Component {
                         />
                         <h2>
                             <div className="add-new-button-holder">
-                                <Link to={`/accommodation/${this.state.accommodationId}/room`}>
+                                <Link to={`/accommodation/${this.accommodationId}/room`}>
                                     <button className="button small">
                                         Add new room
                                     </button>
@@ -158,7 +172,7 @@ class RoomsList extends React.Component {
                                 </button>
                             </div>
                             <span className="brand">
-                                Rooms list In Accommodation #{this.state.accommodationId}
+                                {`Rooms list In Accommodation #${this.accommodationId}`}
                             </span>
                         </h2>
                         {this.renderContent()}
@@ -169,7 +183,7 @@ class RoomsList extends React.Component {
                         title={t('Removing rooms')}
                         text={t('Are you sure you want to proceed?')}
                         onNoClick={this.onCloseRemoveModal}
-                        onYesClick={!this.state.isRequestingApi ? this.onRoomsRemove : undefined}
+                        onYesClick={!this.isRequestingApi ? this.onRoomsRemove : undefined}
                     /> :
                     null
                 }

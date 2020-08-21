@@ -7,10 +7,14 @@ import {
     FieldText
 } from 'matsumoto/src/components/form';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
-import { API } from 'matsumoto/src/core';
-import apiMethods from 'core/methods';
 import UI from 'stores/shuri-ui-store';
 import DialogModal from 'parts/dialog-modal';
+import {
+    createAccommodationRoom,
+    getAccommodationRoom,
+    removeAccommodationRoom,
+    updateAccommodationRoom
+} from 'providers/api';
 
 class RoomPage extends React.Component {
     state = {
@@ -28,20 +32,48 @@ class RoomPage extends React.Component {
     };
 
     componentDidMount() {
-        const { id, accommodationId } = this.state;
+        const { id } = this.state;
         if (!id) {
             return;
         }
 
-        API.get({
-            url: apiMethods.roomsList(accommodationId),
-            success: (rooms) => {
-                rooms.forEach((item) => {
-                    if (item.id === id)
-                        this.setState({ room: item });
-                })
+        getAccommodationRoom({
+            urlParams: {
+                accommodationId: this.state.accommodationId,
+                roomId: id
             }
-        })
+        }).then(this.getAccommodationRoomSuccess);
+    }
+
+    getAccommodationRoomSuccess = (room) => {
+        this.setState({ room })
+    }
+
+    setRedirectUrl = () => {
+        this.setState({ redirectUrl: `/accommodation/${this.state.accommodationId}/rooms` });
+    }
+
+    setRequestingApiStatus = () => {
+        this.setState({ isRequestingApi: true });
+    }
+
+    unsetRequestingApiStatus = () => {
+        this.setState({ isRequestingApi: false });
+    }
+
+    reformatValues = (values) => {
+        if (!values.occupancyConfigurations) {
+            values.occupancyConfigurations = [
+                {
+                    adults: 2,
+                    teenagers: 1,
+                    children: 0,
+                    infants: 0
+                }
+            ];
+        }
+
+        return values;
     }
 
     onOpenRemoveModal = () => {
@@ -57,49 +89,40 @@ class RoomPage extends React.Component {
     }
 
     onRoomRemove = () => {
-        this.setState({ isRequestingApi: true });
-        API.delete({
-            url: apiMethods.roomById(this.state.accommodationId, this.state.id),
-            success: () => {
-                this.setState({ redirectUrl: `/accommodation/${this.state.accommodationId}/rooms` });
-            },
-            after: () => {
-                this.setState({ isRequestingApi: false })
+        this.setRequestingApiStatus();
+        removeAccommodationRoom({
+            urlParams: {
+                accommodationId: this.state.accommodationId,
+                roomId: this.state.id
             }
-        })
+        }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
     }
 
-    submit = (values) => {
-        const {
-            id,
-            accommodationId
-        } = this.state;
-        const method = id ? 'put' : 'post';
-        const url = id ?
-            apiMethods.roomById(accommodationId, this.state.id) :
-            apiMethods.roomsList(accommodationId);
-
-        if (!values.occupancyConfigurations)
-            values.occupancyConfigurations = [
-                {
-                    adults: 2,
-                    teenagers: 1,
-                    children: 0,
-                    infants: 0
-                }
-            ];
-
-        this.setState({ isRequestingApi: true });
-        API[method]({
-            url: url,
-            body: [values],
-            success: () => {
-                this.setState({ redirectUrl: `/accommodation/${accommodationId}/rooms` });
+    onCreateSubmit = (values) => {
+        if (this.state.isRequestingApi) {
+            return;
+        }
+        this.setRequestingApiStatus();
+        createAccommodationRoom({
+            urlParams: {
+                accommodationId: this.state.accommodationId
             },
-            after: () => {
-                this.setState({ isRequestingApi: false })
-            }
-        })
+            body: [this.reformatValues(values)]
+        }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+    }
+
+    onUpdateSubmit = (values) => {
+        if (this.state.isRequestingApi) {
+            return;
+        }
+        this.setRequestingApiStatus();
+        updateAccommodationRoom({
+            urlParams: {
+                accommodationId: this.state.accommodationId,
+                roomId: this.state.id
+            },
+            body: this.reformatValues(values)
+        }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
     }
 
     renderForm = (formik) => {
@@ -187,7 +210,7 @@ class RoomPage extends React.Component {
                         </h2>
                         <CachedForm
                             initialValues={this.state.room}
-                            onSubmit={!this.state.isRequestingApi ? this.submit : undefined}
+                            onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
                             render={this.renderForm}
                             enableReinitialize
                         />
