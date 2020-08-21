@@ -9,7 +9,7 @@ import Table from 'matsumoto/src/components/external/table';
 import { Loader } from 'matsumoto/src/simple';
 import { getSeasons, createSeason, removeSeason } from 'providers/api';
 import SeasonCreateModal from 'pages/seasons/season-create-modal';
-import DialogModal from '../../parts/dialog-modal';
+import DialogModal from 'parts/dialog-modal';
 
 const PAGE_SIZE = 10;
 
