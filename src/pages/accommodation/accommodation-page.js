@@ -28,8 +28,9 @@ class AccommodationPage extends React.Component {
     };
 
     componentDidMount() {
-        if (!this.state.id)
+        if (!this.state.id) {
             return;
+        }
 
         getAccommodation({
             urlParams: {
@@ -43,11 +44,17 @@ class AccommodationPage extends React.Component {
     }
 
     reformatValues = (values) => {
-        if (!values.occupancyDefinition) values.occupancyDefinition = {};
+        if (!values.occupancyDefinition) {
+            values.occupancyDefinition = {};
+        }
         const agesReformat = (k1, k2, def) => {
             let value = parseInt(values.occupancyDefinition?.[k1]?.[k2]);
-            if (value !== 0) value = value || def;
-            if (!values.occupancyDefinition[k1]) values.occupancyDefinition[k1] = {};
+            if (value !== 0) {
+                value = value || def;
+            }
+            if (!values.occupancyDefinition[k1]) {
+                values.occupancyDefinition[k1] = {};
+            }
             values.occupancyDefinition[k1][k2] = value;
         };
         agesReformat('infant', 'lowerBound', 0);

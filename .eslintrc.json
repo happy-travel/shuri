@@ -62,6 +62,7 @@
         "space-before-function-paren" : ["error", "never"],
         "arrow-parens": "error",
         "object-curly-spacing": ["error", "always"],
+        "curly": ["error", "all"],
         "no-implicit-coercion": "error",
         "eqeqeq": "error",
         "comma-dangle": ["error", "never"],
@@ -74,9 +75,6 @@
                 "after": true
             }
         ],
-        "quote-props": [
-            "error",
-            "as-needed"
-        ]
+        "quote-props": ["error", "as-needed"]
     }
 }
