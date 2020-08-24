@@ -134,7 +134,7 @@ function createSeason({ urlParams, body }) {
 
 function removeSeason({ urlParams }) {
     return apiPromise({
-        url: `${API_BASE_PATH}/management/contracts/${urlParams.id}/seasons/${urlParams.id}`,
+        url: `${API_BASE_PATH}/management/contracts/${urlParams.contractId}/seasons/${urlParams.id}`,
         method: 'DELETE'
     })
 }
