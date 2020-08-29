@@ -139,6 +139,12 @@ function removeSeason({ urlParams }) {
     })
 }
 
+function getAccommodationLocations() {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/locations`
+    })
+}
+
 export {
     getAccommodations,
     createAccommodation,
@@ -158,5 +164,6 @@ export {
     removeAccommodationRoom,
     getSeasons,
     createSeason,
-    removeSeason
+    removeSeason,
+    getAccommodationLocations
 };

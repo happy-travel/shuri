@@ -1,6 +1,7 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { Link, Redirect } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
 import {
     CachedForm,
@@ -10,6 +11,7 @@ import {
 import { Stars } from 'matsumoto/src/simple';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import UI from 'stores/shuri-ui-store';
+import LocationsStore from 'stores/shuri-locations-store';
 import DialogModal from 'parts/dialog-modal';
 import {
     createAccommodation,
@@ -18,6 +20,7 @@ import {
     updateAccommodation
 } from 'providers/api';
 
+@observer
 class AccommodationPage extends React.Component {
     state = {
         accommodation: {},
@@ -41,6 +44,18 @@ class AccommodationPage extends React.Component {
 
     getAccommodationSuccess = (accommodation) => {
         this.setState({ accommodation });
+    }
+
+    getLocationOptions = () => {
+        return LocationsStore.locations.map((location) => {
+            const text = location.zone ?
+                `${location.country} - ${location.locality} (zone: ${location.zone})` :
+                `${location.country} - ${location.locality}`;
+            return {
+                value: location.id,
+                text
+            };
+        });
     }
 
     reformatValues = (values) => {
@@ -168,6 +183,14 @@ class AccommodationPage extends React.Component {
                         label={'Accommodation Description'}
                         placeholder={'Enter Accommodation Description'}
                         required
+                    />
+                </div>
+                <div className="row">
+                    <FieldSelect
+                        formik={formik}
+                        id="locationId"
+                        label={t('Locations')}
+                        options={this.getLocationOptions()}
                     />
                 </div>
                 <div className="row">
@@ -366,6 +389,7 @@ class AccommodationPage extends React.Component {
 
         return (
             <>
+                <div className="hide">{JSON.stringify(LocationsStore.locations)}</div>
                 <div className="settings block">
                     <section>
                         <Breadcrumbs
