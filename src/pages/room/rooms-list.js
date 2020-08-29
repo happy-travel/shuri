@@ -4,12 +4,13 @@ import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import Table from 'matsumoto/src/components/external/table';
-import UIStore from 'stores/shuri-ui-store';
+import UI from 'stores/shuri-ui-store';
 import { Link, Redirect } from 'react-router-dom';
 import { Loader } from 'matsumoto/src/simple';
 import DialogModal from 'parts/dialog-modal';
 import propTypes from 'prop-types';
 import {
+    getAccommodation,
     getAccommodationRooms,
     removeAccommodationRooms
 } from 'providers/api';
@@ -18,7 +19,8 @@ const PAGE_SIZE = 10;
 
 @observer
 class RoomsList extends React.Component {
-    @observable roomsList = null;
+    @observable roomsList;
+    @observable accommodation;
     @observable tablePageIndex = 0;
     @observable tableColumns;
     @observable isRemoveModalShown = false;
@@ -32,16 +34,16 @@ class RoomsList extends React.Component {
 
         this.tableColumns = [
             {
-                Header: 'Room Id',
+                Header: t('Room Id'),
                 accessor: 'id'
             },
             {
-                Header: t('name'),
+                Header: t('Name'),
                 accessor: 'name',
-                Cell: (item) => item.cell.value[UIStore.editorLanguage]
+                Cell: (item) => item.cell.value[UI.editorLanguage]
             },
             {
-                Header: 'Actions',
+                Header: t('Actions'),
                 accessor: 'id',
                 Cell: (item) => (
                     <Link to={`/accommodation/${this.accommodationId}/room/${item.cell.value}`}>
@@ -53,11 +55,18 @@ class RoomsList extends React.Component {
     }
 
     componentDidMount() {
-        getAccommodationRooms({
-            urlParams: {
-                accommodationId: this.accommodationId
-            }
-        }).then(this.getAccommodationRoomsSuccess);
+        Promise.all([
+            getAccommodation({
+                urlParams: {
+                    id: this.accommodationId
+                }
+            }),
+            getAccommodationRooms({
+                urlParams: {
+                    accommodationId: this.accommodationId
+                }
+            })
+        ]).then(this.getDataSuccess);
     }
 
     get roomsIds() {
@@ -65,12 +74,14 @@ class RoomsList extends React.Component {
     }
 
     @action
-    getAccommodationRoomsSuccess = (list) => {
-        this.roomsList = list
+    getDataSuccess = ([accommodation, roomsList]) => {
+        this.accommodation = accommodation;
+        this.roomsList = roomsList;
     }
 
+    @action
     setRedirectUrl = () => {
-        this.setState({ redirectUrl: `/accommodation/${this.accommodationId}` });
+        this.redirectUrl = `/accommodation/${this.accommodationId}`;
     }
 
     @action
@@ -108,10 +119,27 @@ class RoomsList extends React.Component {
         this.isRemoveModalShown = false;
     }
 
+    renderBreadcrumbs = () => {
+        const { t } = this.props;
+        return (
+            <Breadcrumbs
+                backLink={`/accommodation/${this.accommodationId}`}
+                items={[
+                    {
+                        text: t('Accommodations'),
+                        link: '/'
+                    }, {
+                        text: this.accommodation.name[UI.editorLanguage] || `Accommodation #${this.accommodationId}`,
+                        link: `/accommodation/${this.accommodationId}`
+                    }, {
+                        text: t('Rooms')
+                    }
+                ]}
+            />
+        );
+    }
+
     renderContent = () => {
-        if (this.roomsList === null) {
-            return <Loader />;
-        }
         const tableData = this.roomsList.slice(
             PAGE_SIZE * this.tablePageIndex,
             PAGE_SIZE * (this.tablePageIndex + 1)
@@ -127,11 +155,15 @@ class RoomsList extends React.Component {
                 pageSize={PAGE_SIZE}
                 manualPagination
             /> :
-            'No results';
+            this.props.t('No results');
     }
 
     render() {
         const { t } = this.props;
+
+        if (this.roomsList === undefined) {
+            return <Loader />;
+        }
 
         if (this.redirectUrl) {
             return <Redirect push to={this.redirectUrl} />;
@@ -141,20 +173,7 @@ class RoomsList extends React.Component {
             <>
                 <div className="settings block">
                     <section>
-                        <Breadcrumbs
-                            backLink={`/accommodation/${this.accommodationId}`}
-                            items={[
-                                {
-                                    text: 'Accommodations list',
-                                    link: '/'
-                                }, {
-                                    text: 'Accommodation',
-                                    link: `/accommodation/${this.accommodationId}`
-                                }, {
-                                    text: 'Rooms list'
-                                }
-                            ]}
-                        />
+                        {this.renderBreadcrumbs()}
                         <h2>
                             <div className="add-new-button-holder">
                                 <Link to={`/accommodation/${this.accommodationId}/room`}>

@@ -1,43 +1,67 @@
 import React from 'react';
+import { action, observable } from 'mobx';
 import { withTranslation } from 'react-i18next';
 import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
+import { Loader } from 'matsumoto/src/simple';
+import UI from 'stores/shuri-ui-store';
+import { getContract } from 'providers/api';
 
 @observer
 class Calendar extends React.Component {
-    contractId;
+    @observable contract;
+    contractId = this.props.match.params.id;
 
-    constructor(props) {
-        super(props);
-        this.contractId = this.props.match.params.id;
+    componentDidMount() {
+        const requestParams = {
+            urlParams: {
+                id: this.contractId
+            }
+        };
+        getContract(requestParams).then(this.getContractSuccess);
+    }
+
+    @action
+    getContractSuccess = (contract) => {
+        this.contract = contract;
+    }
+
+    renderBreadcrumbs = () => {
+        const { t } = this.props;
+        return (
+            <Breadcrumbs
+                backLink={`/contract/${this.contractId}/seasons`}
+                items={[
+                    {
+                        text: t('Contracts'),
+                        link: '/contracts'
+                    },
+                    {
+                        text: this.contract.name[UI.editorLanguage] || `Contract #${this.contractId}`,
+                        link: `/contract/${this.contractId}`
+                    },
+                    {
+                        text: t('Calendar')
+                    }
+                ]}
+            />
+        );
     }
 
     renderContent = () => {
+        // TODO: HIR-48
         return 'This is a calendar page.'
     }
 
     render() {
-        const { t } = this.props;
+        if (this.contract === undefined) {
+            return <Loader />;
+        }
         return (
             <div className="settings block">
                 <section>
-                    <Breadcrumbs
-                        backLink={`/contract/${this.contractId}/seasons`}
-                        items={[
-                            {
-                                text: t('Contracts list'),
-                                link: '/contracts'
-                            },
-                            {
-                                text: `Contract #${this.contractId}`,
-                                link: `/contract/${this.contractId}`
-                            },
-                            {
-                                text: t('Calendar')
-                            }
-                        ]}
-                    />
+                    {this.renderBreadcrumbs()}
                     <h2>
                         <span className="brand">
                             {`Calendar for contract #${this.contractId}`}

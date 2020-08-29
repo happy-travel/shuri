@@ -8,6 +8,7 @@ import {
 } from 'matsumoto/src/components/form';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import FieldDatepicker from 'matsumoto/src/components/complex/field-datepicker';
+import { Loader } from 'matsumoto/src/simple/components/loader';
 import UI from 'stores/shuri-ui-store';
 import DialogModal from 'parts/dialog-modal';
 import {
@@ -20,7 +21,7 @@ import {
 
 class ContractPage extends React.Component {
     state = {
-        contract: {},
+        contract: undefined,
         accommodationsList: null,
         id: this.props.match.params.id,
         redirectUrl: undefined,
@@ -34,6 +35,7 @@ class ContractPage extends React.Component {
         getAccommodations().then(this.getAccommodationsSuccess);
 
         if (!id) {
+            this.setState({ contract: {} });
             return;
         }
 
@@ -101,6 +103,28 @@ class ContractPage extends React.Component {
                 id: this.state.id
             }
         }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+    }
+
+    renderBreadcrumbs = () => {
+        const { t } = this.props;
+        const { id } = this.state;
+        const text = id ?
+            this.state.contract.name[UI.editorLanguage] || `Contract #${id}`:
+            t('Create contract');
+
+        return (
+            <Breadcrumbs
+                backLink={'/contracts'}
+                items={[
+                    {
+                        text: t('Contracts'),
+                        link: '/contracts'
+                    }, {
+                        text
+                    }
+                ]}
+            />
+        );
     }
 
     renderForm = (formik) => {
@@ -176,7 +200,11 @@ class ContractPage extends React.Component {
 
     render() {
         const { t } = this.props;
-        const { redirectUrl, id } = this.state;
+        const { redirectUrl, id, contract, accommodationsList } = this.state;
+
+        if (contract === undefined || accommodationsList === undefined) {
+            return <Loader />
+        }
 
         if (redirectUrl) {
             return <Redirect push to={redirectUrl} />;
@@ -186,17 +214,7 @@ class ContractPage extends React.Component {
             <>
                 <div className="settings block">
                     <section>
-                        <Breadcrumbs
-                            backLink={'/contracts'}
-                            items={[
-                                {
-                                    text: 'Contracts list',
-                                    link: '/contracts'
-                                }, {
-                                    text: 'Contract'
-                                }
-                            ]}
-                        />
+                        {this.renderBreadcrumbs()}
                         <h2>
                             {id ?
                                 <div className="add-new-button-holder">
@@ -212,10 +230,10 @@ class ContractPage extends React.Component {
                                 {id ? `Edit contract #${id}` : t('Create new contract')}
                             </span>
                         </h2>
-                        {!this.state.accommodationsList?.length ?
-                            t('No contracts found') :
+                        {!accommodationsList.length ?
+                            t('No accommodations found') :
                             <CachedForm
-                                initialValues={this.state.contract}
+                                initialValues={contract}
                                 onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
                                 render={this.renderForm}
                                 enableReinitialize
