@@ -39,7 +39,8 @@ const Translations = {
         'Season Name': 'Season Name',
         'Enter Season Name': 'Enter Season Name',
         'No result': 'No result',
-        'Removing season': 'Removing season'
+        'Removing season': 'Removing season',
+        'Locations': 'Locations'
     }
 };
 
