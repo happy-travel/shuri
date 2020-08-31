@@ -13,6 +13,7 @@ import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import UI from 'stores/shuri-ui-store';
 import LocationsStore from 'stores/shuri-locations-store';
 import DialogModal from 'parts/dialog-modal';
+import FieldTime from 'components/form/field-time';
 import {
     createAccommodation,
     getAccommodation,
@@ -208,17 +209,15 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldText
+                    <FieldTime
                         formik={formik}
-                        clearable
                         id="checkInTime"
                         label={'Check In Time'}
                         placeholder={'16:00'}
                         required
                     />
-                    <FieldText
+                    <FieldTime
                         formik={formik}
-                        clearable
                         id="checkOutTime"
                         label={'Check Out Time'}
                         placeholder={'11:00'}
