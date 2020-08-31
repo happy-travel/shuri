@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import View from 'matsumoto/src/stores/view-store';
 import FieldText from 'matsumoto/src/components/form/field-text';
 
-const TIME_OPTIONS = Array.from(Array(24).keys()).flatMap(getHourOptions);
 const TIME_REGEXP = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 
 @observer
@@ -66,15 +65,15 @@ class FieldTime extends React.Component {
     }
 
     render() {
+        const { options } = this.props;
         return (
             <FieldText
                 {...this.props}
-                setValue={this.onDropdownClick}
+                maxLength={5}
+                setValue={options ? this.onDropdownClick : undefined}
                 onBlur={this.onBlur}
                 onChange={this.onChange}
-                maxLength={5}
-                options={TIME_OPTIONS}
-                Dropdown={SelectDropdown}
+                Dropdown={options ? SelectDropdown : undefined}
             />
         );
     }
@@ -88,20 +87,9 @@ SelectDropdown.propTypes = {
 };
 
 FieldTime.propTypes = {
+    options: propTypes.array,
     formik: propTypes.object,
     id: propTypes.string
 };
-
-function getHourOptions(hour) {
-    const hourString = addLeadingZeroIfNeeded(hour);
-    return [
-        { value: `${hourString}:00`, text: `${hourString}:00` },
-        { value: `${hourString}:30`, text: `${hourString}:30` }
-    ];
-}
-
-function addLeadingZeroIfNeeded(hour) {
-    return hour < 10 ? `0${hour}` : String(hour);
-}
 
 export default FieldTime;
