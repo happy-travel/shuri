@@ -3,6 +3,7 @@ import propTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import View from 'matsumoto/src/stores/view-store';
 import FieldText from 'matsumoto/src/components/form/field-text';
+
 const TIME_OPTIONS = Array.from(Array(24).keys()).flatMap(getHourOptions);
 const TIME_REGEXP = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 
