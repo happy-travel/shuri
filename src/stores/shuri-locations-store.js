@@ -1,11 +1,14 @@
 import { action, observable } from 'mobx';
 import { getAccommodationLocations } from '../providers/api';
+import { Authorized } from 'matsumoto/src/core/auth';
 
 class LocationsStore {
     @observable locations = [];
 
     constructor() {
-        getAccommodationLocations().then(this.setLocations);
+        if (Authorized()) {
+            getAccommodationLocations().then(this.setLocations);
+        }
     }
 
     @action

@@ -1,16 +1,19 @@
 import React from 'react';
-import { render } from 'react-dom';
-import { windowLocalStorage } from 'matsumoto/src/core/misc/window-storage';
-import { initApplication } from 'matsumoto/src/core/init';
+import ReactDOM from 'react-dom';
+import { initApplication } from 'core/init';
 import App from 'core/app';
 
-const dir = windowLocalStorage.get('direction');
-if (['ltr', 'rtl'].includes(dir)) {
-    document.getElementsByTagName('html')[0].setAttribute('dir', dir);
-}
+window.setPageDirectionFromLS = () => {
+    const dir = window.localStorage.getItem('direction');
+    if (['ltr', 'rtl'].includes(dir)) {
+        document.getElementsByTagName('html')[0].setAttribute('dir', dir);
+    }
+};
+window.setPageDirectionFromLS();
 
-window.onload = function() {
-    render(<App />, document.getElementById('app'));
-}
+window._renderTheApp = () => {
+    ReactDOM.render(<App />, document.getElementById('app'));
+};
+window._renderTheApp();
 
 initApplication();
