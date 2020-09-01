@@ -4,7 +4,8 @@ import { getAccommodationLocations } from '../providers/api';
 class LocationsStore {
     @observable locations = [];
 
-    constructor() {
+    @action
+    loadLocations = () => {
         getAccommodationLocations().then(this.setLocations);
     }
 

@@ -35,6 +35,7 @@ class AccommodationPage extends React.Component {
             return;
         }
 
+        LocationsStore.loadLocations();
         getAccommodation({
             urlParams: {
                 id: this.state.id
