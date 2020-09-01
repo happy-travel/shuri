@@ -8,7 +8,7 @@ import {
     FieldText,
     FieldSelect
 } from 'matsumoto/src/components/form';
-import { Stars } from 'matsumoto/src/simple';
+import { Loader, Stars } from 'matsumoto/src/simple';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import UI from 'stores/shuri-ui-store';
 import LocationsStore from 'stores/shuri-locations-store';
@@ -38,7 +38,7 @@ const CHECKIN_TIME_OPTIONS = [
 @observer
 class AccommodationPage extends React.Component {
     state = {
-        accommodation: {},
+        accommodation: undefined,
         id: this.props.match.params.id,
         redirectUrl: undefined,
         isRemoveModalShown: false,
@@ -47,9 +47,11 @@ class AccommodationPage extends React.Component {
 
     componentDidMount() {
         if (!this.state.id) {
+            this.setState({ accommodation: {} });
             return;
         }
 
+        LocationsStore.loadLocations();
         getAccommodation({
             urlParams: {
                 id: this.state.id
@@ -150,6 +152,28 @@ class AccommodationPage extends React.Component {
             },
             body: this.reformatValues(values)
         }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+    }
+
+    renderBreadcrumbs = () => {
+        const { t } = this.props;
+        const { id } = this.state;
+        const text = id ?
+            this.state.accommodation.name[UI.editorLanguage] || `Accommodation #${id}`:
+            t('Create accommodation');
+
+        return (
+            <Breadcrumbs
+                backLink={'/'}
+                items={[
+                    {
+                        text: t('Accommodations'),
+                        link: '/'
+                    }, {
+                        text
+                    }
+                ]}
+            />
+        );
     }
 
     renderForm = (formik) => {
@@ -396,7 +420,11 @@ class AccommodationPage extends React.Component {
 
     render() {
         const { t } = this.props;
-        const { redirectUrl, id } = this.state;
+        const { redirectUrl, id, accommodation } = this.state;
+
+        if (accommodation === undefined) {
+            return <Loader />;
+        }
 
         if (redirectUrl) {
             return <Redirect push to={redirectUrl} />;
@@ -407,23 +435,13 @@ class AccommodationPage extends React.Component {
                 <div className="hide">{JSON.stringify(LocationsStore.locations)}</div>
                 <div className="settings block">
                     <section>
-                        <Breadcrumbs
-                            backLink={'/'}
-                            items={[
-                                {
-                                    text: 'Accommodations list',
-                                    link: '/'
-                                }, {
-                                    text: 'Accommodation'
-                                }
-                            ]}
-                        />
+                        {this.renderBreadcrumbs()}
                         <h2>
                             {id ?
                                 <div>
                                     <Link to={`/accommodation/${id}/rooms`}>
                                         <button className="button go-to-rooms">
-                                            Rooms management ({this.state.accommodation?.roomIds?.length || 0})
+                                            {`Rooms management (${accommodation?.roomIds?.length || 0})`}
                                         </button>
                                     </Link>
                                 </div> :
@@ -432,12 +450,12 @@ class AccommodationPage extends React.Component {
                             <span className="brand">
                                 {id ?
                                     `Edit accommodation #${id}` :
-                                    'Create new accommodation'
+                                    t('Create new accommodation')
                                 }
                             </span>
                         </h2>
                         <CachedForm
-                            initialValues={this.state.accommodation}
+                            initialValues={accommodation}
                             onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
                             render={this.renderForm}
                             enableReinitialize

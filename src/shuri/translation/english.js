@@ -40,7 +40,14 @@ const Translations = {
         'Enter Season Name': 'Enter Season Name',
         'No result': 'No result',
         'Removing season': 'Removing season',
-        'Locations': 'Locations'
+        'Locations': 'Locations',
+        'Create accommodation': 'Create accommodation',
+        'Create new accommodation': 'Create new accommodation',
+        'Room Id': 'Room Id',
+        'Actions': 'Actions',
+        'No results': 'No results',
+        'Create room': 'Create room',
+        'No accommodations found': 'No accommodations found'
     }
 };
 
