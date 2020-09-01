@@ -7,7 +7,12 @@ import propTypes from 'prop-types';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import Table from 'matsumoto/src/components/external/table';
 import { Loader } from 'matsumoto/src/simple';
-import { getSeasons, createSeason, removeSeason } from 'providers/api';
+import {
+    getSeasons,
+    createSeason,
+    removeSeason,
+    getContract
+} from 'providers/api';
 import SeasonCreateModal from 'pages/seasons/season-create-modal';
 import DialogModal from 'parts/dialog-modal';
 
@@ -16,6 +21,7 @@ const PAGE_SIZE = 10;
 @observer
 class SeasonsList extends React.Component {
     @observable seasonsList;
+    @observable contract;
     @observable tablePageIndex = 0;
     @observable isCreateModalShown = false;
     @observable removingSeason;
@@ -36,7 +42,21 @@ class SeasonsList extends React.Component {
     }
 
     componentDidMount() {
-        this.loadSeasons();
+        const requestParams = {
+            urlParams: {
+                id: this.contractId
+            }
+        };
+        Promise.all([
+            getContract(requestParams),
+            getSeasons(requestParams)
+        ]).then(this.getDataSuccess);
+    }
+
+    @action
+    getDataSuccess = ([contract, seasonsList]) => {
+        this.contract = contract;
+        this.seasonsList = seasonsList;
     }
 
     @action
@@ -149,11 +169,11 @@ class SeasonsList extends React.Component {
                 backLink={`/contract/${this.contractId}`}
                 items={[
                     {
-                        text: t('Contracts list'),
+                        text: t('Contracts'),
                         link: '/contracts'
                     },
                     {
-                        text: `Contract #${this.contractId}`,
+                        text: this.contract.name || `Contract #${this.contractId}`,
                         link: `/contract/${this.contractId}`
                     },
                     {
@@ -206,6 +226,9 @@ class SeasonsList extends React.Component {
 
     render() {
         const { t } = this.props;
+        if (this.contract === undefined) {
+            return <Loader />;
+        }
         return (
             <>
                 <div className="settings block">
