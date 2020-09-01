@@ -7,7 +7,6 @@ import propTypes from 'prop-types';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import Table from 'matsumoto/src/components/external/table';
 import { Loader } from 'matsumoto/src/simple';
-import UI from 'stores/shuri-ui-store';
 import {
     getSeasons,
     createSeason,
@@ -174,7 +173,7 @@ class SeasonsList extends React.Component {
                         link: '/contracts'
                     },
                     {
-                        text: this.contract.name[UI.editorLanguage] || `Contract #${this.contractId}`,
+                        text: this.contract.name || `Contract #${this.contractId}`,
                         link: `/contract/${this.contractId}`
                     },
                     {

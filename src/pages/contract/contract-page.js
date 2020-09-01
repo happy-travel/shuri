@@ -22,7 +22,7 @@ import {
 class ContractPage extends React.Component {
     state = {
         contract: undefined,
-        accommodationsList: null,
+        accommodationsList: undefined,
         id: this.props.match.params.id,
         redirectUrl: undefined,
         isRequestingApi: false,
@@ -109,7 +109,7 @@ class ContractPage extends React.Component {
         const { t } = this.props;
         const { id } = this.state;
         const text = id ?
-            this.state.contract.name[UI.editorLanguage] || `Contract #${id}`:
+            this.state.contract.name || `Contract #${id}`:
             t('Create contract');
 
         return (
@@ -231,7 +231,7 @@ class ContractPage extends React.Component {
                             </span>
                         </h2>
                         {!accommodationsList.length ?
-                            t('No accommodations found') :
+                            t('No contracts found') :
                             <CachedForm
                                 initialValues={contract}
                                 onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}

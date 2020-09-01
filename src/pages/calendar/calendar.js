@@ -5,7 +5,6 @@ import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import { Loader } from 'matsumoto/src/simple';
-import UI from 'stores/shuri-ui-store';
 import { getContract } from 'providers/api';
 
 @observer
@@ -38,7 +37,7 @@ class Calendar extends React.Component {
                         link: '/contracts'
                     },
                     {
-                        text: this.contract.name[UI.editorLanguage] || `Contract #${this.contractId}`,
+                        text: this.contract.name || `Contract #${this.contractId}`,
                         link: `/contract/${this.contractId}`
                     },
                     {
