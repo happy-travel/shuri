@@ -45,8 +45,8 @@ class FieldTime extends React.Component {
         }
     }
 
-    onBlur = (event) => {
-        event.target.value = this.lastCorrectValue || '';
+    onBlur = () => {
+        this.props.formik.setFieldValue(this.props.id, this.lastCorrectValue || '');
     }
 
     onChange = (event) => {
