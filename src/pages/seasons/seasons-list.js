@@ -62,7 +62,7 @@ class SeasonsList extends React.Component {
     @action
     loadSeasons = () => {
         this.seasonsList = undefined;
-        getSeasons({
+        return getSeasons({
             urlParams: {
                 id: this.contractId
             }
@@ -121,7 +121,9 @@ class SeasonsList extends React.Component {
 
     createSeasonSuccess = () => {
         this.onCloseCreateModal();
-        this.loadSeasons();
+        this.loadSeasons().then(() => {
+            this.onPaginationClick({ pageIndex: Math.floor(this.seasonsList.length / PAGE_SIZE) });
+        });
     }
 
     createSeasonFinally = () => {
@@ -141,7 +143,7 @@ class SeasonsList extends React.Component {
 
     removeSeasonSuccess = () => {
         this.unsetRemovingSeason();
-        this.loadSeasons();
+        this.loadSeasons()
     }
 
     removeSeasonFinally = () => {
@@ -150,7 +152,7 @@ class SeasonsList extends React.Component {
     }
 
     renderIdColumn = (item) => {
-        const season = this.seasonsList[item.row.id];
+        const season = this.seasonsList.find((season) => season.id === item.row.original.id);
         return (
             <div
                 className="seasons-table-row"
