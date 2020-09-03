@@ -154,6 +154,49 @@ class AccommodationPage extends React.Component {
         }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
     }
 
+    onAddPictureClick = () => {
+        const { accommodation } = this.state;
+        this.setState({
+            accommodation: {
+                ...accommodation,
+                pictures: {
+                    [UI.editorLanguage]: [
+                        ...accommodation.pictures[UI.editorLanguage],
+                        { source: '', caption: '' }
+                    ]
+                }
+            }
+        })
+    }
+
+    onRemovePictureClick = (index) => {
+        const { accommodation } = this.state;
+        const pictures = accommodation.pictures[UI.editorLanguage];
+        this.setState({
+            accommodation: {
+                ...accommodation,
+                pictures: {
+                    [UI.editorLanguage]: pictures.filter((picture, order) => order !== index)
+                }
+            }
+        })
+    }
+
+    onChangePictureField = (event, index, field) => {
+        const value = event.target.value;
+        const { accommodation } = this.state;
+        const pictures = accommodation.pictures[UI.editorLanguage];
+        pictures[index][field] = value;
+        this.setState({
+            accommodation: {
+                ...accommodation,
+                pictures: {
+                    [UI.editorLanguage]: pictures
+                }
+            }
+        })
+    }
+
     renderBreadcrumbs = () => {
         const { t } = this.props;
         const { id } = this.state;
@@ -370,27 +413,13 @@ class AccommodationPage extends React.Component {
                         placeholder={'200'}
                     />
                 </div>
-                <h3>PICTURES</h3>
-                <div className="row">
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id={`pictures.${UI.editorLanguage}.0.source`}
-                        label={'Picture source link'}
-                        placeholder={'https://domain/image.jpg'}
-                        required
-                    />
+                <div className="row align-items-center justify-content-space-between">
+                    <h3>{t('Pictures for accommodation')}</h3>
+                    <button className="button small" type="button" onClick={this.onAddPictureClick}>
+                        {t('Add new picture')}
+                    </button>
                 </div>
-                <div className="row">
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id={`pictures.${UI.editorLanguage}.0.caption`}
-                        label={'Picture caption'}
-                        placeholder={'Enter picture text description'}
-                        required
-                    />
-                </div>
+                {this.renderPictureRows(formik)}
 
                 <div className="row controls">
                     <div className="field">
@@ -415,6 +444,39 @@ class AccommodationPage extends React.Component {
                     }
                 </div>
             </div>
+        );
+    }
+
+    renderPictureRows = (formik) => {
+        return (
+            this.state.accommodation.pictures[UI.editorLanguage].map((_picture, index) => (
+                <div className="row position-relative" key={index}>
+                    {index > 0 ?
+                        <span
+                            className="icon icon-action-cancel remove-picture-icon"
+                            onClick={() => this.onRemovePictureClick(index)}
+                        /> :
+                        null}
+                    <FieldText
+                        formik={formik}
+                        onChange={(event) => this.onChangePictureField(event, index, 'source')}
+                        clearable
+                        id={`pictures.${UI.editorLanguage}.${index}.source`}
+                        label={'Picture source link'}
+                        placeholder={'https://domain/image.jpg'}
+                        required={index === 0}
+                    />
+                    <FieldText
+                        formik={formik}
+                        onChange={(event) => this.onChangePictureField(event, index, 'caption')}
+                        clearable
+                        id={`pictures.${UI.editorLanguage}.${index}.caption`}
+                        label={'Picture caption'}
+                        placeholder={'Enter picture text description'}
+                        required={index === 0}
+                    />
+                </div>
+            ))
         );
     }
 
