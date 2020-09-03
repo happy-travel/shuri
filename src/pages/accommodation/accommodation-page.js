@@ -184,7 +184,8 @@ class AccommodationPage extends React.Component {
                 { /* TODO: pictures */ }
                 { /* TODO: amenities */ }
                 <div className="row">
-                    <FieldText formik={formik}
+                    <FieldText
+                        formik={formik}
                         clearable
                         id={`name.${UI.editorLanguage}`}
                         label={'Accommodation Name'}
@@ -193,7 +194,8 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldText formik={formik}
+                    <FieldText
+                        formik={formik}
                         clearable
                         id={`address.${UI.editorLanguage}`}
                         label={'Accommodation Address'}
@@ -202,13 +204,15 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldText formik={formik}
+                    <FieldText
+                        formik={formik}
                         clearable
                         id="coordinates.latitude"
                         label={'Latitude'}
                         placeholder={'Latitude'}
                     />
-                    <FieldText formik={formik}
+                    <FieldText
+                        formik={formik}
                         clearable
                         id="coordinates.longitude"
                         label={'Longitude'}
@@ -216,7 +220,8 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldText formik={formik}
+                    <FieldText
+                        formik={formik}
                         clearable
                         id={`description.${UI.editorLanguage}.description`}
                         label={'Accommodation Description'}
@@ -233,17 +238,18 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldSelect formik={formik}
-                         id="rating"
-                         label={t('Star Rating')}
-                         options={[
-                             { value: 'notRated', text: 'Unrated' },
-                             { value: 'oneStar', text: <span>{t('Economy')}  <Stars count="1" /></span> },
-                             { value: 'twoStars', text: <span>{t('Budget')}   <Stars count="2" /></span> },
-                             { value: 'threeStars', text: <span>{t('Standard')} <Stars count="3" /></span> },
-                             { value: 'fourStars', text: <span>{t('Superior')} <Stars count="4" /></span> },
-                             { value: 'fiveStars', text: <span>{t('Luxury')}   <Stars count="5" /></span> }
-                         ]}
+                    <FieldSelect
+                        formik={formik}
+                        id="rating"
+                        label={t('Star Rating')}
+                        options={[
+                            { value: 'notRated', text: 'Unrated' },
+                            { value: 'oneStar', text: <span>{t('Economy')}  <Stars count="1" /></span> },
+                            { value: 'twoStars', text: <span>{t('Budget')}   <Stars count="2" /></span> },
+                            { value: 'threeStars', text: <span>{t('Standard')} <Stars count="3" /></span> },
+                            { value: 'fourStars', text: <span>{t('Superior')} <Stars count="4" /></span> },
+                            { value: 'fiveStars', text: <span>{t('Luxury')}   <Stars count="5" /></span> }
+                        ]}
                     />
                 </div>
                 <div className="row">
@@ -287,7 +293,6 @@ class AccommodationPage extends React.Component {
                         id="contactInfo.website"
                         label={'Website'}
                         placeholder={'Enter Website'}
-                        required
                     />
                 </div>
                 <div className="row">
