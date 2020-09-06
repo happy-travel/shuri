@@ -20,6 +20,7 @@ import {
     removeAccommodation,
     updateAccommodation
 } from 'providers/api';
+import { parseBackendErrors } from 'utils/error-utils';
 
 const CHECKOUT_TIME_OPTIONS = [
     { value: '10:00', text: '10:00' },
@@ -44,6 +45,7 @@ class AccommodationPage extends React.Component {
         isRemoveModalShown: false,
         isRequestingApi: false
     };
+    formik;
 
     componentDidMount() {
         if (!this.state.id) {
@@ -149,7 +151,7 @@ class AccommodationPage extends React.Component {
         }
         this.setRequestingApiStatus();
         createAccommodation({ body: this.reformatValues(values) })
-            .then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+            .then(this.setRedirectUrl, this.accommodationActionFail);
     }
 
     onUpdateSubmit = (values) => {
@@ -162,7 +164,15 @@ class AccommodationPage extends React.Component {
                 id: this.state.id
             },
             body: this.reformatValues(values)
-        }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+        }).then(this.setRedirectUrl, this.accommodationActionFail);
+    }
+
+    accommodationActionFail = (errorData) => {
+        this.unsetRequestingApiStatus();
+        parseBackendErrors(errorData).forEach((error) => {
+            this.formik.setFieldError(error.path, error.message);
+        })
+        this.forceUpdate();
     }
 
     onAddPictureClick = () => {
@@ -233,6 +243,7 @@ class AccommodationPage extends React.Component {
     renderForm = (formik) => {
         const { t } = this.props;
         const { id } = this.state;
+        this.formik = formik;
         return (
             <div className="form app-settings">
                 { /* TODO: pictures */ }
