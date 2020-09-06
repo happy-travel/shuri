@@ -47,7 +47,18 @@ class AccommodationPage extends React.Component {
 
     componentDidMount() {
         if (!this.state.id) {
-            this.setState({ accommodation: {} });
+            this.setState({
+                accommodation: {
+                    pictures: {
+                        [UI.editorLanguage]: [
+                            {
+                                source: '',
+                                caption: ''
+                            }
+                        ]
+                    }
+                }
+            });
             return;
         }
 
