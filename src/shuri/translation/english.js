@@ -47,7 +47,9 @@ const Translations = {
         'Actions': 'Actions',
         'No results': 'No results',
         'Create room': 'Create room',
-        'No accommodations found': 'No accommodations found'
+        'No accommodations found': 'No accommodations found',
+        'Pictures for accommodation': 'Pictures of accommodation',
+        'Add new picture': 'Add new picture'
     }
 };
 
