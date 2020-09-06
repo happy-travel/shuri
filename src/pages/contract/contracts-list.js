@@ -12,7 +12,7 @@ const PAGE_SIZE = 10;
 
 @observer
 class ContractsList extends React.Component {
-    @observable contractsList = [];
+    @observable contractsList;
     @observable tablePageIndex = 0;
     tableColumns;
 
@@ -63,7 +63,7 @@ class ContractsList extends React.Component {
     }
 
     renderContent = () => {
-        if (this.contractsList === null) {
+        if (this.contractsList === undefined) {
             return <Loader />;
         }
         const tableData = this.contractsList.slice(

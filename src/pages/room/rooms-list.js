@@ -181,14 +181,14 @@ class RoomsList extends React.Component {
                                         Add new room
                                     </button>
                                 </Link>
-                                <button
-                                    type="button"
-                                    disabled={!this.roomsList?.length}
-                                    onClick={this.onOpenRemoveModal}
-                                    className="button small gray remove-button"
-                                >
-                                    {t('Remove rooms')}
-                                </button>
+                                {/*<button*/}
+                                {/*    type="button"*/}
+                                {/*    disabled={!this.roomsList?.length}*/}
+                                {/*    onClick={this.onOpenRemoveModal}*/}
+                                {/*    className="button small gray remove-button"*/}
+                                {/*>*/}
+                                {/*    {t('Remove rooms')}*/}
+                                {/*</button>*/}
                             </div>
                             <span className="brand">
                                 {`Rooms list In Accommodation #${this.accommodationId}`}
