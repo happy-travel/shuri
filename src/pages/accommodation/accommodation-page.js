@@ -48,6 +48,8 @@ class AccommodationPage extends React.Component {
     formik;
 
     componentDidMount() {
+        LocationsStore.loadLocations();
+
         if (!this.state.id) {
             this.setState({
                 accommodation: {
@@ -64,7 +66,6 @@ class AccommodationPage extends React.Component {
             return;
         }
 
-        LocationsStore.loadLocations();
         getAccommodation({
             urlParams: {
                 id: this.state.id
