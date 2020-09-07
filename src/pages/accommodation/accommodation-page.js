@@ -10,6 +10,7 @@ import {
 } from 'matsumoto/src/components/form';
 import { Loader, Stars } from 'matsumoto/src/simple';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
+import Gallery from 'matsumoto/src/components/gallery';
 import UI from 'stores/shuri-ui-store';
 import LocationsStore from 'stores/shuri-locations-store';
 import DialogModal from 'parts/dialog-modal';
@@ -125,6 +126,17 @@ class AccommodationPage extends React.Component {
         this.setState({ isRequestingApi: false });
     }
 
+    setPictures = (pictures) => {
+        this.setState({
+            accommodation: {
+                ...this.state.accommodation,
+                pictures: {
+                    [UI.editorLanguage]: pictures
+                }
+            }
+        });
+    }
+
     onOpenRemoveModal = () => {
         this.setState({
             isRemoveModalShown: true
@@ -177,46 +189,28 @@ class AccommodationPage extends React.Component {
     }
 
     onAddPictureClick = () => {
-        const { accommodation } = this.state;
-        this.setState({
-            accommodation: {
-                ...accommodation,
-                pictures: {
-                    [UI.editorLanguage]: [
-                        ...accommodation.pictures[UI.editorLanguage],
-                        { source: '', caption: '' }
-                    ]
-                }
-            }
-        })
+        this.setPictures([
+            ...this.state.accommodation.pictures[UI.editorLanguage],
+            { source: '', caption: '' }
+        ]);
     }
 
     onRemovePictureClick = (index) => {
-        const { accommodation } = this.state;
-        const pictures = accommodation.pictures[UI.editorLanguage];
-        this.setState({
-            accommodation: {
-                ...accommodation,
-                pictures: {
-                    [UI.editorLanguage]: pictures.filter((picture, order) => order !== index)
-                }
-            }
-        })
+        this.setPictures(
+            this.state.accommodation.pictures[UI.editorLanguage].filter((picture, order) => order !== index)
+        );
     }
 
     onChangePictureField = (event, index, field) => {
-        const value = event.target.value;
-        const { accommodation } = this.state;
-        const pictures = accommodation.pictures[UI.editorLanguage];
-        pictures[index][field] = value;
-        this.setState({
-            accommodation: {
-                ...accommodation,
-                pictures: {
-                    [UI.editorLanguage]: pictures
-                }
-            }
-        })
+        const pictures = this.state.accommodation.pictures[UI.editorLanguage];
+        pictures[index][field] = event.target.value;
+        this.setPictures(pictures);
+    }
+
+    onClearPictureField = (index, field) => {
+        const pictures = this.state.accommodation.pictures[UI.editorLanguage];
+        pictures[index][field] = '';
+        this.setPictures(pictures);
     }
 
     renderBreadcrumbs = () => {
@@ -448,6 +442,9 @@ class AccommodationPage extends React.Component {
                     </button>
                 </div>
                 {this.renderPictureRows(formik)}
+                <Gallery
+                    pictures={this.state.accommodation.pictures[UI.editorLanguage].filter((picture) => picture.source)}
+                />
 
                 <div className="row controls">
                     <div className="field">
@@ -476,10 +473,11 @@ class AccommodationPage extends React.Component {
     }
 
     renderPictureRows = (formik) => {
+        const pictures = this.state.accommodation.pictures[UI.editorLanguage];
         return (
-            this.state.accommodation.pictures[UI.editorLanguage].map((_picture, index) => (
+            pictures.map((_picture, index) => (
                 <div className="row position-relative" key={index}>
-                    {index > 0 ?
+                    {pictures.length > 1 ?
                         <span
                             className="icon icon-action-cancel remove-picture-icon"
                             onClick={() => this.onRemovePictureClick(index)}
@@ -488,6 +486,7 @@ class AccommodationPage extends React.Component {
                     <FieldText
                         formik={formik}
                         onChange={(event) => this.onChangePictureField(event, index, 'source')}
+                        onClear={() => this.onClearPictureField(index, 'source')}
                         clearable
                         id={`pictures.${UI.editorLanguage}.${index}.source`}
                         label={'Picture source link'}
@@ -497,6 +496,7 @@ class AccommodationPage extends React.Component {
                     <FieldText
                         formik={formik}
                         onChange={(event) => this.onChangePictureField(event, index, 'caption')}
+                        onClear={() => this.onClearPictureField(index, 'caption')}
                         clearable
                         id={`pictures.${UI.editorLanguage}.${index}.caption`}
                         label={'Picture caption'}
