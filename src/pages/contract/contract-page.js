@@ -230,7 +230,7 @@ class ContractPage extends React.Component {
                                 {id ? `Edit contract #${id}` : t('Create new contract')}
                             </span>
                         </h2>
-                        {!accommodationsList.length ?
+                        {!accommodationsList?.length ?
                             t('No accommodations found') :
                             <CachedForm
                                 initialValues={contract}
