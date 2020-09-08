@@ -13,7 +13,7 @@ const PAGE_SIZE = 10;
 
 @observer
 class AccommodationsList extends React.Component {
-    @observable accommodationsList = null;
+    @observable accommodationsList;
     @observable tablePageIndex = 0;
     @observable tableColumns;
 
@@ -58,7 +58,7 @@ class AccommodationsList extends React.Component {
     }
 
     renderContent = () => {
-        if (this.accommodationsList === null) {
+        if (this.accommodationsList === undefined) {
             return <Loader />;
         }
         const tableData = this.accommodationsList.slice(

@@ -10,9 +10,11 @@ import {
 } from 'matsumoto/src/components/form';
 import { Loader, Stars } from 'matsumoto/src/simple';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
+import Gallery from 'matsumoto/src/components/gallery';
 import UI from 'stores/shuri-ui-store';
 import LocationsStore from 'stores/shuri-locations-store';
 import DialogModal from 'parts/dialog-modal';
+import FieldTime from 'components/form/field-time';
 import {
     createAccommodation,
     getAccommodation,
@@ -21,6 +23,21 @@ import {
 } from 'providers/api';
 import AgeRanges from './parts/age-ranges';
 import { agesReformat } from './parts/utils';
+import { parseBackendErrors } from 'utils/error-utils';
+
+const CHECKOUT_TIME_OPTIONS = [
+    { value: '10:00', text: '10:00' },
+    { value: '11:00', text: '11:00' },
+    { value: '12:00', text: '12:00' },
+    { value: '13:00', text: '13:00' },
+    { value: '14:00', text: '14:00' }
+]
+
+const CHECKIN_TIME_OPTIONS = [
+    { value: '14:00', text: '14:00' },
+    { value: '15:00', text: '15:00' },
+    { value: '16:00', text: '16:00' }
+]
 
 @observer
 class AccommodationPage extends React.Component {
@@ -31,10 +48,24 @@ class AccommodationPage extends React.Component {
         isRemoveModalShown: false,
         isRequestingApi: false
     };
+    formik;
 
     componentDidMount() {
+        LocationsStore.loadLocations();
+
         if (!this.state.id) {
-            this.setState({ accommodation: {} });
+            this.setState({
+                accommodation: {
+                    pictures: {
+                        [UI.editorLanguage]: [
+                            {
+                                source: '',
+                                caption: ''
+                            }
+                        ]
+                    }
+                }
+            });
             return;
         }
 
@@ -80,6 +111,17 @@ class AccommodationPage extends React.Component {
         this.setState({ isRequestingApi: false });
     }
 
+    setPictures = (pictures) => {
+        this.setState({
+            accommodation: {
+                ...this.state.accommodation,
+                pictures: {
+                    [UI.editorLanguage]: pictures
+                }
+            }
+        });
+    }
+
     onOpenRemoveModal = () => {
         this.setState({
             isRemoveModalShown: true
@@ -107,7 +149,7 @@ class AccommodationPage extends React.Component {
         }
         this.setRequestingApiStatus();
         createAccommodation({ body: this.reformatValues(values) })
-            .then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+            .then(this.setRedirectUrl, this.accommodationActionFail);
     }
 
     onUpdateSubmit = (values) => {
@@ -120,7 +162,62 @@ class AccommodationPage extends React.Component {
                 id: this.state.id
             },
             body: this.reformatValues(values)
-        }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+        }).then(this.setRedirectUrl, this.accommodationActionFail);
+    }
+
+    accommodationActionFail = (errorData) => {
+        this.unsetRequestingApiStatus();
+        parseBackendErrors(errorData).forEach((error) => {
+            this.formik.setFieldError(error.path, error.message);
+        })
+        this.forceUpdate();
+    }
+
+    onAddPictureClick = () => {
+        this.setPictures([
+            ...this.state.accommodation.pictures[UI.editorLanguage],
+            { source: '', caption: '' }
+        ]);
+    }
+
+    onRemovePictureClick = (index) => {
+        this.setPictures(
+            this.state.accommodation.pictures[UI.editorLanguage].filter((picture, order) => order !== index)
+        );
+    }
+
+    onChangePictureField = (event, index, field) => {
+        const pictures = this.state.accommodation.pictures[UI.editorLanguage];
+        pictures[index][field] = event.target.value;
+        this.setPictures(pictures);
+    }
+
+    onClearPictureField = (index, field) => {
+        const pictures = this.state.accommodation.pictures[UI.editorLanguage];
+        pictures[index][field] = '';
+        this.setPictures(pictures);
+    }
+
+    renderBreadcrumbs = () => {
+        const { t } = this.props;
+        const { id } = this.state;
+        const text = id ?
+            this.state.accommodation.name[UI.editorLanguage] || `Accommodation #${id}`:
+            t('Create accommodation');
+
+        return (
+            <Breadcrumbs
+                backLink={'/'}
+                items={[
+                    {
+                        text: t('Accommodations'),
+                        link: '/'
+                    }, {
+                        text
+                    }
+                ]}
+            />
+        );
     }
 
     renderBreadcrumbs = () => {
@@ -148,12 +245,14 @@ class AccommodationPage extends React.Component {
     renderForm = (formik) => {
         const { t } = this.props;
         const { id } = this.state;
+        this.formik = formik;
         return (
             <div className="form app-settings">
                 { /* TODO: pictures */ }
                 { /* TODO: amenities */ }
                 <div className="row">
-                    <FieldText formik={formik}
+                    <FieldText
+                        formik={formik}
                         clearable
                         id={`name.${UI.editorLanguage}`}
                         label={'Accommodation Name'}
@@ -162,7 +261,8 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldText formik={formik}
+                    <FieldText
+                        formik={formik}
                         clearable
                         id={`address.${UI.editorLanguage}`}
                         label={'Accommodation Address'}
@@ -171,13 +271,15 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldText formik={formik}
+                    <FieldText
+                        formik={formik}
                         clearable
                         id="coordinates.latitude"
                         label={'Latitude'}
                         placeholder={'Latitude'}
                     />
-                    <FieldText formik={formik}
+                    <FieldText
+                        formik={formik}
                         clearable
                         id="coordinates.longitude"
                         label={'Longitude'}
@@ -185,7 +287,8 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldText formik={formik}
+                    <FieldText
+                        formik={formik}
                         clearable
                         id={`description.${UI.editorLanguage}.description`}
                         label={'Accommodation Description'}
@@ -202,34 +305,35 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldSelect formik={formik}
-                         id="rating"
-                         label={t('Star Rating')}
-                         options={[
-                             { value: 'notRated', text: 'Unrated' },
-                             { value: 'oneStar', text: <span>{t('Economy')}  <Stars count="1" /></span> },
-                             { value: 'twoStars', text: <span>{t('Budget')}   <Stars count="2" /></span> },
-                             { value: 'threeStars', text: <span>{t('Standard')} <Stars count="3" /></span> },
-                             { value: 'fourStars', text: <span>{t('Superior')} <Stars count="4" /></span> },
-                             { value: 'fiveStars', text: <span>{t('Luxury')}   <Stars count="5" /></span> }
-                         ]}
+                    <FieldSelect
+                        formik={formik}
+                        id="rating"
+                        label={t('Star Rating')}
+                        options={[
+                            { value: 'notRated', text: 'Unrated' },
+                            { value: 'oneStar', text: <span>{t('Economy')}  <Stars count="1" /></span> },
+                            { value: 'twoStars', text: <span>{t('Budget')}   <Stars count="2" /></span> },
+                            { value: 'threeStars', text: <span>{t('Standard')} <Stars count="3" /></span> },
+                            { value: 'fourStars', text: <span>{t('Superior')} <Stars count="4" /></span> },
+                            { value: 'fiveStars', text: <span>{t('Luxury')}   <Stars count="5" /></span> }
+                        ]}
                     />
                 </div>
                 <div className="row">
-                    <FieldText
+                    <FieldTime
                         formik={formik}
-                        clearable
                         id="checkInTime"
                         label={'Check In Time'}
                         placeholder={'16:00'}
+                        options={CHECKIN_TIME_OPTIONS}
                         required
                     />
-                    <FieldText
+                    <FieldTime
                         formik={formik}
-                        clearable
                         id="checkOutTime"
                         label={'Check Out Time'}
                         placeholder={'11:00'}
+                        options={CHECKOUT_TIME_OPTIONS}
                         required
                     />
                 </div>
@@ -256,7 +360,6 @@ class AccommodationPage extends React.Component {
                         id="contactInfo.website"
                         label={'Website'}
                         placeholder={'Enter Website'}
-                        required
                     />
                 </div>
                 <div className="row">
@@ -294,27 +397,16 @@ class AccommodationPage extends React.Component {
 
                 <AgeRanges formik={formik} />
 
-                <h3>Pictures</h3>
-                <div className="row">
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id={`pictures.${UI.editorLanguage}.0.source`}
-                        label={'Picture source link'}
-                        placeholder={'https://domain/image.jpg'}
-                        required
-                    />
+                <div className="row align-items-center justify-content-space-between">
+                    <h3>{t('Pictures for accommodation')}</h3>
+                    <button className="button small" type="button" onClick={this.onAddPictureClick}>
+                        {t('Add new picture')}
+                    </button>
                 </div>
-                <div className="row">
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id={`pictures.${UI.editorLanguage}.0.caption`}
-                        label={'Picture caption'}
-                        placeholder={'Enter picture text description'}
-                        required
-                    />
-                </div>
+                {this.renderPictureRows(formik)}
+                <Gallery
+                    pictures={this.state.accommodation.pictures[UI.editorLanguage].filter((picture) => picture.source)}
+                />
 
                 <div className="row controls">
                     <div className="field">
@@ -339,6 +431,42 @@ class AccommodationPage extends React.Component {
                     }
                 </div>
             </div>
+        );
+    }
+
+    renderPictureRows = (formik) => {
+        const pictures = this.state.accommodation.pictures[UI.editorLanguage];
+        return (
+            pictures.map((_picture, index) => (
+                <div className="row position-relative" key={index}>
+                    {pictures.length > 1 ?
+                        <span
+                            className="icon icon-action-cancel remove-picture-icon"
+                            onClick={() => this.onRemovePictureClick(index)}
+                        /> :
+                        null}
+                    <FieldText
+                        formik={formik}
+                        onChange={(event) => this.onChangePictureField(event, index, 'source')}
+                        onClear={() => this.onClearPictureField(index, 'source')}
+                        clearable
+                        id={`pictures.${UI.editorLanguage}.${index}.source`}
+                        label={'Picture source link'}
+                        placeholder={'https://domain/image.jpg'}
+                        required={index === 0}
+                    />
+                    <FieldText
+                        formik={formik}
+                        onChange={(event) => this.onChangePictureField(event, index, 'caption')}
+                        onClear={() => this.onClearPictureField(index, 'caption')}
+                        clearable
+                        id={`pictures.${UI.editorLanguage}.${index}.caption`}
+                        label={'Picture caption'}
+                        placeholder={'Enter picture text description'}
+                        required={index === 0}
+                    />
+                </div>
+            ))
         );
     }
 

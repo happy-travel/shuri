@@ -7,7 +7,6 @@ import propTypes from 'prop-types';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import Table from 'matsumoto/src/components/external/table';
 import { Loader } from 'matsumoto/src/simple';
-import UI from 'stores/shuri-ui-store';
 import {
     getSeasons,
     createSeason,
@@ -63,7 +62,7 @@ class SeasonsList extends React.Component {
     @action
     loadSeasons = () => {
         this.seasonsList = undefined;
-        getSeasons({
+        return getSeasons({
             urlParams: {
                 id: this.contractId
             }
@@ -122,7 +121,9 @@ class SeasonsList extends React.Component {
 
     createSeasonSuccess = () => {
         this.onCloseCreateModal();
-        this.loadSeasons();
+        this.loadSeasons().then(() => {
+            this.onPaginationClick({ pageIndex: Math.floor(this.seasonsList.length / PAGE_SIZE) });
+        });
     }
 
     createSeasonFinally = () => {
@@ -142,7 +143,7 @@ class SeasonsList extends React.Component {
 
     removeSeasonSuccess = () => {
         this.unsetRemovingSeason();
-        this.loadSeasons();
+        this.loadSeasons()
     }
 
     removeSeasonFinally = () => {
@@ -151,7 +152,7 @@ class SeasonsList extends React.Component {
     }
 
     renderIdColumn = (item) => {
-        const season = this.seasonsList[item.row.id];
+        const season = this.seasonsList.find((season) => season.id === item.row.original.id);
         return (
             <div
                 className="seasons-table-row"
@@ -174,7 +175,7 @@ class SeasonsList extends React.Component {
                         link: '/contracts'
                     },
                     {
-                        text: this.contract.name[UI.editorLanguage] || `Contract #${this.contractId}`,
+                        text: this.contract.name || `Contract #${this.contractId}`,
                         link: `/contract/${this.contractId}`
                     },
                     {

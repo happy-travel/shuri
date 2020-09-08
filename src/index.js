@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { initApplication } from 'core/init';
+import { initApplication } from 'matsumoto/src/core/init';
 import App from 'core/app';
 
 window.setPageDirectionFromLS = () => {

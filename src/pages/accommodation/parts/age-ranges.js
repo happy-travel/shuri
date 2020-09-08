@@ -56,7 +56,6 @@ class AgeRanges extends React.Component {
         return (
             <div className="age-ranges">
                 <h3>{t('Age groups presented')}</h3>
-                {JSON.stringify(formik.values?.occupancyDefinition)}
 
                 <FieldCheckbox
                     formik={formik}

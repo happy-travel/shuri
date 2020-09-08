@@ -18,16 +18,18 @@ import {
     removeContract,
     getAccommodations
 } from 'providers/api';
+import { parseBackendErrors } from 'utils/error-utils';
 
 class ContractPage extends React.Component {
     state = {
         contract: undefined,
-        accommodationsList: null,
+        accommodationsList: undefined,
         id: this.props.match.params.id,
         redirectUrl: undefined,
         isRequestingApi: false,
         isRemoveModalShown: false
     };
+    formik;
 
     componentDidMount() {
         const { id } = this.state;
@@ -80,7 +82,7 @@ class ContractPage extends React.Component {
         }
         this.setRequestingApiStatus();
         createContract({ body: values })
-            .then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+            .then(this.setRedirectUrl, this.contractActionFail);
     }
 
     onUpdateSubmit = (values) => {
@@ -93,7 +95,15 @@ class ContractPage extends React.Component {
                 id: this.state.id
             },
             body: values
-        }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+        }).then(this.setRedirectUrl, this.contractActionFail);
+    }
+
+    contractActionFail = (errorData) => {
+        this.unsetRequestingApiStatus();
+        parseBackendErrors(errorData).forEach((error) => {
+            this.formik.setFieldError(error.path, error.message);
+        })
+        this.forceUpdate();
     }
 
     onContractRemove = () => {
@@ -109,7 +119,7 @@ class ContractPage extends React.Component {
         const { t } = this.props;
         const { id } = this.state;
         const text = id ?
-            this.state.contract.name[UI.editorLanguage] || `Contract #${id}`:
+            this.state.contract.name || `Contract #${id}`:
             t('Create contract');
 
         return (
@@ -130,6 +140,7 @@ class ContractPage extends React.Component {
     renderForm = (formik) => {
         const { t } = this.props;
         const { id } = this.state;
+        this.formik = formik;
         return (
             <div className="form app-settings">
                 <div className="row">
@@ -139,6 +150,7 @@ class ContractPage extends React.Component {
                         id="name"
                         label="Name"
                         placeholder={t('Enter name')}
+                        required
                     />
                     <FieldDatepicker
                         formik={formik}
@@ -170,6 +182,7 @@ class ContractPage extends React.Component {
                         id="description"
                         label="Description"
                         placeholder="Enter contract description"
+                        required
                     />
                 </div>
                 <div className="row controls">
