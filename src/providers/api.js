@@ -145,6 +145,20 @@ function getAccommodationLocations() {
     })
 }
 
+function getSeasonRanges({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/contracts/${urlParams.id}/seasons/ranges`
+    })
+}
+
+function updateSeasonRanges({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/contracts/${urlParams.id}/seasons/ranges`,
+        method: 'POST',
+        body
+    })
+}
+
 export {
     getAccommodations,
     createAccommodation,
@@ -165,5 +179,7 @@ export {
     getSeasons,
     createSeason,
     removeSeason,
-    getAccommodationLocations
+    getAccommodationLocations,
+    getSeasonRanges,
+    updateSeasonRanges
 };
