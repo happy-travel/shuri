@@ -6,6 +6,9 @@ import propTypes from 'prop-types';
 import { FieldCheckbox } from 'matsumoto/src/components/form';
 import FieldMultiRange from 'components/field-multi-range';
 
+const MIN_AGE = 0;
+const MAX_AGE = 25;
+
 const range = (group, alwaysVisible) => {
     if (group?.enabled || alwaysVisible) {
         return ': ' + (group.lowerBound || 0) + '+';
@@ -84,8 +87,8 @@ class AgeRanges extends React.Component {
 
                 <FieldMultiRange
                     formik={formik}
-                    min={0}
-                    max={25}
+                    min={MIN_AGE}
+                    max={MAX_AGE}
                     ids={filterSelectedOnly([
                         'occupancyDefinition.infant.lowerBound',
                         'occupancyDefinition.child.lowerBound',
@@ -103,7 +106,7 @@ class AgeRanges extends React.Component {
                     ]}
                 />
                 <div className="line">
-                    {new Array(25+1).fill(null).map((x, i) => (
+                    {new Array(MAX_AGE+1).fill(null).map((x, i) => (
                         <div key={i}>
                             {i}
                         </div>

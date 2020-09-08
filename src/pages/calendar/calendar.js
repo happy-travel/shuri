@@ -12,7 +12,7 @@ import {
     convertRangesToForm,
     convertFormToRanges,
     formatSeasons
-} from './converter';
+} from './utils/converter';
 import {
     getContract,
     getSeasonRanges,

@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import FieldSelect from 'matsumoto/src/components/form/field-select';
 import propTypes from 'prop-types';
 
-const dayOfWeekNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAY_OF_WEEK_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
                     'July', 'August', 'September', 'October', 'November', 'December'];
 const daysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -18,10 +18,7 @@ class CalendarForm extends React.Component {
     contractId = 0;
 
     renderDay = (firstDay, plusDay) => {
-        const {
-            formik,
-            seasons
-        } = this.props;
+        const { formik, seasons } = this.props;
         const day = new Date(firstDay);
         day.setDate(day.getDate() + plusDay - firstDay.getDay());
 
@@ -77,9 +74,9 @@ class CalendarForm extends React.Component {
                 </h2>
                 <table>
                     <tr>
-                        {dayOfWeekNames
+                        {DAY_OF_WEEK_NAMES
                             .map((day, index) => (<th key={index}>
-                                {dayOfWeekNames[(index + firstDayOfWeek) % 7]}
+                                {DAY_OF_WEEK_NAMES[(index + firstDayOfWeek) % 7]}
                             </th>))
                         }
                     </tr>
