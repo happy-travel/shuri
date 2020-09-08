@@ -6,10 +6,12 @@ import FieldSelect from 'matsumoto/src/components/form/field-select';
 import propTypes from 'prop-types';
 
 const DAY_OF_WEEK_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
                     'July', 'August', 'September', 'October', 'November', 'December'];
-const daysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+
+// temporary const, will be settable later
 const firstDayOfWeek = 1;
+const daysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
 @observer
 class CalendarForm extends React.Component {
@@ -69,7 +71,7 @@ class CalendarForm extends React.Component {
             <div className="month">
                 <h2>
                     <span className="brand">
-                        {monthNames[date.getMonth()]} {date.getFullYear()}
+                        {MONTH_NAMES[date.getMonth()]} {date.getFullYear()}
                     </span>
                 </h2>
                 <table>
