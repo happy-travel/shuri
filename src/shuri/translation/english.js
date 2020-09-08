@@ -47,7 +47,8 @@ const Translations = {
         'Actions': 'Actions',
         'No results': 'No results',
         'Create room': 'Create room',
-        'No accommodations found': 'No accommodations found'
+        'No accommodations found': 'No accommodations found',
+        'Age groups presented': 'Age groups presented'
     }
 };
 

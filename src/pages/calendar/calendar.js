@@ -53,9 +53,10 @@ class Calendar extends React.Component {
                 id: this.contractId
             },
             body: convertFormToRanges(values, this.contract)
-        }); /* .then((data) => {
-            // console.log(data);
-        }); */
+        }).then((data) => {
+            // eslint-disable-next-line no-console
+            console.log(data);
+        });
     }
 
     renderBreadcrumbs = () => {

@@ -237,7 +237,7 @@ class SeasonsList extends React.Component {
                         {this.renderBreadcrumbs()}
                         {this.renderHeader()}
                         {this.renderContent()}
-                        <div className="row seasons-calendar-link" style={{marginTop: "40px"}}>
+                        <div className="row seasons-calendar-link" style={{ marginTop: '40px' }}>
                             <Link to={`/contract/${this.contractId}/calendar`}>
                                 <button className="button wide">
                                     {t('Go to calendar')}

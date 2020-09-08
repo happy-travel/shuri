@@ -19,6 +19,8 @@ import {
     removeAccommodation,
     updateAccommodation
 } from 'providers/api';
+import AgeRanges from './parts/age-ranges';
+import { agesReformat } from './parts/utils';
 
 @observer
 class AccommodationPage extends React.Component {
@@ -60,27 +62,10 @@ class AccommodationPage extends React.Component {
     }
 
     reformatValues = (values) => {
-        if (!values.occupancyDefinition) {
-            values.occupancyDefinition = {};
-        }
-        const agesReformat = (k1, k2, def) => {
-            let value = parseInt(values.occupancyDefinition?.[k1]?.[k2]);
-            if (value !== 0) {
-                value = value || def;
-            }
-            if (!values.occupancyDefinition[k1]) {
-                values.occupancyDefinition[k1] = {};
-            }
-            values.occupancyDefinition[k1][k2] = value;
+        return {
+            ...values,
+            occupancyDefinition: agesReformat(values.occupancyDefinition)
         };
-        agesReformat('infant', 'lowerBound', 0);
-        agesReformat('infant', 'upperBound', 3);
-        agesReformat('child', 'lowerBound', 4);
-        agesReformat('child', 'upperBound', 11);
-        agesReformat('adult', 'lowerBound', 12);
-        agesReformat('adult', 'upperBound', 200);
-
-        return values;
     }
 
     setRedirectUrl = () => {
@@ -306,55 +291,10 @@ class AccommodationPage extends React.Component {
                         required
                     />
                 </div>
-                <div className="row">
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id="occupancyDefinition.infant.lowerBound"
-                        label="Occupancy Infant Age Lower Bound"
-                        placeholder="0"
-                    />
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id="occupancyDefinition.infant.upperBound"
-                        label="Occupancy Infant Age Upper Bound"
-                        placeholder="3"
-                    />
-                </div>
-                <div className="row">
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id="occupancyDefinition.child.lowerBound"
-                        label="Occupancy Child Age Lower Bound"
-                        placeholder="4"
-                    />
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id="occupancyDefinition.child.upperBound"
-                        label="Occupancy Child Age Upper Bound"
-                        placeholder="11"
-                    />
-                </div>
-                <div className="row">
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id="occupancyDefinition.adult.lowerBound"
-                        label="Occupancy Adult Age Lower Bound"
-                        placeholder="12"
-                    />
-                    <FieldText
-                        formik={formik}
-                        clearable
-                        id={'occupancyDefinition.adult.upperBound'}
-                        label={'Occupancy Adult Age Upper Bound'}
-                        placeholder={'200'}
-                    />
-                </div>
-                <h3>PICTURES</h3>
+
+                <AgeRanges formik={formik} />
+
+                <h3>Pictures</h3>
                 <div className="row">
                     <FieldText
                         formik={formik}

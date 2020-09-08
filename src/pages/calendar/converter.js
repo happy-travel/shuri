@@ -21,7 +21,7 @@ export const convertRangesToForm = (ranges, contract) => {
     return values;
 };
 
-const formatServerDate = date => moment(date).utc(true).format();
+const formatServerDate = (date) => moment(date).utc(true).format();
 
 export const convertFormToRanges = (values, contract) => {
     const result = [];
@@ -48,6 +48,6 @@ export const convertFormToRanges = (values, contract) => {
 
 export const formatSeasons = (seasonsList) => {
     const seasons = {};
-    seasonsList.forEach(season => seasons[season.id] = season.name);
+    seasonsList.forEach((season) => seasons[season.id] = season.name);
     return seasons;
 };
