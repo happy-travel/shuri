@@ -7,7 +7,6 @@ import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import { CachedForm } from 'matsumoto/src/components/form';
 import { Loader } from 'matsumoto/src/simple';
 import CalendarForm from 'components/calendar';
-import UI from 'stores/shuri-ui-store';
 import {
     convertRangesToForm,
     convertFormToRanges,
@@ -19,12 +18,14 @@ import {
     getSeasons,
     updateSeasonRanges
 } from 'providers/api';
+import { Redirect } from 'react-router-dom';
 
 @observer
 class Calendar extends React.Component {
     @observable contract;
     @observable seasons;
     @observable initialValues;
+    @observable redirectUrl;
     contractId = this.props.match.params.id;
 
     componentDidMount() {
@@ -53,10 +54,12 @@ class Calendar extends React.Component {
                 id: this.contractId
             },
             body: convertFormToRanges(values, this.contract)
-        }).then((data) => {
-            // eslint-disable-next-line no-console
-            console.log(data);
-        });
+        }).then(this.setRedirectUrl);
+    }
+
+    @action
+    setRedirectUrl = () => {
+        this.redirectUrl = `/contract/${this.contractId}`;
     }
 
     renderBreadcrumbs = () => {
@@ -70,7 +73,7 @@ class Calendar extends React.Component {
                         link: '/contracts'
                     },
                     {
-                        text: this.contract.name[UI.editorLanguage] || `Contract #${this.contractId}`,
+                        text: this.contract.name || `Contract #${this.contractId}`,
                         link: `/contract/${this.contractId}`
                     },
                     {
@@ -83,6 +86,10 @@ class Calendar extends React.Component {
 
     renderContent = () => {
         const { t } = this.props;
+
+        if (this.redirectUrl) {
+            return <Redirect push to={this.redirectUrl} />;
+        }
 
         return (<div className="calendar-table">
             <CachedForm
