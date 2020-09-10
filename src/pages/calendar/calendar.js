@@ -1,6 +1,7 @@
 import React from 'react';
 import { action, observable } from 'mobx';
 import { withTranslation } from 'react-i18next';
+import { Redirect } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
@@ -18,7 +19,6 @@ import {
     getSeasons,
     updateSeasonRanges
 } from 'providers/api';
-import { Redirect } from 'react-router-dom';
 
 @observer
 class Calendar extends React.Component {
