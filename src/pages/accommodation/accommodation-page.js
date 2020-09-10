@@ -56,6 +56,23 @@ class AccommodationPage extends React.Component {
         if (!this.state.id) {
             this.setState({
                 accommodation: {
+                    name: {
+                        [UI.editorLanguage]: ''
+                    },
+                    address: {
+                        [UI.editorLanguage]: ''
+                    },
+                    description: {
+                        [UI.editorLanguage]: {
+                            description: ''
+                        }
+                    },
+                    coordinates: {
+                        latitude: '',
+                        longitude: ''
+                    },
+                    checkInTime: '',
+                    checkOutTime: '',
                     pictures: {
                         [UI.editorLanguage]: [
                             {
@@ -63,7 +80,41 @@ class AccommodationPage extends React.Component {
                                 caption: ''
                             }
                         ]
-                    }
+                    },
+                    contactInfo: {
+                        email: '',
+                        phone: '',
+                        website: ''
+                    },
+                    propertyType: '',
+                    amenities: {
+                        [UI.editorLanguage]: ['']
+                    },
+                    additionalInfo: {
+                        [UI.editorLanguage]: ''
+                    },
+                    occupancyDefinition: {
+                        infant: {
+                            lowerBound: 0,
+                            upperBound: 3,
+                            enabled: true
+                        },
+                        child: {
+                            lowerBound: 4,
+                            upperBound: 11,
+                            enabled: true
+                        },
+                        teen: {
+                            lowerBound: 12,
+                            upperBound: 17,
+                            enabled: true
+                        },
+                        adult: {
+                            lowerBound: 18,
+                            enabled: true
+                        }
+                    },
+                    locationId: undefined
                 }
             });
             return;
@@ -167,8 +218,12 @@ class AccommodationPage extends React.Component {
 
     accommodationActionFail = (errorData) => {
         this.unsetRequestingApiStatus();
+        const fieldsWithErrors = new Set();
         parseBackendErrors(errorData).forEach((error) => {
-            this.formik.setFieldError(error.path, error.message);
+            if (!fieldsWithErrors.has(error.path)) {
+                this.formik.setFieldError(error.path, error.message);
+                fieldsWithErrors.add(error.path);
+            }
         })
         this.forceUpdate();
     }
@@ -196,28 +251,6 @@ class AccommodationPage extends React.Component {
         const pictures = this.state.accommodation.pictures[UI.editorLanguage];
         pictures[index][field] = '';
         this.setPictures(pictures);
-    }
-
-    renderBreadcrumbs = () => {
-        const { t } = this.props;
-        const { id } = this.state;
-        const text = id ?
-            this.state.accommodation.name[UI.editorLanguage] || `Accommodation #${id}`:
-            t('Create accommodation');
-
-        return (
-            <Breadcrumbs
-                backLink={'/'}
-                items={[
-                    {
-                        text: t('Accommodations'),
-                        link: '/'
-                    }, {
-                        text
-                    }
-                ]}
-            />
-        );
     }
 
     renderBreadcrumbs = () => {
