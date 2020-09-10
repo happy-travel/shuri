@@ -118,7 +118,7 @@ class AgeRanges extends React.Component {
 }
 
 AgeRanges.propTypes = {
-    t: propTypes.object,
+    t: propTypes.func,
     formik: propTypes.object
 };
 
