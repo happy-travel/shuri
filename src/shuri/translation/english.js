@@ -51,15 +51,13 @@ const Translations = {
         'Pictures for accommodation': 'Pictures of accommodation',
         'Add new picture': 'Add new picture',
         'Age groups presented': 'Age groups presented',
-        'Create New Room': 'Create New Room',
-        'Edit Accommodation Room': 'Edit Accommodation Room',
-        'Accommodation Rooms': 'Accommodation Rooms',
-        'Create Accommodation': 'Create Accommodation',
+        'Room Creation': 'Room Creation',
+        'Edit Room': 'Edit Room',
+        'Accommodation Creation': 'Accommodation Creation',
         'Edit Accommodation': 'Edit Accommodation',
-        'Create Contract': 'Create Contract',
+        'Contract Creation': 'Contract Creation',
         'Edit Contract': 'Edit Contract',
-        'Edit Contracts Seasons': 'Edit Contracts Seasons',
-        'Edit Contracts Calendar': 'Edit Contracts Calendar',
+        'Season Calendar': 'Season Calendar',
         'Page Not Found': 'Page Not Found'
     }
 };

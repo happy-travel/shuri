@@ -2,7 +2,7 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { Switch } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
-import Route from 'core/route';
+import Route from 'matsumoto/src/core/misc/route';
 import ErrorPage from 'matsumoto/src/pages/common/error';
 import AccommodationsList from 'pages/accommodation/accommodations-list';
 import AccommodationPage from 'pages/accommodation/accommodation-page';
@@ -26,23 +26,23 @@ const Routes = (props) => {
             <Route
                 exact
                 path="/accommodation/:accommodationId/room"
-                title={t('Create New Room')}
+                title={t('Room Creation')}
                 component={RoomPage}
             />
             <Route
                 path="/accommodation/:accommodationId/room/:id"
-                title={t('Edit Accommodation Room')}
+                title={t('Edit Room')}
                 component={RoomPage}
             />
             <Route
                 path="/accommodation/:accommodationId/rooms"
-                title={t('Accommodation Rooms')}
+                title={t('Rooms')}
                 component={RoomsList}
             />
             <Route
                 exact
                 path="/accommodation"
-                title={t('Create Accommodation')}
+                title={t('Accommodation Creation')}
                 component={AccommodationPage}
             />
             <Route
@@ -58,7 +58,7 @@ const Routes = (props) => {
             <Route
                 exact
                 path="/contract"
-                title={t('Create Contract')}
+                title={t('Contract Creation')}
                 component={ContractPage}
             />
             <Route
@@ -69,12 +69,12 @@ const Routes = (props) => {
             />
             <Route
                 path="/contract/:id/seasons"
-                title={t('Edit Contracts Seasons')}
+                title={t('Seasons')}
                 component={SeasonsList}
             />
             <Route
                 path="/contract/:id/calendar"
-                title={t('Edit Contracts Calendar')}
+                title={t('Season Calendar')}
                 component={Calendar}
             />
             <Route
