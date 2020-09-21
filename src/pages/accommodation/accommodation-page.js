@@ -165,7 +165,7 @@ class AccommodationPage extends React.Component {
     setPictures = (pictures) => {
         this.setState({
             accommodation: {
-                ...this.state.accommodation,
+                ...this.formik.values,
                 pictures: {
                     [UI.editorLanguage]: pictures
                 }
