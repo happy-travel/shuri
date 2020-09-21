@@ -75,7 +75,8 @@ class SeasonsRates extends React.Component {
             },
             {
                 Header: t('Room type'),
-                accessor: 'roomType'
+                accessor: 'roomType',
+                Cell: (item) => t(item.cell.value)
             },
             {
                 Header: '',

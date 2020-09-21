@@ -78,11 +78,20 @@ const Translations = {
         'halfBoard': 'Half board',
         'fullBoard': 'Full board',
         'allInclusive': 'All inclusive',
+        'single': 'Single',
+        'twinOrSingle': 'Twin or single',
+        'twin': 'Twin',
+        'double': 'Double',
+        'triple': 'Triple',
+        'quadruple': 'Quadruple',
+        'family': 'Family',
         'Board Basis': 'Board Basis',
         'Enter rate price': 'Enter rate price',
         'Meal Plan': 'Meal Plan',
         'Describe meal plan': 'Describe meal plan',
-        'Go to rates': 'Go to rates'
+        'Go to rates': 'Go to rates',
+        'Rates': 'Rates',
+        'Enter details on this rate': 'Enter details on this rate'
     }
 };
 
