@@ -5,11 +5,11 @@ import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
 import { Loader } from 'matsumoto/src/simple';
 import Table from 'matsumoto/src/components/external/table';
+import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import UI from 'stores/shuri-ui-store';
+import RateCreateModal from 'pages/seasons-rates/rate-create-modal';
 import { getRates, getSeasons, removeRate, createRate, getContractAccommodations, getContract } from 'providers/api';
 import DialogModal from 'parts/dialog-modal';
-import RateCreateModal from 'pages/seasons-rates/rate-create-modal';
-import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 
 @observer
 class SeasonsRates extends React.Component {
