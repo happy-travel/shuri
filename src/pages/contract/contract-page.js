@@ -239,6 +239,16 @@ class ContractPage extends React.Component {
                                 </div> :
                                 null
                             }
+                            {id ?
+                                <div className="add-new-button-holder rates-link">
+                                    <Link to={`/contract/${id}/rates`}>
+                                        <button className="button small">
+                                            {t('Go to rates')}
+                                        </button>
+                                    </Link>
+                                </div> :
+                                null
+                            }
                             <span className="brand">
                                 {id ? `Edit contract #${id}` : t('Create new contract')}
                             </span>

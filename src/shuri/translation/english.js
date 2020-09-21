@@ -58,7 +58,31 @@ const Translations = {
         'Contract Creation': 'Contract Creation',
         'Edit Contract': 'Edit Contract',
         'Season Calendar': 'Season Calendar',
-        'Page Not Found': 'Page Not Found'
+        'Page Not Found': 'Page Not Found',
+        'Seasons Rates': 'Seasons Rates',
+        'Add rate': 'Add rate',
+        'No rates': 'No rates',
+        'Price': 'Price',
+        'Board basis plan': 'Board basis plan',
+        'Details': 'Details',
+        'Room type': 'Room type',
+        'Are you sure you want to proceed and remove season rate?':
+            'Are you sure you want to proceed and remove season rate?',
+        'Removing rate': 'Removing rate',
+        'Season rate creation': 'Season rate creation',
+        'Season': 'Season',
+        'notSpecified': 'Not specified',
+        'roomOnly': 'Room only',
+        'selfCatering': 'Self catering',
+        'bedAndBreakfast': 'Bed and breakfast',
+        'halfBoard': 'Half board',
+        'fullBoard': 'Full board',
+        'allInclusive': 'All inclusive',
+        'Board Basis': 'Board Basis',
+        'Enter rate price': 'Enter rate price',
+        'Meal Plan': 'Meal Plan',
+        'Describe meal plan': 'Describe meal plan',
+        'Go to rates': 'Go to rates'
     }
 };
 
