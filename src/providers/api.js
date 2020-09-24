@@ -120,13 +120,13 @@ function removeAccommodationRoom({ urlParams }) {
 
 function getSeasons({ urlParams }) {
     return apiPromise({
-        url: `${API_BASE_PATH}/management/contracts/${urlParams.id}/seasons`
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/seasons`
     })
 }
 
 function createSeason({ urlParams, body }) {
     return apiPromise({
-        url: `${API_BASE_PATH}/management/contracts/${urlParams.id}/seasons`,
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/seasons`,
         method: 'POST',
         body
     })
@@ -134,7 +134,7 @@ function createSeason({ urlParams, body }) {
 
 function removeSeason({ urlParams }) {
     return apiPromise({
-        url: `${API_BASE_PATH}/management/contracts/${urlParams.contractId}/seasons/${urlParams.id}`,
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.contractId}/seasons/${urlParams.id}`,
         method: 'DELETE'
     })
 }
@@ -147,14 +147,42 @@ function getAccommodationLocations() {
 
 function getSeasonRanges({ urlParams }) {
     return apiPromise({
-        url: `${API_BASE_PATH}/management/contracts/${urlParams.id}/seasons/ranges`
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/seasons/ranges`
     })
 }
 
 function updateSeasonRanges({ urlParams, body }) {
     return apiPromise({
-        url: `${API_BASE_PATH}/management/contracts/${urlParams.id}/seasons/ranges`,
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/seasons/ranges`,
         method: 'POST',
+        body
+    })
+}
+
+function getContractAccommodations({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/accommodations`
+    });
+}
+
+function getRates({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/rates`
+    })
+}
+
+function createRate({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/rates`,
+        method: 'POST',
+        body
+    })
+}
+
+function removeRate({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/rates`,
+        method: 'DELETE',
         body
     })
 }
@@ -181,5 +209,9 @@ export {
     removeSeason,
     getAccommodationLocations,
     getSeasonRanges,
-    updateSeasonRanges
+    updateSeasonRanges,
+    getContractAccommodations,
+    getRates,
+    createRate,
+    removeRate
 };

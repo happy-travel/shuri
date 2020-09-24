@@ -120,7 +120,6 @@ class SeasonsList extends React.Component {
     }
 
     createSeasonSuccess = () => {
-        this.onCloseCreateModal();
         this.loadSeasons().then(() => {
             this.onPaginationClick({ pageIndex: Math.floor(this.seasonsList.length / PAGE_SIZE) });
         });
@@ -138,12 +137,7 @@ class SeasonsList extends React.Component {
                 contractId: this.contractId,
                 id: this.removingSeason.id
             }
-        }).then(this.removeSeasonSuccess).finally(this.removeSeasonFinally);
-    }
-
-    removeSeasonSuccess = () => {
-        this.unsetRemovingSeason();
-        this.loadSeasons()
+        }).then(this.loadSeasons).finally(this.removeSeasonFinally);
     }
 
     removeSeasonFinally = () => {
@@ -154,12 +148,12 @@ class SeasonsList extends React.Component {
     renderIdColumn = (item) => {
         const season = this.seasonsList.find((season) => season.id === item.row.original.id);
         return (
-            <div
-                className="seasons-table-row"
-                onClick={() => this.setRemovingSeason(season)}
-            >
+            <div className="seasons-table-row">
                 <span>{season.name}</span>
-                <span className="icon icon-action-cancel seasons-remove-icon" />
+                <span
+                    onClick={() => this.setRemovingSeason(season)}
+                    className="icon icon-action-cancel seasons-remove-icon"
+                />
             </div>
         );
     }
