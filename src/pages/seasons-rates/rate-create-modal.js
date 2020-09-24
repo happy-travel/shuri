@@ -4,6 +4,18 @@ import propTypes from 'prop-types';
 import { CachedForm, FieldSelect, FieldText, FieldTextarea } from 'matsumoto/src/components/form';
 import UI from 'stores/shuri-ui-store';
 import Modal from 'parts/modal';
+import { getSelectOptions } from 'utils/ui-utils';
+
+const BOARD_BASIS_OPTIONS = [
+    'notSpecified',
+    'roomOnly',
+    'selfCatering',
+    'bedAndBreakfast',
+    'halfBoard',
+    'fullBoard',
+    'allInclusive'
+];
+const ROOM_TYPE_OPTIONS = ['notSpecified', 'single', 'twinOrSingle', 'twin', 'double', 'triple', 'quadruple', 'family'];
 
 class RateCreateModal extends React.Component {
     boardBasisOptions;
@@ -15,70 +27,8 @@ class RateCreateModal extends React.Component {
     constructor(props) {
         super(props);
         const { t } = props;
-        this.boardBasisOptions = [
-            {
-                value: 'notSpecified',
-                text: t('notSpecified')
-            },
-            {
-                value: 'roomOnly',
-                text: t('roomOnly')
-            },
-            {
-                value: 'selfCatering',
-                text: t('selfCatering')
-            },
-            {
-                value: 'bedAndBreakfast',
-                text: t('bedAndBreakfast')
-            },
-            {
-                value: 'halfBoard',
-                text: t('halfBoard')
-            },
-            {
-                value: 'fullBoard',
-                text: t('fullBoard')
-            },
-            {
-                value: 'allInclusive',
-                text: t('allInclusive')
-            }
-        ];
-        this.roomTypeOptions = [
-            {
-                value: 'notSpecified',
-                text: t('notSpecified')
-            },
-            {
-                value: 'single',
-                text: t('single')
-            },
-            {
-                value: 'twinOrSingle',
-                text: t('twinOrSingle')
-            },
-            {
-                value: 'twin',
-                text: t('twin')
-            },
-            {
-                value: 'double',
-                text: t('double')
-            },
-            {
-                value: 'triple',
-                text: t('triple')
-            },
-            {
-                value: 'quadruple',
-                text: t('quadruple')
-            },
-            {
-                value: 'family',
-                text: t('family')
-            }
-        ];
+        this.boardBasisOptions = getSelectOptions(BOARD_BASIS_OPTIONS, t);
+        this.roomTypeOptions = getSelectOptions(ROOM_TYPE_OPTIONS, t);
     }
 
     renderForm = (formik) => {
