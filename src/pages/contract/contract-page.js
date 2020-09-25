@@ -231,7 +231,7 @@ class ContractPage extends React.Component {
                         <h2>
                             {id ?
                                 <div className="add-new-button-holder">
-                                    <Link to={`/contract/${id}/seasons`}>
+                                    <Link to={`/contract/${id}/calendar`}>
                                         <button className="button small">
                                             {t('Go to seasons')}
                                         </button>

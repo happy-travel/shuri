@@ -16,13 +16,13 @@ const DialogModal = (props) => {
                 <div className="modal-actions">
                     <button
                         onClick={props.onYesClick}
-                        className="button small"
+                        className="button"
                     >
                         {t('Yes')}
                     </button>
                     <button
                         onClick={onNoClick}
-                        className="button small gray"
+                        className="button gray"
                     >
                         {t('No')}
                     </button>

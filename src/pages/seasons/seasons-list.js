@@ -1,45 +1,27 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
-import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
-import Table from 'matsumoto/src/components/external/table';
 import { Loader } from 'matsumoto/src/simple';
 import {
-    getSeasons,
     createSeason,
     removeSeason,
     getContract
 } from 'providers/api';
 import SeasonCreateModal from 'pages/seasons/season-create-modal';
 import DialogModal from 'parts/dialog-modal';
-
-const PAGE_SIZE = 10;
+import Modal from 'parts/modal';
+import SeasonsStore from 'stores/shuri-seasons-store';
 
 @observer
 class SeasonsList extends React.Component {
-    @observable seasonsList;
     @observable contract;
-    @observable tablePageIndex = 0;
     @observable isCreateModalShown = false;
+    @observable isListModalShown = false;
     @observable removingSeason;
     @observable isRequestingApi = false;
-    contractId = this.props.match.params.id;
-    tableColumns;
-
-    constructor(props) {
-        super(props);
-
-        this.tableColumns = [
-            {
-                Header: this.props.t('Name'),
-                accessor: 'name',
-                Cell: this.renderIdColumn
-            }
-        ];
-    }
+    contractId = this.props.contractId;
 
     componentDidMount() {
         const requestParams = {
@@ -48,30 +30,15 @@ class SeasonsList extends React.Component {
             }
         };
         Promise.all([
-            getContract(requestParams),
-            getSeasons(requestParams)
+            getContract(requestParams)
         ]).then(this.getDataSuccess);
+
+        SeasonsStore.loadSeasons(requestParams);
     }
 
     @action
-    getDataSuccess = ([contract, seasonsList]) => {
+    getDataSuccess = ([contract]) => {
         this.contract = contract;
-        this.seasonsList = seasonsList;
-    }
-
-    @action
-    loadSeasons = () => {
-        this.seasonsList = undefined;
-        return getSeasons({
-            urlParams: {
-                id: this.contractId
-            }
-        }).then(this.getSeasonsSuccess);
-    }
-
-    @action
-    getSeasonsSuccess = (list) => {
-        this.seasonsList = list;
     }
 
     @action
@@ -85,8 +52,18 @@ class SeasonsList extends React.Component {
     }
 
     @action
+    onOpenListModal = () => {
+        this.isListModalShown = true;
+    }
+
+    @action
     onOpenCreateModal = () => {
         this.isCreateModalShown = true;
+    }
+
+    @action
+    onCloseListModal = () => {
+        this.isListModalShown = false;
     }
 
     @action
@@ -104,11 +81,6 @@ class SeasonsList extends React.Component {
         this.removingSeason = undefined;
     }
 
-    @action
-    onPaginationClick = ({ pageIndex }) => {
-        this.tablePageIndex = pageIndex;
-    }
-
     onCreateClick = (values) => {
         this.setRequestingApiStatus();
         createSeason({
@@ -116,13 +88,16 @@ class SeasonsList extends React.Component {
                 id: this.contractId
             },
             body: [values.seasonName]
-        }).then(this.createSeasonSuccess).finally(this.createSeasonFinally);
+        }).then(this.loadSeasons).finally(this.createSeasonFinally);
     }
 
-    createSeasonSuccess = () => {
-        this.loadSeasons().then(() => {
-            this.onPaginationClick({ pageIndex: Math.floor(this.seasonsList.length / PAGE_SIZE) });
-        });
+    loadSeasons = () => {
+        const requestParams = {
+            urlParams: {
+                id: this.contractId
+            }
+        };
+        SeasonsStore.loadSeasons(requestParams)
     }
 
     createSeasonFinally = () => {
@@ -145,79 +120,32 @@ class SeasonsList extends React.Component {
         this.unsetRequestingApiStatus();
     }
 
-    renderIdColumn = (item) => {
-        const season = this.seasonsList.find((season) => season.id === item.row.original.id);
-        return (
-            <div className="seasons-table-row">
-                <span>{season.name}</span>
-                <span
-                    onClick={() => this.setRemovingSeason(season)}
-                    className="icon icon-action-cancel seasons-remove-icon"
-                />
-            </div>
-        );
-    }
-
-    renderBreadcrumbs = () => {
-        const { t } = this.props;
-        return (
-            <Breadcrumbs
-                backLink={`/contract/${this.contractId}`}
-                items={[
-                    {
-                        text: t('Contracts'),
-                        link: '/contracts'
-                    },
-                    {
-                        text: this.contract.name || `Contract #${this.contractId}`,
-                        link: `/contract/${this.contractId}`
-                    },
-                    {
-                        text: t('Seasons')
-                    }
-                ]}
-            />
-        );
-    }
-
-    renderHeader = () => {
-        return (
-            <h2>
-                <div className="add-new-button-holder">
-                    <button
-                        className="button small"
-                        onClick={this.onOpenCreateModal}
-                    >
-                        {this.props.t('Create season')}
-                    </button>
-                </div>
-                <span className="brand">
-                    {`Seasons for contract #${this.contractId}`}
-                </span>
-            </h2>
-        );
-    }
-
     renderContent = () => {
-        if (this.seasonsList === undefined) {
+        if (SeasonsStore.seasons === undefined) {
             return <Loader />;
         }
-        const tableData = this.seasonsList.slice(
-            PAGE_SIZE * this.tablePageIndex,
-            PAGE_SIZE * (this.tablePageIndex + 1)
-        );
 
-        return this.seasonsList.length ?
-            <Table
-                data={tableData}
-                count={this.seasonsList.length}
-                fetchData={this.onPaginationClick}
-                columns={this.tableColumns}
-                pageIndex={this.tablePageIndex}
-                pageSize={PAGE_SIZE}
-                manualPagination
-            /> :
-            this.props.t('No results');
+        return (
+            <div>
+                <div className="wrapper">
+                    {SeasonsStore.seasons.map((season, index) => (
+                        <div key={index}>
+                            <span>{season.name}</span>
+                            <span
+                                onClick={() => this.setRemovingSeason(season)}
+                                className="icon icon-action-cancel seasons-remove-icon"
+                            />
+                        </div>
+                    ))}
+                </div>
+                <button
+                    className="button"
+                    onClick={this.onOpenCreateModal}
+                >
+                    {this.props.t('Create season')}
+                </button>
+            </div>
+        );
     }
 
     render() {
@@ -226,21 +154,23 @@ class SeasonsList extends React.Component {
             return <Loader />;
         }
         return (
-            <>
-                <div className="settings block">
-                    <section>
-                        {this.renderBreadcrumbs()}
-                        {this.renderHeader()}
+            <div className="seasons-list">
+                <button
+                    className="enter-button button"
+                    onClick={this.onOpenListModal}
+                >
+                    {t('Seasons list')}
+                </button>
+                { this.isListModalShown &&
+                  !this.removingSeason &&
+                  !this.isCreateModalShown &&
+                    <Modal
+                        onCloseClick={this.onCloseListModal}
+                        title={t('Seasons list')}
+                    >
                         {this.renderContent()}
-                        <div className="row seasons-calendar-link" style={{ marginTop: '40px' }}>
-                            <Link to={`/contract/${this.contractId}/calendar`}>
-                                <button className="button wide">
-                                    {t('Go to calendar')}
-                                </button>
-                            </Link>
-                        </div>
-                    </section>
-                </div>
+                    </Modal>
+                }
                 {this.isCreateModalShown ?
                     <SeasonCreateModal
                         onCloseClick={this.onCloseCreateModal}
@@ -257,14 +187,14 @@ class SeasonsList extends React.Component {
                     /> :
                     null
                 }
-            </>
+            </div>
         );
     }
 }
 
 SeasonsList.propTypes = {
     t: propTypes.func,
-    match: propTypes.object
+    contractId: propTypes.string
 };
 
 export default withTranslation()(SeasonsList);

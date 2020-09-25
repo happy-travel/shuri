@@ -33,7 +33,6 @@ const Translations = {
         'Seasons': 'Seasons',
         'Calendar': 'Calendar',
         'Go to seasons': 'Go to seasons',
-        'Go to calendar': 'Go to Calendar',
         'Create season': 'Create season',
         'Season creation': 'Season creation',
         'Season Name': 'Season Name',
