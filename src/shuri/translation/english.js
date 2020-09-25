@@ -91,7 +91,9 @@ const Translations = {
         'Describe meal plan': 'Describe meal plan',
         'Go to rates': 'Go to rates',
         'Rates': 'Rates',
-        'Enter details on this rate': 'Enter details on this rate'
+        'Enter details on this rate': 'Enter details on this rate',
+        'Choose value for all selected days': 'Choose value for all selected days',
+        'Clear selection': 'Clear selection'
     }
 };
 

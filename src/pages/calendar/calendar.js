@@ -85,8 +85,6 @@ class Calendar extends React.Component {
     }
 
     renderContent = () => {
-        const { t } = this.props;
-
         if (this.redirectUrl) {
             return <Redirect push to={this.redirectUrl} />;
         }
@@ -100,20 +98,10 @@ class Calendar extends React.Component {
                         <div className="form">
                             <CalendarForm
                                 formik={formik}
-                                seasons={this.seasons}
+                                possibleValues={this.seasons}
                                 startDate={this.contract.validFrom}
                                 endDate={this.contract.validTo}
                             />
-                            <div className="field" style={{ marginTop: '30px' }}>
-                                <div className="inner">
-                                    <button
-                                        type="submit"
-                                        className="button"
-                                    >
-                                        {t('Save changes')}
-                                    </button>
-                                </div>
-                            </div>
                         </div>
                     );
                 }}
@@ -135,9 +123,6 @@ class Calendar extends React.Component {
                             {`Calendar — ${this.contract.name}`}
                         </span>
                     </h2>
-                    <h4>
-                        {this.contract.description}
-                    </h4>
                     {this.renderContent()}
                 </section>
             </div>
