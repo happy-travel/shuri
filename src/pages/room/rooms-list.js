@@ -3,10 +3,9 @@ import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
-import Table from 'matsumoto/src/components/external/table';
+import Table from 'matsumoto/src/components/table';
 import UI from 'stores/shuri-ui-store';
 import { Link, Redirect } from 'react-router-dom';
-import { Loader } from 'matsumoto/src/simple';
 import DialogModal from 'parts/dialog-modal';
 import propTypes from 'prop-types';
 import {
@@ -15,16 +14,12 @@ import {
     removeAccommodationRooms
 } from 'providers/api';
 
-const PAGE_SIZE = 10;
-
 @observer
 class RoomsList extends React.Component {
     @observable roomsList;
     @observable accommodation;
-    @observable tablePageIndex = 0;
-    @observable tableColumns;
+    @observable redirect;
     @observable isRemoveModalShown = false;
-    @observable redirectUrl;
     @observable isRequestingApi = false;
     @observable accommodationId = this.props.match.params.accommodationId;
 
@@ -34,22 +29,16 @@ class RoomsList extends React.Component {
 
         this.tableColumns = [
             {
-                Header: t('Room Id'),
-                accessor: 'id'
+                header: t('Id'),
+                cell: 'id'
             },
             {
-                Header: t('Name'),
-                accessor: 'name',
-                Cell: (item) => item.cell.value[UI.editorLanguage]
+                header: t('Name'),
+                cell: (item) => item.name[UI.editorLanguage]
             },
             {
-                Header: t('Actions'),
-                accessor: 'id',
-                Cell: (item) => (
-                    <Link to={`/accommodation/${this.accommodationId}/room/${item.cell.value}`}>
-                        <span className="icon icon-action-pen-orange"/>
-                    </Link>
-                )
+                header: t('Description'),
+                cell: (item) => item.description[UI.editorLanguage]
             }
         ];
     }
@@ -105,11 +94,6 @@ class RoomsList extends React.Component {
     }
 
     @action
-    onPaginationClick = ({ pageIndex }) => {
-        this.tablePageIndex = pageIndex;
-    }
-
-    @action
     onOpenRemoveModal = () => {
         this.isRemoveModalShown = true;
     }
@@ -129,7 +113,7 @@ class RoomsList extends React.Component {
                         text: t('Accommodations'),
                         link: '/'
                     }, {
-                        text: this.accommodation.name[UI.editorLanguage] || `Accommodation #${this.accommodationId}`,
+                        text: this.accommodation?.name[UI.editorLanguage] || `Accommodation #${this.accommodationId}`,
                         link: `/accommodation/${this.accommodationId}`
                     }, {
                         text: t('Rooms')
@@ -140,35 +124,25 @@ class RoomsList extends React.Component {
     }
 
     renderContent = () => {
-        const tableData = this.roomsList.slice(
-            PAGE_SIZE * this.tablePageIndex,
-            PAGE_SIZE * (this.tablePageIndex + 1)
-        );
-
-        return this.roomsList.length ?
+        return (
             <Table
-                data={tableData}
-                count={this.roomsList.length}
-                fetchData={this.onPaginationClick}
+                list={this.roomsList}
                 columns={this.tableColumns}
-                pageIndex={this.tablePageIndex}
-                pageSize={PAGE_SIZE}
-                manualPagination
-            /> :
-            this.props.t('No results');
+                textEmptyResult={'No accommodations found'}
+                textEmptyList={'No accommodations added'}
+                onRowClick={(item) =>
+                    this.redirect = `/accommodation/${this.accommodationId}/room/${item.id}`
+                }
+            />
+        );
     }
 
     render() {
+        if (this.redirect) {
+            return <Redirect push to={this.redirect}/>;
+        }
+
         const { t } = this.props;
-
-        if (this.roomsList === undefined) {
-            return <Loader />;
-        }
-
-        if (this.redirectUrl) {
-            return <Redirect push to={this.redirectUrl} />;
-        }
-
         return (
             <>
                 <div className="settings block">
