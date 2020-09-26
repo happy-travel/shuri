@@ -8,6 +8,7 @@ import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import { CachedForm } from 'matsumoto/src/components/form';
 import { Loader } from 'matsumoto/src/simple';
 import CalendarForm from 'components/calendar';
+import SeasonsList from '../seasons/seasons-list';
 import {
     convertRangesToForm,
     convertFormToRanges,
@@ -16,9 +17,9 @@ import {
 import {
     getContract,
     getSeasonRanges,
-    getSeasons,
     updateSeasonRanges
 } from 'providers/api';
+import SeasonsStore from 'stores/shuri-seasons-store';
 
 @observer
 class Calendar extends React.Component {
@@ -36,16 +37,16 @@ class Calendar extends React.Component {
         };
         Promise.all([
             getContract(requestParams),
-            getSeasons(requestParams),
             getSeasonRanges(requestParams)
         ]).then(this.getDataSuccess);
+
+        SeasonsStore.loadSeasons(requestParams);
     }
 
     @action
-    getDataSuccess = ([contract, seasonsList, ranges]) => {
+    getDataSuccess = ([contract, ranges]) => {
         this.contract = contract;
         this.initialValues = convertRangesToForm(ranges, contract);
-        this.seasons = formatSeasons(seasonsList);
     }
 
     onSubmit = (values) => {
@@ -66,7 +67,7 @@ class Calendar extends React.Component {
         const { t } = this.props;
         return (
             <Breadcrumbs
-                backLink={`/contract/${this.contractId}/seasons`}
+                backLink={`/contract/${this.contractId}`}
                 items={[
                     {
                         text: t('Contracts'),
@@ -85,13 +86,12 @@ class Calendar extends React.Component {
     }
 
     renderContent = () => {
-        const { t } = this.props;
-
         if (this.redirectUrl) {
             return <Redirect push to={this.redirectUrl} />;
         }
 
         return (<div className="calendar-table">
+            <div className="hide">{JSON.stringify(SeasonsStore.seasons)}</div>
             <CachedForm
                 initialValues={this.initialValues}
                 onSubmit={this.onSubmit}
@@ -100,20 +100,10 @@ class Calendar extends React.Component {
                         <div className="form">
                             <CalendarForm
                                 formik={formik}
-                                seasons={this.seasons}
+                                possibleValues={formatSeasons(SeasonsStore.seasons)}
                                 startDate={this.contract.validFrom}
                                 endDate={this.contract.validTo}
                             />
-                            <div className="field" style={{ marginTop: '30px' }}>
-                                <div className="inner">
-                                    <button
-                                        type="submit"
-                                        className="button"
-                                    >
-                                        {t('Save changes')}
-                                    </button>
-                                </div>
-                            </div>
                         </div>
                     );
                 }}
@@ -127,20 +117,22 @@ class Calendar extends React.Component {
             return <Loader />;
         }
         return (
-            <div className="settings block">
-                <section>
-                    {this.renderBreadcrumbs()}
-                    <h2>
-                        <span className="brand">
-                            {`Calendar — ${this.contract.name}`}
-                        </span>
-                    </h2>
-                    <h4>
-                        {this.contract.description}
-                    </h4>
-                    {this.renderContent()}
-                </section>
-            </div>
+            <>
+                <SeasonsList
+                    contractId={this.contractId}
+                />
+                <div className="settings block">
+                    <section>
+                        {this.renderBreadcrumbs()}
+                        <h2>
+                            <span className="brand">
+                                {`Calendar — ${this.contract.name}`}
+                            </span>
+                        </h2>
+                        {this.renderContent()}
+                    </section>
+                </div>
+            </>
         );
     }
 }
