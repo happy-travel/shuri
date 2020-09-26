@@ -3,18 +3,15 @@ import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import Table from 'matsumoto/src/components/external/table';
-import { dateFormat, Loader } from 'matsumoto/src/simple';
+import { Link, Redirect } from 'react-router-dom';
+import Table from 'matsumoto/src/components/table';
+import { dateFormat } from 'matsumoto/src/simple';
 import { getContracts } from 'providers/api';
-
-const PAGE_SIZE = 10;
 
 @observer
 class ContractsList extends React.Component {
-    @observable contractsList;
-    @observable tablePageIndex = 0;
-    tableColumns;
+    @observable contractsList = null;
+    @observable redirect;
 
     constructor(props) {
         super(props);
@@ -22,27 +19,20 @@ class ContractsList extends React.Component {
 
         this.tableColumns = [
             {
-                Header: t('Name'),
-                accessor: 'name'
+                header: t('Id'),
+                cell: 'id'
             },
             {
-                Header: t('Valid from'),
-                accessor: 'validFrom',
-                Cell: (item) => dateFormat.b(item.cell.value)
+                header: t('Name'),
+                cell: 'name'
             },
             {
-                Header: t('Valid to'),
-                accessor: 'validTo',
-                Cell: (item) => dateFormat.b(item.cell.value)
+                header: t('Valid from'),
+                cell: (item) => dateFormat.b(item.validFrom)
             },
             {
-                Header: t('Id'),
-                accessor: 'id',
-                Cell: (item) => (
-                    <Link to={`/contract/${item.cell.value}`}>
-                        <span className="icon icon-action-pen-orange"/>
-                    </Link>
-                )
+                header: t('Valid to'),
+                cell: (item) => dateFormat.b(item.validTo)
             }
         ];
 
@@ -57,34 +47,23 @@ class ContractsList extends React.Component {
         this.contractsList = list;
     }
 
-    @action
-    onPaginationClick = ({ pageIndex }) => {
-        this.tablePageIndex = pageIndex;
-    }
-
     renderContent = () => {
-        if (this.contractsList === undefined) {
-            return <Loader />;
-        }
-        const tableData = this.contractsList.slice(
-            PAGE_SIZE * this.tablePageIndex,
-            PAGE_SIZE * (this.tablePageIndex + 1)
-        );
-
-        return this.contractsList.length ?
+        return (
             <Table
-                data={tableData}
-                count={this.contractsList.length}
-                fetchData={this.onPaginationClick}
+                list={this.contractsList}
                 columns={this.tableColumns}
-                pageIndex={this.tablePageIndex}
-                pageSize={PAGE_SIZE}
-                manualPagination
-            /> :
-            this.props.t('No results');
+                textEmptyResult={'No contracts found'}
+                textEmptyList={'No contracts added'}
+                onRowClick={(item) => this.redirect = `/contract/${item.id}`}
+            />
+        );
     }
 
     render() {
+        if (this.redirect) {
+            return <Redirect push to={this.redirect}/>;
+        }
+
         const { t } = this.props;
         return (
             <div className="settings block">

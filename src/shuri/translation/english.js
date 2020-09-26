@@ -12,7 +12,6 @@ const Translations = {
         'Create new contract': 'Create new contract',
         'Enter name': 'Enter name',
         'Contract Id': 'Contract Id',
-        'Accommodation Id': 'Accommodation Id',
         'Id': 'Id',
         'Name': 'Name',
         'Valid from': 'Valid From',
