@@ -8,22 +8,13 @@ function getRatesTree(ratesList) {
                 seasonId,
                 {
                     isExpanded: false,
-                    data: new Map([[roomId, {
-                        isExpanded: false,
-                        data: [rate]
-                    }]])
+                    data: new Map([[roomId, [rate]]])
                 }
             );
         } else if (!roomsMap.has(roomId)) {
-            roomsMap.set(
-                roomId,
-                {
-                    isExpanded: false,
-                    data: [rate]
-                }
-            );
+            roomsMap.set(roomId, [rate]);
         } else {
-            roomsMap.get(roomId).data.push(rate);
+            roomsMap.get(roomId).push(rate);
         }
     });
     return ratesTree;

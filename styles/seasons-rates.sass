@@ -1,11 +1,53 @@
-.tree-header
-    padding: 5px 0
-    margin-bottom: 10px
-    border-bottom: 1px solid #ededed
-    cursor: pointer
+.season
+    &-container
+        padding: 4px
+        margin-bottom: 10px
+        border: 1px solid #ededed
+        border-radius: 4px
 
-.rooms-subheader, .table-container
-    margin-left: 15px
+    &-header
+        padding: 4px 0
+        display: flex
+        cursor: pointer
+        position: relative
+
+        &.expanded
+            padding-bottom: 8px
+
+        .icon
+            margin: 0 4px
+
+.room-info
+    display: flex
+    padding: 10px 0
+    margin: 0 26px
+    border-top: 1px solid #ededed
+
+.room-name
+    padding: 5px
+    overflow: hidden
+    min-width: 250px
+    max-width: 250px
+    word-break: break-word
+
+.rates-container
+    flex-wrap: wrap
+    padding: 0 10px
+    display: flex
+
+.rate-info, .add-icon-container
+    margin: 5px
+    padding: 8px
+    border: 1px solid #bbbbbb
+    border-radius: 4px
+    cursor: pointer
+    transition: background-color 0.15s linear
+    &:hover
+        background-color: #ededed
+
+.add-icon-container
+    align-items: center
+    display: flex
 
 .remove-icon
     cursor: pointer

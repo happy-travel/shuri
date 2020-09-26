@@ -4,24 +4,22 @@ import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
 import { Loader } from 'matsumoto/src/simple';
-import Table from 'matsumoto/src/components/external/table';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import UI from 'stores/shuri-ui-store';
-import RateCreateModal from 'pages/seasons-rates/rate-create-modal';
+import RateActionModal from 'pages/seasons-rates/rate-action-modal';
 import { getRates, getSeasons, removeRate, createRate, getContractAccommodations, getContract } from 'providers/api';
-import DialogModal from 'parts/dialog-modal';
 import { getRatesTree } from 'utils/ui-utils';
 
 @observer
 class SeasonsRates extends React.Component {
     contractId = this.props.match.params.id;
-    tableColumns;
     @observable contract;
     @observable seasonsList;
     @observable accommodationsList;
+    @observable rateStub;
     @observable ratesList;
     @observable ratesTree;
-    @observable removingRate;
+    @observable activeRate;
     @observable isRequestingApi = false;
     @observable isCreateModalShown = false;
 
@@ -58,34 +56,6 @@ class SeasonsRates extends React.Component {
     }
 
     componentDidMount() {
-        const { t } = this.props;
-        this.tableColumns = [
-            {
-                Header: t('Price'),
-                accessor: 'price'
-            },
-            {
-                Header: t('Board basis plan'),
-                accessor: 'boardBasisType',
-                Cell: (item) => t(item.cell.value)
-            },
-            {
-                Header: t('Details'),
-                accessor: 'details',
-                Cell: (item) => item.cell.value[UI.editorLanguage]
-            },
-            {
-                Header: t('Room type'),
-                accessor: 'roomType',
-                Cell: (item) => t(item.cell.value)
-            },
-            {
-                Header: '',
-                sortable: false,
-                accessor: 'id',
-                Cell: this.renderIdColumn
-            }
-        ];
         this.getData();
     }
 
@@ -119,13 +89,13 @@ class SeasonsRates extends React.Component {
     }
 
     @action
-    setRemovingRate = (rate) => {
-        this.removingRate = rate;
+    setRateStub = (stub) => {
+        this.rateStub = stub;
     }
 
     @action
-    unsetRemovingRate = () => {
-        this.removingRate = undefined;
+    setActiveRate = (rate) => {
+        this.activeRate = rate;
     }
 
     @action
@@ -134,8 +104,10 @@ class SeasonsRates extends React.Component {
     }
 
     @action
-    hideCreateModal = () => {
+    hideModal = () => {
         this.isCreateModalShown = false;
+        this.rateStub = undefined;
+        this.activeRate = undefined;
     }
 
     @action
@@ -144,27 +116,24 @@ class SeasonsRates extends React.Component {
         this.ratesTree.get(seasonId).isExpanded = !isExpanded;
     }
 
-    @action
-    onRoomClick = (seasonId, roomId) => {
-        const isExpanded = this.ratesTree.get(seasonId).data.get(roomId).isExpanded;
-        this.ratesTree.get(seasonId).data.get(roomId).isExpanded = !isExpanded;
-    }
-
     onRemoveClick = () => {
+        if (this.isRequestingApi) {
+            return;
+        }
         this.setRequestingApiStatus();
         removeRate({
             urlParams: { id: this.contractId },
-            body: [this.removingRate.id]
+            body: [this.activeRate.id]
         }).then(this.onRemoveClickSuccess).finally(this.onRemoveClickFinally);
     }
 
     @action
     onRemoveClickSuccess = () => {
-        const { id, seasonId, roomId } = this.removingRate;
+        const { id, seasonId, roomId } = this.activeRate;
         this.ratesList = this.ratesList.filter((rate) => rate.id !== id);
-        const branch = this.ratesTree.get(seasonId).data.get(roomId).data;
+        const branch = this.ratesTree.get(seasonId).data.get(roomId);
         const newBranch = branch.filter((rate) => rate.id !== id)
-        this.ratesTree.get(seasonId).data.get(roomId).data = newBranch;
+        this.ratesTree.get(seasonId).data.set(roomId, newBranch);
         if (newBranch.length === 0) {
             this.ratesTree.get(seasonId).data.delete(roomId);
         }
@@ -174,11 +143,14 @@ class SeasonsRates extends React.Component {
     }
 
     onRemoveClickFinally = () => {
-        this.unsetRemovingRate();
+        this.hideModal();
         this.unsetRequestingApiStatus();
     }
 
     onCreateClick = (values) => {
+        if (this.isRequestingApi) {
+            return;
+        }
         this.setRequestingApiStatus();
         createRate({
             urlParams: {
@@ -188,19 +160,27 @@ class SeasonsRates extends React.Component {
         }).then(this.onCreateClickSuccess).finally(this.unsetRequestingApiStatus);
     }
 
-    onCreateClickSuccess = () => {
-        this.hideCreateModal();
-        this.getData();
-    }
-
-    renderIdColumn = (item) => {
-        const rate = this.ratesList.find((rate) => rate.id === item.row.original.id);
-        return (
-            <span
-                onClick={() => this.setRemovingRate(rate)}
-                className="icon icon-action-cancel remove-icon"
-            />
-        );
+    onCreateClickSuccess = ([rate]) => {
+        const { seasonId, roomId } = rate;
+        this.ratesList.push(rate);
+        const branch = this.ratesTree.get(seasonId);
+        if (!branch) {
+            this.ratesTree.set(
+                seasonId,
+                {
+                    isExpanded: true,
+                    data: new Map([[roomId, [rate]]])
+                }
+            );
+        } else {
+            branch.isExpanded = true;
+            if (branch.data.has(roomId)) {
+                branch.data.get(roomId).push(rate);
+            } else {
+                branch.data.set(roomId, [rate]);
+            }
+        }
+        this.hideModal();
     }
 
     renderBreadcrumbs = () => {
@@ -241,55 +221,70 @@ class SeasonsRates extends React.Component {
         );
     }
 
-    renderRatesTable = (data) => {
+    renderRate = (rate) => {
+        const { t } = this.props;
         return (
-            <div className="table-container">
-                <Table
-                    data={data}
-                    columns={this.tableColumns}
-                    pageIndex={0}
-                    pageSize={data.length}
-                    manualPagination
-                />
+            <div className="rate-info" onClick={() => this.setActiveRate(rate)}>
+                <div>
+                    {t(rate.roomType)}
+                    <span className="bullet" />
+                    {t(rate.boardBasisType)}
+                </div>
+                <div>
+                    {rate.currency.toUpperCase()}&nbsp;{rate.price}
+                </div>
             </div>
         );
     }
 
-    renderRoom = (seasonId, [roomId, { isExpanded, data }]) => {
-        const arrowClassName = isExpanded ? 'icon icon-arrow-expand-rotate' : 'icon icon-arrow-expand'
+    renderRoom = (seasonId, roomId, data) => {
+        const stub = { seasonId, roomId };
         return (
             <>
-                <div
-                    key={seasonId + roomId}
-                    className="tree-header rooms-subheader"
-                    onClick={() => this.onRoomClick(seasonId, roomId)}
-                >
-                    <span className={arrowClassName} />
-                    {this.roomsNames.get(roomId)}
+                <div key={seasonId + roomId} className="room-info">
+                    <div className="room-name">
+                        {this.roomsNames.get(roomId)}
+                    </div>
+                    <div className="rates-container">
+                        {data ? data.map(this.renderRate) : null}
+                        <div
+                            className="add-icon-container"
+                            onClick={() => this.setRateStub(stub)}
+                        >
+                            <span className="icon icon-action-cancel rotate-45-deg" />
+                        </div>
+                    </div>
                 </div>
-                {isExpanded ? this.renderRatesTable(data) : null}
             </>
         )
     }
 
     renderSeason = (seasonId) => {
+        const roomIds = Array.from(this.roomsNames.keys());
         const seasonBranch = this.ratesTree.get(seasonId);
         const isExpanded = seasonBranch.isExpanded;
-        const seasonData = Array.from(seasonBranch.data);
-        const arrowClassName = isExpanded ? 'icon icon-arrow-expand-rotate' : 'icon icon-arrow-expand';
+        const seasonData = seasonBranch.data;
+        const arrowClassName = isExpanded ?
+            'icon icon-arrow-expand-rotate' :
+            'icon icon-arrow-expand';
 
         return (
-            <>
+            <div className="season-container">
                 <div
                     key={seasonId}
-                    className="tree-header"
+                    className={'season-header' + __class(isExpanded, 'expanded')}
                     onClick={() => this.onSeasonClick(seasonId)}
                 >
                     <span className={arrowClassName} />
-                    {this.seasonsNames.get(seasonId)}
+                    <span>{this.seasonsNames.get(seasonId)}</span>
                 </div>
-                {isExpanded ? seasonData.map((roomId) => this.renderRoom(seasonId, roomId)) : null}
-            </>
+                {isExpanded ?
+                    <div className="season-info">
+                        {roomIds.map((id) => this.renderRoom(seasonId, id, seasonData.get(id)))}
+                    </div> :
+                    null
+                }
+            </div>
         );
     }
 
@@ -308,32 +303,6 @@ class SeasonsRates extends React.Component {
         );
     }
 
-    renderModals = () => {
-        const { t } = this.props;
-        return (
-            <>
-                {this.removingRate ?
-                    <DialogModal
-                        title={t('Removing rate')}
-                        text={t('Are you sure you want to proceed and remove season rate?')}
-                        onNoClick={this.unsetRemovingRate}
-                        onYesClick={!this.isRequestingApi ? this.onRemoveClick : undefined}
-                    /> :
-                    null
-                }
-                {this.isCreateModalShown ?
-                    <RateCreateModal
-                        roomsOptions={this.roomsOptions}
-                        seasonsOptions={this.seasonsOptions}
-                        onCreate={this.onCreateClick}
-                        onClose={this.hideCreateModal}
-                    /> :
-                    null
-                }
-            </>
-        );
-    }
-
     render() {
         if (this.contract === undefined) {
             return <Loader />;
@@ -347,7 +316,17 @@ class SeasonsRates extends React.Component {
                         {this.renderSeasons()}
                     </section>
                 </div>
-                {this.renderModals()}
+                {this.activeRate || this.rateStub || this.isCreateModalShown ?
+                    <RateActionModal
+                        rate={this.activeRate}
+                        rateStub={this.rateStub}
+                        roomsOptions={this.roomsOptions}
+                        seasonsOptions={this.seasonsOptions}
+                        action={this.activeRate ? this.onRemoveClick : this.onCreateClick}
+                        onClose={this.hideModal}
+                    /> :
+                    null
+                }
             </>
         );
     }
