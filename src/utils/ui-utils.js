@@ -1,4 +1,4 @@
-function getRatesTree(ratesList) {
+function getRatesTree(ratesList, seasonsList) {
     const ratesTree = new Map();
     ratesList.forEach((rate) => {
         const { seasonId, roomId } = rate;
@@ -15,6 +15,11 @@ function getRatesTree(ratesList) {
             roomsMap.set(roomId, [rate]);
         } else {
             roomsMap.get(roomId).push(rate);
+        }
+    });
+    seasonsList.forEach((season) => {
+        if (!ratesTree.has(season.id)) {
+            ratesTree.set(season.id, { isExpanded: false, data: new Map() })
         }
     });
     return ratesTree;

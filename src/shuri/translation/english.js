@@ -93,7 +93,9 @@ const Translations = {
         'Rates': 'Rates',
         'Enter details on this rate': 'Enter details on this rate',
         'Choose value for all selected days': 'Choose value for all selected days',
-        'Clear selection': 'Clear selection'
+        'Clear selection': 'Clear selection',
+        'rate': 'rate',
+        'rate_plural': 'rates'
     }
 };
 

@@ -21,7 +21,6 @@ class SeasonsRates extends React.Component {
     @observable ratesTree;
     @observable activeRate;
     @observable isRequestingApi = false;
-    @observable isCreateModalShown = false;
 
     @computed
     get seasonsNames() {
@@ -75,7 +74,7 @@ class SeasonsRates extends React.Component {
         this.seasonsList = seasonsList;
         this.accommodationsList = accommodationsList;
         this.ratesList = ratesList;
-        this.ratesTree = getRatesTree(this.ratesList);
+        this.ratesTree = getRatesTree(this.ratesList, this.seasonsList);
     }
 
     @action
@@ -99,13 +98,7 @@ class SeasonsRates extends React.Component {
     }
 
     @action
-    showCreateModal = () => {
-        this.isCreateModalShown = true;
-    }
-
-    @action
     hideModal = () => {
-        this.isCreateModalShown = false;
         this.rateStub = undefined;
         this.activeRate = undefined;
     }
@@ -136,9 +129,6 @@ class SeasonsRates extends React.Component {
         this.ratesTree.get(seasonId).data.set(roomId, newBranch);
         if (newBranch.length === 0) {
             this.ratesTree.get(seasonId).data.delete(roomId);
-        }
-        if (this.ratesTree.get(seasonId).data.size === 0) {
-            this.ratesTree.delete(seasonId);
         }
     }
 
@@ -209,11 +199,6 @@ class SeasonsRates extends React.Component {
         const { t } = this.props;
         return (
             <h2>
-                <div className="add-new-button-holder">
-                    <button className="button small" onClick={this.showCreateModal}>
-                        {t('Add rate')}
-                    </button>
-                </div>
                 <span className="brand">
                     {t('Seasons Rates')}
                 </span>
@@ -260,6 +245,7 @@ class SeasonsRates extends React.Component {
     }
 
     renderSeason = (seasonId) => {
+        const { t } = this.props;
         const roomIds = Array.from(this.roomsNames.keys());
         const seasonBranch = this.ratesTree.get(seasonId);
         const isExpanded = seasonBranch.isExpanded;
@@ -267,6 +253,10 @@ class SeasonsRates extends React.Component {
         const arrowClassName = isExpanded ?
             'icon icon-arrow-expand-rotate' :
             'icon icon-arrow-expand';
+        let numberOfRates = 0;
+        Array.from(seasonData.entries()).forEach(([, roomsArray]) => {
+            numberOfRates += roomsArray.length;
+        });
 
         return (
             <div className="season-container">
@@ -277,6 +267,7 @@ class SeasonsRates extends React.Component {
                 >
                     <span className={arrowClassName} />
                     <span>{this.seasonsNames.get(seasonId)}</span>
+                    <span className="number-of-rates">{__plural(t, numberOfRates, t('rate'))}</span>
                 </div>
                 {isExpanded ?
                     <div className="season-info">
@@ -316,7 +307,7 @@ class SeasonsRates extends React.Component {
                         {this.renderSeasons()}
                     </section>
                 </div>
-                {this.activeRate || this.rateStub || this.isCreateModalShown ?
+                {this.activeRate || this.rateStub ?
                     <RateActionModal
                         rate={this.activeRate}
                         rateStub={this.rateStub}

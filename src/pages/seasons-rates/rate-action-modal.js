@@ -39,7 +39,7 @@ class RateActionModal extends React.Component {
                 <div className="row">
                     <FieldSelect
                         formik={formik}
-                        disabled={this.disabled}
+                        disabled
                         addClass="size-half"
                         id="roomId"
                         label={t('Room')}
@@ -48,7 +48,7 @@ class RateActionModal extends React.Component {
                     />
                     <FieldSelect
                         formik={formik}
-                        disabled={this.disabled}
+                        disabled
                         addClass="size-half"
                         id="seasonId"
                         label={t('Season')}
@@ -83,6 +83,7 @@ class RateActionModal extends React.Component {
                         addClass="size-half"
                         clearable
                         id="price"
+                        numeric
                         label={t('Price')}
                         placeholder={t('Enter rate price')}
                         required

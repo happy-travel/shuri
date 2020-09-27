@@ -11,7 +11,8 @@
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly",
-        "__class": "readonly"
+        "__class": "readonly",
+        "__plural": "readonly"
     },
     "parser": "babel-eslint",
     "parserOptions": {
