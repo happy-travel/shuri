@@ -9,6 +9,7 @@ const Translations = {
         'Rooms': 'Rooms',
         'Add new contract': 'Add new contract',
         'Create': 'Create',
+        'Remove': 'Remove',
         'Create new contract': 'Create new contract',
         'Enter name': 'Enter name',
         'Contract Id': 'Contract Id',
@@ -68,6 +69,7 @@ const Translations = {
             'Are you sure you want to proceed and remove season rate?',
         'Removing rate': 'Removing rate',
         'Season rate creation': 'Season rate creation',
+        'Season rate removing': 'Season rate removing',
         'Season': 'Season',
         'notSpecified': 'Not specified',
         'roomOnly': 'Room only',
@@ -91,7 +93,9 @@ const Translations = {
         'Rates': 'Rates',
         'Enter details on this rate': 'Enter details on this rate',
         'Choose value for all selected days': 'Choose value for all selected days',
-        'Clear selection': 'Clear selection'
+        'Clear selection': 'Clear selection',
+        'rate': 'rate',
+        'rate_plural': 'rates'
     }
 };
 
