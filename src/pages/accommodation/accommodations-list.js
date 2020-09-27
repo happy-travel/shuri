@@ -1,21 +1,21 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
-import Table from 'matsumoto/src/components/external/table';
+import Table from 'matsumoto/src/components/table';
+import { Stars } from 'matsumoto/src/simple';
 import UIStore from 'stores/shuri-ui-store';
 import { Link } from 'react-router-dom';
-import { Loader } from 'matsumoto/src/simple';
 import { getAccommodations } from 'providers/api';
 
-const PAGE_SIZE = 10;
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 @observer
 class AccommodationsList extends React.Component {
-    @observable accommodationsList;
-    @observable tablePageIndex = 0;
-    @observable tableColumns;
+    @observable accommodationsList = null;
+    @observable redirect;
 
     constructor(props) {
         super(props);
@@ -23,23 +23,31 @@ class AccommodationsList extends React.Component {
 
         this.tableColumns = [
             {
-                Header: t('Accommodation Id'),
-                accessor: 'id'
+                header: t('Id'),
+                cell: 'id'
             },
             {
-                Header: t('Name'),
-                accessor: 'name',
-                Cell: (item) => item.cell.value[UIStore.editorLanguage]
+                header: t('Name'),
+                cell: (item) => item.name[UIStore.editorLanguage]
             },
             {
-                Header: 'Id',
-                accessor: 'id',
-                Cell: (item) => (
-                    <Link to={`/accommodation/${item.cell.value}`}>
-                        <span className="icon icon-action-pen-orange"/>
-                    </Link>
-                )
+                header: t('Address'),
+                cell: (item) => item.address[UIStore.editorLanguage]
+            },
+            {
+                header: t('Property type'),
+                cell: (item) => capitalize(item.propertyType)
+            },
+            {
+                header: t('Star Rating'),
+                cell: (item) => Stars({
+                    count: capitalize(item.rating)
+                }) || t('Not Rated')
             }
+            /* todo: {
+                header: t('Status'),
+                cell: 'status'
+            }, */
         ];
     }
 
@@ -58,41 +66,36 @@ class AccommodationsList extends React.Component {
     }
 
     renderContent = () => {
-        if (this.accommodationsList === undefined) {
-            return <Loader />;
-        }
-        const tableData = this.accommodationsList.slice(
-            PAGE_SIZE * this.tablePageIndex,
-            PAGE_SIZE * (this.tablePageIndex + 1)
-        );
-
-        return this.accommodationsList.length ?
+        return (
             <Table
-                data={tableData}
-                count={this.accommodationsList.length}
-                fetchData={this.onPaginationClick}
+                list={this.accommodationsList}
                 columns={this.tableColumns}
-                pageIndex={this.tablePageIndex}
-                pageSize={PAGE_SIZE}
-                manualPagination
-            /> :
-            'No results';
+                textEmptyResult={'No accommodations found'}
+                textEmptyList={'No accommodations added'}
+                onRowClick={(item) => this.redirect = `/accommodation/${item.id}`}
+            />
+        );
     }
 
     render() {
+        if (this.redirect) {
+            return <Redirect push to={this.redirect}/>;
+        }
+
+        const { t } = this.props;
         return (
             <div className="settings block">
                 <section>
                     <div className="add-new-button-holder">
                         <Link to="/accommodation">
                             <button className="button small">
-                                Add new accommodation
+                                {t('Add new accommodation')}
                             </button>
                         </Link>
                     </div>
                     <h2>
                         <span className="brand">
-                            {this.props.t('Accommodations List')}
+                            {t('Accommodations List')}
                         </span>
                     </h2>
                     {this.renderContent()}

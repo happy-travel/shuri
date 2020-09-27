@@ -10,7 +10,6 @@ import ContractsList from 'pages/contract/contracts-list';
 import ContractPage from 'pages/contract/contract-page';
 import RoomsList from 'pages/room/rooms-list';
 import RoomPage from 'pages/room/room-page';
-import SeasonsList from 'pages/seasons/seasons-list';
 import Calendar from 'pages/calendar/calendar';
 import SeasonsRates from 'pages/seasons-rates/seasons-rates';
 
@@ -67,11 +66,6 @@ const Routes = (props) => {
                 path="/contract/:id"
                 title={t('Edit Contract')}
                 component={ContractPage}
-            />
-            <Route
-                path="/contract/:id/seasons"
-                title={t('Seasons')}
-                component={SeasonsList}
             />
             <Route
                 path="/contract/:id/calendar"
