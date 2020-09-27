@@ -95,7 +95,8 @@ const Translations = {
         'Choose value for all selected days': 'Choose value for all selected days',
         'Clear selection': 'Clear selection',
         'rate': 'rate',
-        'rate_plural': 'rates'
+        'rate_plural': 'rates',
+        'Log out': 'Log out'
     }
 };
 
