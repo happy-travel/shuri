@@ -80,7 +80,7 @@ class AvailabilityCalendar extends React.Component {
         this.contract = contract;
         accommodationsList.forEach((accommodation) => {
             accommodation.roomIds?.forEach((roomId) => {
-                this.roomsList.set(String(roomId), `${accommodation.name[UI.editorLanguage]} (room #${roomId})`);
+                this.roomsList.set(String(roomId), `#${roomId}: ${accommodation.name[UI.editorLanguage]}`);
             });
         });
     }
@@ -111,7 +111,7 @@ class AvailabilityCalendar extends React.Component {
     @action
     updateAvailabilityRestrictionsSuccess = () => {
         this.setRoomId(undefined);
-        this.redirectUrl = `/contract/${this.contractId}`;
+        // this.redirectUrl = `/contract/${this.contractId}`;
     }
 
     @action
@@ -161,7 +161,7 @@ class AvailabilityCalendar extends React.Component {
         }
 
         return (
-            <div className="calendar-table">
+            <div className="calendar-table availability-calendar">
                 <CachedForm
                     initialValues={this.initialCalendarValues}
                     onSubmit={this.onSubmit}
@@ -187,7 +187,10 @@ class AvailabilityCalendar extends React.Component {
         return Array.from(this.roomsList.entries()).map(([roomId, roomName]) => {
             return (
                 <div key={roomId} className="room-link-container">
-                    <Link to={`/contract/${this.contractId}/availability/room/${roomId}/calendar`}>
+                    <Link
+                        to={`/contract/${this.contractId}/availability/room/${roomId}/calendar`}
+                        className="button transparent-with-border"
+                    >
                         <span className="room-link">{roomName}</span>
                     </Link>
                 </div>
