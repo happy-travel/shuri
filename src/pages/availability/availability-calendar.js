@@ -2,7 +2,7 @@ import React from 'react';
 import { action, computed, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import propTypes from 'prop-types';
 import { Loader } from 'matsumoto/src/simple';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
@@ -19,7 +19,6 @@ import { convertRestrictionsToForm, convertFormToRestrictions } from 'pages/cale
 
 @observer
 class AvailabilityCalendar extends React.Component {
-    @observable redirectUrl;
     @observable roomsList;
     @observable contract;
     @observable availabilityRestrictions;
@@ -111,7 +110,7 @@ class AvailabilityCalendar extends React.Component {
     @action
     updateAvailabilityRestrictionsSuccess = () => {
         this.setRoomId(undefined);
-        // this.redirectUrl = `/contract/${this.contractId}`;
+        this.props.history.replace({ pathname: `/contract/${this.contractId}/availability/rooms` });
     }
 
     @action
@@ -202,9 +201,6 @@ class AvailabilityCalendar extends React.Component {
         if (this.contract === undefined) {
             return <Loader />;
         }
-        if (this.redirectUrl) {
-            return <Redirect push to={this.redirectUrl} />;
-        }
         return (
             <>
                 <div className="settings block">
@@ -228,7 +224,8 @@ class AvailabilityCalendar extends React.Component {
 
 AvailabilityCalendar.propTypes = {
     t: propTypes.func,
-    match: propTypes.object
+    match: propTypes.object,
+    history: propTypes.object
 };
 
 export default withTranslation()(AvailabilityCalendar);
