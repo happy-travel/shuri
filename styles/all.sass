@@ -86,8 +86,19 @@ h3
     flex-direction: column
     justify-content: center
 
-.rates-link
+.rates-link, .availability-link
     margin-right: 20px
 
 .modal.confirm
     max-width: unset
+
+.bullet
+    padding: 0 3px
+    &::after
+        content: '•'
+
+.rotate-45-deg
+    transform: rotate(45deg)
+
+.shuri-user-menu
+    pointer-events: none

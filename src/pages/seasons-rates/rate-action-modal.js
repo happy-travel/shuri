@@ -16,13 +16,12 @@ const BOARD_BASIS_OPTIONS = [
     'allInclusive'
 ];
 const ROOM_TYPE_OPTIONS = ['notSpecified', 'single', 'twinOrSingle', 'twin', 'double', 'triple', 'quadruple', 'family'];
+const DEFAULT_CURRENCY = 'USD';
 
-class RateCreateModal extends React.Component {
+class RateActionModal extends React.Component {
     boardBasisOptions;
     roomTypeOptions;
-    rate = {
-        currency: 'USD'
-    };
+    disabled = Boolean(this.props.rate);
 
     constructor(props) {
         super(props);
@@ -33,12 +32,14 @@ class RateCreateModal extends React.Component {
 
     renderForm = (formik) => {
         const { t } = this.props;
+        const buttonTitle = this.props.rate ? t('Remove') : t('Create');
 
         return (
             <div className="form app-settings">
                 <div className="row">
                     <FieldSelect
                         formik={formik}
+                        disabled
                         addClass="size-half"
                         id="roomId"
                         label={t('Room')}
@@ -47,6 +48,7 @@ class RateCreateModal extends React.Component {
                     />
                     <FieldSelect
                         formik={formik}
+                        disabled
                         addClass="size-half"
                         id="seasonId"
                         label={t('Season')}
@@ -57,6 +59,7 @@ class RateCreateModal extends React.Component {
                 <div className="row">
                     <FieldSelect
                         formik={formik}
+                        disabled={this.disabled}
                         addClass="size-half"
                         id="boardBasis"
                         label={t('Board Basis')}
@@ -65,6 +68,7 @@ class RateCreateModal extends React.Component {
                     />
                     <FieldSelect
                         formik={formik}
+                        disabled={this.disabled}
                         addClass="size-half"
                         id="roomType"
                         label={t('Room type')}
@@ -75,15 +79,18 @@ class RateCreateModal extends React.Component {
                 <div className="row">
                     <FieldText
                         formik={formik}
+                        disabled={this.disabled}
                         addClass="size-half"
                         clearable
                         id="price"
+                        numeric
                         label={t('Price')}
                         placeholder={t('Enter rate price')}
                         required
                     />
                     <FieldText
                         formik={formik}
+                        disabled={this.disabled}
                         addClass="size-half"
                         clearable
                         id="mealPlan"
@@ -95,6 +102,7 @@ class RateCreateModal extends React.Component {
                 <div className="row">
                     <FieldTextarea
                         formik={formik}
+                        disabled={this.disabled}
                         clearable
                         id={`details.${UI.editorLanguage}`}
                         label={t('Details')}
@@ -108,7 +116,7 @@ class RateCreateModal extends React.Component {
                                 type="submit"
                                 className="button"
                             >
-                                {t('Create')}
+                                {buttonTitle}
                             </button>
                         </div>
                     </div>
@@ -118,17 +126,21 @@ class RateCreateModal extends React.Component {
     }
 
     render() {
-        const { t } = this.props;
+        const { t, rate } = this.props;
+        const initialValues = rate ?
+            { ...rate, boardBasis: rate.boardBasisType } :
+            { ...this.props.rateStub, currency: DEFAULT_CURRENCY };
+        const modalTitle = rate ? t('Season rate removing') : t('Season rate creation');
 
         return (
             <Modal
                 onCloseClick={this.props.onClose}
-                title={t('Season rate creation')}
+                title={modalTitle}
             >
                 <div className="rate-create-modal-content">
                     <CachedForm
-                        initialValues={this.rate}
-                        onSubmit={this.props.onCreate}
+                        initialValues={initialValues}
+                        onSubmit={this.props.action}
                         render={this.renderForm}
                         enableReinitialize
                     />
@@ -138,12 +150,14 @@ class RateCreateModal extends React.Component {
     }
 }
 
-RateCreateModal.propTypes = {
+RateActionModal.propTypes = {
     t: propTypes.func,
+    rate: propTypes.object,
+    rateStub: propTypes.object,
     roomsOptions: propTypes.array,
     seasonsOptions: propTypes.array,
     onClose: propTypes.func,
-    onCreate: propTypes.func
+    action: propTypes.func
 };
 
-export default withTranslation()(RateCreateModal);
+export default withTranslation()(RateActionModal);

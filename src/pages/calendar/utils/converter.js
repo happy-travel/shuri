@@ -51,3 +51,47 @@ export const formatSeasons = (seasonsList) => {
     seasonsList.forEach((season) => seasons[season.id] = season.name);
     return seasons;
 };
+
+export const convertRestrictionsToForm = (restrictions, contract) => {
+    let values = {};
+    const findRestriction = (date) => {
+        for (let i = 0; i < restrictions.length; i++) {
+            if ((new Date(date) >= new Date(restrictions[i].fromDate) &&
+                (new Date(date) <= new Date(restrictions[i].toDate)))) {
+                return restrictions[i].restriction;
+            }
+        }
+        return 'freeSale';
+    };
+    for (
+        let date = new Date(contract.validFrom);
+        date <= new Date(contract.validTo);
+        date.setDate(date.getDate()+1)
+    ) {
+        values[Number(date)] = findRestriction(date);
+    }
+    return values;
+}
+
+export const convertFormToRestrictions = (values, contract, roomId) => {
+    const result = [];
+    for (
+        let date = new Date(contract.validFrom);
+        date <= new Date(contract.validTo);
+        date.setDate(date.getDate()+1)
+    ) {
+        const restriction = values[Number(date)];
+        const serverDate = formatServerDate(date);
+        if (result.length && result[result.length - 1].restriction === restriction) {
+            result[result.length - 1].toDate = serverDate;
+        } else {
+            result.push({
+                roomId,
+                restriction,
+                fromDate: serverDate,
+                toDate: serverDate
+            });
+        }
+    }
+    return result;
+};

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import propTypes from 'prop-types';
-import UserMenu from 'matsumoto/src/components/complex/user-menu';
+import UserMenu from 'parts/shuri-user-menu';
 import { withTranslation } from 'react-i18next';
 
 class Header extends React.Component {
