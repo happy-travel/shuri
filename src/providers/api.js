@@ -187,6 +187,21 @@ function removeRate({ urlParams, body }) {
     })
 }
 
+function getAvailabilityRestrictions({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.contractId}` +
+            `/availability-restrictions?roomId=${urlParams.roomId}`
+    });
+}
+
+function updateAvailabilityRestrictions({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/availability-restrictions`,
+        method: 'POST',
+        body
+    });
+}
+
 export {
     getAccommodations,
     createAccommodation,
@@ -213,5 +228,7 @@ export {
     getContractAccommodations,
     getRates,
     createRate,
-    removeRate
+    removeRate,
+    getAvailabilityRestrictions,
+    updateAvailabilityRestrictions
 };
