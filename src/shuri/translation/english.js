@@ -96,7 +96,15 @@ const Translations = {
         'Clear selection': 'Clear selection',
         'rate': 'rate',
         'rate_plural': 'rates',
-        'Log out': 'Log out'
+        'Log out': 'Log out',
+        'Go to availability': 'Go to availability',
+        'Availability Calendar': 'Availability Calendar',
+        'Availability Calendar - Choose a Room': 'Availability Calendar - Choose a Room',
+        'Availability calendar': 'Availability calendar',
+        'Stop sale': 'Stop sale',
+        'Allotment': 'Allotment',
+        'Framed free sale': 'Framed free sale',
+        'Free sale': 'Free sale'
     }
 };
 
