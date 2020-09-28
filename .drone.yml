@@ -143,7 +143,7 @@ steps:
     chart: ./Helm
     release: shuri-prod
     values_files: ["Helm/values_prod.yaml"]
-    namespace: dev
+    namespace: production
     skip_tls_verify: true
     wait_for_upgrade: true
     values: image.tag=${DRONE_COMMIT_SHA:0:7}
