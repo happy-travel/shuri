@@ -26,10 +26,10 @@ class AvailabilityCalendar extends React.Component {
     @observable roomId = this.props.match.params.roomId;
     contractId = this.props.match.params.contractId;
     possibleCalendarValues = {
-        stopSale: this.props.t('Stop sale'),
-        allotment: this.props.t('Allotment'),
-        framedFreeSale: this.props.t('Framed free sale'),
-        freeSale: this.props.t('Free sale')
+        StopSale: this.props.t('Stop sale'),
+        Allotment: this.props.t('Allotment'),
+        FramedFreeSale: this.props.t('Framed free sale'),
+        FreeSale: this.props.t('Free sale')
     };
 
     @computed

@@ -59,7 +59,7 @@ export const convertRestrictionsToForm = (restrictions, contract) => {
                 return restrictions[i].restriction;
             }
         }
-        return 'freeSale';
+        return 'FreeSale';
     };
     for (
         let date = new Date(contract.validFrom);
