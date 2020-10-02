@@ -7,15 +7,15 @@ import Modal from 'parts/modal';
 import { getSelectOptions } from 'utils/ui-utils';
 
 const BOARD_BASIS_OPTIONS = [
-    'notSpecified',
-    'roomOnly',
-    'selfCatering',
-    'bedAndBreakfast',
-    'halfBoard',
-    'fullBoard',
-    'allInclusive'
+    'NotSpecified',
+    'RoomOnly',
+    'SelfCatering',
+    'BedAndBreakfast',
+    'HalfBoard',
+    'FullBoard',
+    'AllInclusive'
 ];
-const ROOM_TYPE_OPTIONS = ['notSpecified', 'single', 'twinOrSingle', 'twin', 'double', 'triple', 'quadruple', 'family'];
+const ROOM_TYPE_OPTIONS = ['NotSpecified', 'Single', 'TwinOrSingle', 'Twin', 'Double', 'Triple', 'Quadruple', 'Family'];
 const DEFAULT_CURRENCY = 'USD';
 
 class RateActionModal extends React.Component {
