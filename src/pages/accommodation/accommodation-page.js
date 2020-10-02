@@ -8,7 +8,7 @@ import {
     FieldText,
     FieldSelect
 } from 'matsumoto/src/components/form';
-import { Loader, Stars } from 'matsumoto/src/simple';
+import { Loader, Stars, decorate } from 'matsumoto/src/simple';
 import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import Gallery from 'matsumoto/src/components/gallery';
 import UI from 'stores/shuri-ui-store';
@@ -140,6 +140,9 @@ class AccommodationPage extends React.Component {
     }
 
     reformatValues = (values) => {
+        if (values?.contactInfo?.phone) {
+            values.contactInfo.phone = decorate.removeNonDigits(values.contactInfo.phone);
+        }
         return {
             ...values,
             occupancyDefinition: agesReformat(values.occupancyDefinition)
