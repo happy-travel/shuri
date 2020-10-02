@@ -104,7 +104,9 @@ const Translations = {
         'Stop sale': 'Stop sale',
         'Allotment': 'Allotment',
         'Framed free sale': 'Framed free sale',
-        'Free sale': 'Free sale'
+        'Free sale': 'Free sale',
+        'No rooms found': 'No rooms found',
+        'No rooms added': 'No rooms added'
     }
 };
 

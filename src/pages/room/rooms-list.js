@@ -124,12 +124,13 @@ class RoomsList extends React.Component {
     }
 
     renderContent = () => {
+        const { t } = this.props;
         return (
             <Table
                 list={this.roomsList}
                 columns={this.tableColumns}
-                textEmptyResult={'No accommodations found'}
-                textEmptyList={'No accommodations added'}
+                textEmptyResult={t('No rooms found')}
+                textEmptyList={t('No rooms added')}
                 onRowClick={(item) =>
                     this.redirect = `/accommodation/${this.accommodationId}/room/${item.id}`
                 }
