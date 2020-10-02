@@ -289,6 +289,10 @@ class SeasonsRates extends React.Component {
             return <div>{t('No rates')}</div>;
         }
 
+        if (this.roomsNames.size === 0) {
+            return <div>{t('No rooms added')}</div>;
+        }
+
         return (
             Array.from(this.ratesTree.keys()).map(this.renderSeason)
         );
