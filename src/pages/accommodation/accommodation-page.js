@@ -67,10 +67,6 @@ class AccommodationPage extends React.Component {
                             description: ''
                         }
                     },
-                    coordinates: {
-                        latitude: '',
-                        longitude: ''
-                    },
                     checkInTime: '',
                     checkOutTime: '',
                     pictures: {
