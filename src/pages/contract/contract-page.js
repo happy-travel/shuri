@@ -19,6 +19,7 @@ import {
     getAccommodations
 } from 'providers/api';
 import { parseBackendErrors } from 'utils/error-utils';
+import { formatDate } from 'utils/date-utils';
 
 class ContractPage extends React.Component {
     state = {
@@ -81,7 +82,7 @@ class ContractPage extends React.Component {
             return;
         }
         this.setRequestingApiStatus();
-        createContract({ body: values })
+        createContract({ body: formatValues(values) })
             .then(this.setRedirectUrl, this.contractActionFail);
     }
 
@@ -94,7 +95,7 @@ class ContractPage extends React.Component {
             urlParams: {
                 id: this.state.id
             },
-            body: values
+            body: formatValues(values)
         }).then(this.setRedirectUrl, this.contractActionFail);
     }
 
@@ -286,6 +287,14 @@ class ContractPage extends React.Component {
             </>
         );
     }
+}
+
+function formatValues(values) {
+    return {
+        ...values,
+        validFrom: formatDate(values.validFrom),
+        validTo: formatDate(values.validTo)
+    };
 }
 
 ContractPage.propTypes = {
