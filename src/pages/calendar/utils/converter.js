@@ -32,7 +32,7 @@ export const convertFormToRanges = (values, contract) => {
         const serverDate = formatDate(date);
         if (result.length && result[result.length-1].seasonId === seasonId) {
             result[result.length-1].endDate = serverDate;
-        } else {
+        } else if (seasonId) {
             result.push({
                 id: result.length + 1,
                 seasonId,
