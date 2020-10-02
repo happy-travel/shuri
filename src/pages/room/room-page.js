@@ -21,9 +21,9 @@ import {
 class RoomPage extends React.Component {
     state = {
         room: {
-            name: { ar: '', en: '', ru: '' },
-            description: { ar: '', en: '', ru: '' },
-            amenities: { ar: [], en: [], ru: [] },
+            name: { [UI.editorLanguage]: '' },
+            description: { [UI.editorLanguage]: '' },
+            amenities: { [UI.editorLanguage]: [] },
             pictures: {}
         },
         accommodation: undefined,

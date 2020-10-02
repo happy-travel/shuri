@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { formatDate } from 'utils/date-utils';
 
 export const convertRangesToForm = (ranges, contract) => {
     let values = {};
@@ -21,8 +21,6 @@ export const convertRangesToForm = (ranges, contract) => {
     return values;
 };
 
-const formatServerDate = (date) => moment(date).utc(true).format();
-
 export const convertFormToRanges = (values, contract) => {
     const result = [];
     for (
@@ -31,7 +29,7 @@ export const convertFormToRanges = (values, contract) => {
         date.setDate(date.getDate()+1)
     ) {
         const seasonId = parseInt(values[Number(date)]);
-        const serverDate = formatServerDate(date);
+        const serverDate = formatDate(date);
         if (result.length && result[result.length-1].seasonId === seasonId) {
             result[result.length-1].endDate = serverDate;
         } else {
@@ -81,7 +79,7 @@ export const convertFormToRestrictions = (values, contract, roomId) => {
         date.setDate(date.getDate()+1)
     ) {
         const restriction = values[Number(date)];
-        const serverDate = formatServerDate(date);
+        const serverDate = formatDate(date);
         if (result.length && result[result.length - 1].restriction === restriction) {
             result[result.length - 1].toDate = serverDate;
         } else {
