@@ -13,6 +13,7 @@ import RoomPage from 'pages/room/room-page';
 import Calendar from 'pages/calendar/calendar';
 import SeasonsRates from 'pages/seasons-rates/seasons-rates';
 import AvailabilityCalendar from 'pages/availability/availability-calendar'
+import RoomAvailabilityCalendar from 'pages/availability/room-availability-calendar';
 
 const Routes = (props) => {
     const { t } = props;
@@ -79,10 +80,12 @@ const Routes = (props) => {
                 component={SeasonsRates}
             />
             <Route
-                path={[
-                    '/contract/:contractId/availability/rooms',
-                    '/contract/:contractId/availability/room/:roomId/calendar'
-                ]}
+                path="/contract/:contractId/availability/room/:roomId/calendar"
+                title={t('Availability Calendar')}
+                component={RoomAvailabilityCalendar}
+            />
+            <Route
+                path="/contract/:contractId/availability/rooms"
                 title={t('Availability Calendar')}
                 component={AvailabilityCalendar}
             />
