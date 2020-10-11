@@ -1,0 +1,64 @@
+.menu
+    margin-top: 80px
+    min-width: 250px
+    box-sizing: border-box
+    padding-right: 30px
+
+.menu-item
+    display: flex
+    cursor: pointer
+    align-items: center
+    font-size: 17px
+    padding: 12px
+
+    &.active
+        cursor: default
+        pointer-events: none
+
+    &.active
+        background: #F5F9FA
+
+    &:hover
+        background: #f7f7f7
+
+
+    &-text
+        margin-left: 8px
+
+.submenu
+    margin-left: 22px
+
+    & .menu-item
+        font-size: 15px
+
+.menu-icon
+    width: 22px
+    height: 22px
+    background: #595959
+
+    &.active
+        background: #FF9D19
+
+    &.accommodations
+        mask: url("./icons/accommodations.svg") center no-repeat
+
+    &.plus
+        mask: url("./icons/plus.svg") center no-repeat
+
+    &.profile
+        mask: url("./icons/profile.svg") center no-repeat
+
+    &.rooms
+        mask: url("./icons/rooms.svg") center no-repeat
+
+    &.contracts
+        mask: url("./icons/contracts.svg") center no-repeat
+
+    &.calendar
+        mask: url("./icons/calendar.svg") center no-repeat
+
+    &.rates
+        mask: url("./icons/rates.svg") center no-repeat
+
+    &.seasons
+        mask: url("./icons/seasons.svg") center no-repeat

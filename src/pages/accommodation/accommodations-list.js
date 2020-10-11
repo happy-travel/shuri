@@ -7,8 +7,8 @@ import propTypes from 'prop-types';
 import Table from 'matsumoto/src/components/table';
 import { Stars } from 'matsumoto/src/simple';
 import UIStore from 'stores/shuri-ui-store';
-import { Link } from 'react-router-dom';
 import { getAccommodations } from 'providers/api';
+import Menu from 'parts/menu';
 
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -85,14 +85,8 @@ class AccommodationsList extends React.Component {
         const { t } = this.props;
         return (
             <div className="settings block">
+                <Menu match={this.props.match} />
                 <section>
-                    <div className="add-new-button-holder">
-                        <Link to="/accommodation">
-                            <button className="button small">
-                                {t('Add new accommodation')}
-                            </button>
-                        </Link>
-                    </div>
                     <h2>
                         <span className="brand">
                             {t('Accommodations List')}
@@ -106,7 +100,8 @@ class AccommodationsList extends React.Component {
 }
 
 AccommodationsList.propTypes = {
-    t: propTypes.func
+    t: propTypes.func,
+    match: propTypes.object
 };
 
 export default withTranslation()(AccommodationsList);

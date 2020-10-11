@@ -106,7 +106,11 @@ const Translations = {
         'Framed free sale': 'Framed free sale',
         'Free sale': 'Free sale',
         'No rooms found': 'No rooms found',
-        'No rooms added': 'No rooms added'
+        'No rooms added': 'No rooms added',
+        'Create new': 'Create new',
+        'Profile': 'Profile',
+        'Room types': 'Room types',
+        'Room': 'Room'
     }
 };
 

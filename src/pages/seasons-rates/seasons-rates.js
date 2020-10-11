@@ -4,9 +4,9 @@ import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
 import { Loader } from 'matsumoto/src/simple';
-import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import UI from 'stores/shuri-ui-store';
 import RateActionModal from 'pages/seasons-rates/rate-action-modal';
+import Menu from 'parts/menu';
 import { getRates, getSeasons, removeRate, createRate, getContractAccommodations, getContract } from 'providers/api';
 import { getRatesTree } from 'utils/ui-utils';
 
@@ -173,28 +173,6 @@ class SeasonsRates extends React.Component {
         this.hideModal();
     }
 
-    renderBreadcrumbs = () => {
-        const { t } = this.props;
-        return (
-            <Breadcrumbs
-                backLink={`/contract/${this.contractId}`}
-                items={[
-                    {
-                        text: t('Contracts'),
-                        link: '/contracts'
-                    },
-                    {
-                        text: this.contract.name || `Contract #${this.contractId}`,
-                        link: `/contract/${this.contractId}`
-                    },
-                    {
-                        text: t('Rates')
-                    }
-                ]}
-            />
-        );
-    }
-
     renderHeader = () => {
         const { t } = this.props;
         return (
@@ -299,17 +277,21 @@ class SeasonsRates extends React.Component {
     }
 
     render() {
-        if (this.contract === undefined) {
-            return <Loader />;
-        }
+        const isLoading = this.contract === undefined;
+
         return (
             <>
                 <div className="settings block">
-                    <section>
-                        {this.renderBreadcrumbs()}
-                        {this.renderHeader()}
-                        {this.renderSeasons()}
-                    </section>
+                    <Menu match={this.props.match} />
+                        <section>
+                            {isLoading ?
+                                <Loader /> :
+                                <>
+                                    {this.renderHeader()}
+                                    {this.renderSeasons()}
+                                </>
+                            }
+                        </section>
                 </div>
                 {this.activeRate || this.rateStub ?
                     <RateActionModal

@@ -4,9 +4,9 @@ import { withTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
-import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import { CachedForm } from 'matsumoto/src/components/form';
 import { Loader } from 'matsumoto/src/simple';
+import Menu from 'parts/menu';
 import CalendarForm from 'components/calendar';
 import SeasonsList from '../seasons/seasons-list';
 import {
@@ -63,28 +63,6 @@ class Calendar extends React.Component {
         this.redirectUrl = `/contract/${this.contractId}`;
     }
 
-    renderBreadcrumbs = () => {
-        const { t } = this.props;
-        return (
-            <Breadcrumbs
-                backLink={`/contract/${this.contractId}`}
-                items={[
-                    {
-                        text: t('Contracts'),
-                        link: '/contracts'
-                    },
-                    {
-                        text: this.contract.name || `Contract #${this.contractId}`,
-                        link: `/contract/${this.contractId}`
-                    },
-                    {
-                        text: t('Calendar')
-                    }
-                ]}
-            />
-        );
-    }
-
     renderContent = () => {
         if (this.redirectUrl) {
             return <Redirect push to={this.redirectUrl} />;
@@ -113,23 +91,27 @@ class Calendar extends React.Component {
     }
 
     render() {
-        if (this.contract === undefined) {
-            return <Loader />;
-        }
+        const isLoading = this.contract === undefined;
         return (
             <>
-                <SeasonsList
-                    contractId={this.contractId}
-                />
                 <div className="settings block">
+                    <Menu match={this.props.match} />
                     <section>
-                        {this.renderBreadcrumbs()}
-                        <h2>
-                            <span className="brand">
-                                {`Calendar — ${this.contract.name}`}
-                            </span>
-                        </h2>
-                        {this.renderContent()}
+                        {isLoading ?
+                            <Loader /> :
+                            <>
+                                <SeasonsList
+                                    contractId={this.contractId}
+                                />
+                                <h2>
+                                    <span className="brand">
+                                        {`Calendar — ${this.contract.name}`}
+                                    </span>
+                                </h2>
+                                {this.renderContent()}
+                            </>
+                        }
+
                     </section>
                 </div>
             </>

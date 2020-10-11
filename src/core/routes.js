@@ -70,7 +70,7 @@ const Routes = (props) => {
                 component={ContractPage}
             />
             <Route
-                path="/contract/:id/calendar"
+                path="/contract/:id/seasons"
                 title={t('Season Calendar')}
                 component={Calendar}
             />

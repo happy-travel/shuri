@@ -2,10 +2,11 @@ import React from 'react';
 import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
-import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import Table from 'matsumoto/src/components/table';
+import { Loader } from 'matsumoto/src/simple/components/loader';
+import Menu from 'parts/menu';
 import UI from 'stores/shuri-ui-store';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import DialogModal from 'parts/dialog-modal';
 import propTypes from 'prop-types';
 import {
@@ -103,26 +104,6 @@ class RoomsList extends React.Component {
         this.isRemoveModalShown = false;
     }
 
-    renderBreadcrumbs = () => {
-        const { t } = this.props;
-        return (
-            <Breadcrumbs
-                backLink={`/accommodation/${this.accommodationId}`}
-                items={[
-                    {
-                        text: t('Accommodations'),
-                        link: '/'
-                    }, {
-                        text: this.accommodation?.name[UI.editorLanguage] || `Accommodation #${this.accommodationId}`,
-                        link: `/accommodation/${this.accommodationId}`
-                    }, {
-                        text: t('Rooms')
-                    }
-                ]}
-            />
-        );
-    }
-
     renderContent = () => {
         const { t } = this.props;
         return (
@@ -142,35 +123,27 @@ class RoomsList extends React.Component {
         if (this.redirect) {
             return <Redirect push to={this.redirect}/>;
         }
+        const isLoading = this.accommodation === undefined;
 
         const { t } = this.props;
         return (
             <>
                 <div className="settings block">
+                    <Menu match={this.props.match}/>
                     <section>
-                        {this.renderBreadcrumbs()}
-                        <h2>
-                            <div className="add-new-button-holder">
-                                <Link to={`/accommodation/${this.accommodationId}/room`}>
-                                    <button className="button small">
-                                        Add new room
-                                    </button>
-                                </Link>
-                                {/*<button*/}
-                                {/*    type="button"*/}
-                                {/*    disabled={!this.roomsList?.length}*/}
-                                {/*    onClick={this.onOpenRemoveModal}*/}
-                                {/*    className="button small gray remove-button"*/}
-                                {/*>*/}
-                                {/*    {t('Remove rooms')}*/}
-                                {/*</button>*/}
-                            </div>
-                            <span className="brand">
-                                {`Rooms list In Accommodation #${this.accommodationId}`}
-                            </span>
-                        </h2>
-                        {this.renderContent()}
+                        {isLoading ?
+                            <Loader /> :
+                            <>
+                                <h2>
+                                    <span className="brand">
+                                        {`Rooms list In ${this.accommodation.name[UI.editorLanguage]}`}
+                                    </span>
+                                </h2>
+                                {this.renderContent()}
+                            </>
+                        }
                     </section>
+
                 </div>
                 {this.isRemoveModalShown ?
                     <DialogModal

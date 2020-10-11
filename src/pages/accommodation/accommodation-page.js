@@ -1,6 +1,6 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
 import {
@@ -9,7 +9,6 @@ import {
     FieldSelect
 } from 'matsumoto/src/components/form';
 import { Loader, Stars, decorate } from 'matsumoto/src/simple';
-import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import Gallery from 'matsumoto/src/components/gallery';
 import UI from 'stores/shuri-ui-store';
 import LocationsStore from 'stores/shuri-locations-store';
@@ -23,6 +22,7 @@ import {
 } from 'providers/api';
 import AgeRanges from './parts/age-ranges';
 import { agesReformat } from './parts/utils';
+import Menu from 'parts/menu';
 import { parseBackendErrors } from 'utils/error-utils';
 
 const CHECKOUT_TIME_OPTIONS = [
@@ -51,6 +51,19 @@ class AccommodationPage extends React.Component {
     formik;
 
     componentDidMount() {
+        this.loadData();
+    }
+
+    componentDidUpdate(prevProps) {
+        const prevId = prevProps.match.params.id;
+        const id = this.props.match.params.id;
+
+        if (prevId !== id) {
+            this.setState({ id }, this.loadData);
+        }
+    }
+
+    loadData = () => {
         LocationsStore.loadLocations();
 
         if (!this.state.id) {
@@ -117,9 +130,7 @@ class AccommodationPage extends React.Component {
         }
 
         getAccommodation({
-            urlParams: {
-                id: this.state.id
-            }
+            urlParams: { id: this.state.id }
         }).then(this.getAccommodationSuccess);
     }
 
@@ -250,28 +261,6 @@ class AccommodationPage extends React.Component {
         const pictures = this.state.accommodation.pictures[UI.editorLanguage];
         pictures[index][field] = '';
         this.setPictures(pictures);
-    }
-
-    renderBreadcrumbs = () => {
-        const { t } = this.props;
-        const { id } = this.state;
-        const text = id ?
-            this.state.accommodation.name[UI.editorLanguage] || `Accommodation #${id}`:
-            t('Create accommodation');
-
-        return (
-            <Breadcrumbs
-                backLink={'/'}
-                items={[
-                    {
-                        text: t('Accommodations'),
-                        link: '/'
-                    }, {
-                        text
-                    }
-                ]}
-            />
-        );
     }
 
     renderForm = (formik) => {
@@ -505,10 +494,7 @@ class AccommodationPage extends React.Component {
     render() {
         const { t } = this.props;
         const { redirectUrl, id, accommodation } = this.state;
-
-        if (accommodation === undefined) {
-            return <Loader />;
-        }
+        const isLoading = accommodation === undefined;
 
         if (redirectUrl) {
             return <Redirect push to={redirectUrl} />;
@@ -518,32 +504,27 @@ class AccommodationPage extends React.Component {
             <>
                 <div className="hide">{JSON.stringify(LocationsStore.locations)}</div>
                 <div className="settings block">
+                    <Menu match={this.props.match} />
                     <section>
-                        {this.renderBreadcrumbs()}
-                        <h2>
-                            {id ?
-                                <div>
-                                    <Link to={`/accommodation/${id}/rooms`}>
-                                        <button className="button go-to-rooms">
-                                            {`Rooms management (${accommodation?.roomIds?.length || 0})`}
-                                        </button>
-                                    </Link>
-                                </div> :
-                                null
-                            }
-                            <span className="brand">
-                                {id ?
-                                    `Edit accommodation #${id}` :
-                                    t('Create new accommodation')
-                                }
-                            </span>
-                        </h2>
-                        <CachedForm
-                            initialValues={accommodation}
-                            onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
-                            render={this.renderForm}
-                            enableReinitialize
-                        />
+                        {isLoading ?
+                            <Loader /> :
+                            <>
+                                <h2>
+                                    <span className="brand">
+                                    {id ?
+                                        `Edit ${accommodation.name[UI.editorLanguage]}` :
+                                        t('Create new accommodation')
+                                    }
+                                    </span>
+                                </h2>
+                                <CachedForm
+                                    initialValues={accommodation}
+                                    onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
+                                    render={this.renderForm}
+                                    enableReinitialize
+                                />
+                            </>
+                        }
                     </section>
                 </div>
                 {this.state.isRemoveModalShown ?
