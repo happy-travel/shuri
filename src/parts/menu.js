@@ -26,6 +26,10 @@ class Menu extends React.Component {
                     {
                         name: t('Create new'),
                         activePath: '/accommodation',
+                        shownPaths: [
+                            '/',
+                            '/accommodation'
+                        ],
                         link: '/accommodation',
                         icon: 'plus'
                     },
@@ -42,7 +46,7 @@ class Menu extends React.Component {
                         icon: 'profile'
                     },
                     {
-                        name: t('Room types'),
+                        name: t('Rooms'),
                         activePath: '/accommodation/:accommodationId/rooms',
                         expandedPaths: [
                             '/accommodation/:accommodationId/rooms',
@@ -87,6 +91,10 @@ class Menu extends React.Component {
                     {
                         name: t('Create new'),
                         activePath: '/contract',
+                        shownPaths: [
+                            '/contracts',
+                            '/contract'
+                        ],
                         link: '/contract',
                         icon: 'plus'
                     },

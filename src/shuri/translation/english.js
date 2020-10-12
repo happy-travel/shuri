@@ -109,7 +109,6 @@ const Translations = {
         'No rooms added': 'No rooms added',
         'Create new': 'Create new',
         'Profile': 'Profile',
-        'Room types': 'Room types',
         'Room': 'Room'
     }
 };
