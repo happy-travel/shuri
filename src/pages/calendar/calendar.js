@@ -19,6 +19,7 @@ import {
     getSeasonRanges,
     updateSeasonRanges
 } from 'providers/api';
+import EntitiesStore from 'stores/shuri-entities-store';
 import SeasonsStore from 'stores/shuri-seasons-store';
 
 @observer
@@ -47,6 +48,7 @@ class Calendar extends React.Component {
     getDataSuccess = ([contract, ranges]) => {
         this.contract = contract;
         this.initialValues = convertRangesToForm(ranges, contract);
+        EntitiesStore.setContract(contract);
     }
 
     onSubmit = (values) => {

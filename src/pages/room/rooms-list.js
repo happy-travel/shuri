@@ -6,6 +6,7 @@ import Table from 'matsumoto/src/components/table';
 import { Loader } from 'matsumoto/src/simple/components/loader';
 import Menu from 'parts/menu';
 import UI from 'stores/shuri-ui-store';
+import EntitiesStore from 'stores/shuri-entities-store';
 import { Redirect } from 'react-router-dom';
 import DialogModal from 'parts/dialog-modal';
 import propTypes from 'prop-types';
@@ -67,6 +68,7 @@ class RoomsList extends React.Component {
     getDataSuccess = ([accommodation, roomsList]) => {
         this.accommodation = accommodation;
         this.roomsList = roomsList;
+        EntitiesStore.setAccommodation(accommodation);
     }
 
     @action

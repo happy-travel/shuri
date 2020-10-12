@@ -8,13 +8,22 @@ import {
 } from 'matsumoto/src/components/form';
 import Menu from 'parts/menu';
 import UI from 'stores/shuri-ui-store';
+import EntitiesStore from 'stores/shuri-entities-store';
 import DialogModal from 'parts/dialog-modal';
 import {
-    createAccommodationRoom,
+    createAccommodationRoom, getAccommodation,
     getAccommodationRoom,
     removeAccommodationRoom,
     updateAccommodationRoom
 } from 'providers/api';
+import { Loader } from 'matsumoto/src/simple';
+
+const DEFAULT_ROOM = {
+    name: { [UI.editorLanguage]: '' },
+    description: { [UI.editorLanguage]: '' },
+    amenities: { [UI.editorLanguage]: [] },
+    pictures: {}
+};
 
 class RoomPage extends React.Component {
     state = {
@@ -41,32 +50,28 @@ class RoomPage extends React.Component {
 
     loadData = () => {
         const { id, accommodationId } = this.state;
-        if (!id) {
-            this.setState({
-                room: {
-                    name: { [UI.editorLanguage]: '' },
-                    description: { [UI.editorLanguage]: '' },
-                    amenities: { [UI.editorLanguage]: [] },
-                    pictures: {}
-                }
-            });
-            return;
-        }
 
-        getAccommodationRoom({
-            urlParams: {
-                accommodationId,
-                roomId: id
-            }
-        }).then(this.getDataSuccess);
+        getAccommodation({ urlParams: { id: accommodationId } }).then(this.getAccommodationSuccess);
+
+        if (!id || EntitiesStore.hasRoom(accommodationId, id)) {
+            this.setState({ room: !id ? DEFAULT_ROOM : EntitiesStore.getRoom(accommodationId, id) });
+        } else {
+            getAccommodationRoom({
+                urlParams: {
+                    accommodationId,
+                    roomId: id
+                }
+            }).then(this.getAccommodationRoomSuccess);
+        }
     }
 
     getAccommodationSuccess = (accommodation) => {
-        this.setState({ accommodation })
+        EntitiesStore.setAccommodation(accommodation);
     }
 
-    getDataSuccess = (room) => {
-        this.setState({ room })
+    getAccommodationRoomSuccess = (room) => {
+        this.setState({ room });
+        EntitiesStore.setRoom(this.state.accommodationId, room);
     }
 
     setRedirectUrl = () => {
@@ -193,6 +198,7 @@ class RoomPage extends React.Component {
     render() {
         const { t } = this.props;
         const { redirectUrl, id } = this.state;
+        const isLoading = this.state.room === undefined;
 
         if (redirectUrl) {
             return <Redirect push to={redirectUrl} />;
@@ -203,17 +209,22 @@ class RoomPage extends React.Component {
                 <div className="settings block">
                     <Menu match={this.props.match} />
                     <section>
-                        <h2>
-                            <span className="brand">
-                                {id ? `Edit room #${id}` : 'Create new room'}
-                            </span>
-                        </h2>
-                        <CachedForm
-                            initialValues={this.state.room}
-                            onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
-                            render={this.renderForm}
-                            enableReinitialize
-                        />
+                        {isLoading ?
+                            <Loader /> :
+                            <>
+                                <h2>
+                                    <span className="brand">
+                                        {id ? `Edit room #${id}` : 'Create new room'}
+                                    </span>
+                                </h2>
+                                <CachedForm
+                                    initialValues={this.state.room}
+                                    onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
+                                    render={this.renderForm}
+                                    enableReinitialize
+                                />
+                            </>
+                        }
                     </section>
                 </div>
                 {this.state.isRemoveModalShown ?

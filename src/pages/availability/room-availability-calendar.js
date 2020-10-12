@@ -15,6 +15,7 @@ import {
     updateAvailabilityRestrictions
 } from 'providers/api';
 import UI from 'stores/shuri-ui-store';
+import EntitiesStore from 'stores/shuri-entities-store';
 import { convertRestrictionsToForm, convertFormToRestrictions } from 'pages/calendar/utils/converter';
 
 @observer
@@ -65,6 +66,7 @@ class RoomAvailabilityCalendar extends React.Component {
             });
         });
         this.availabilityRestrictions = restrictions;
+        EntitiesStore.setContract(contract);
     }
 
     onSubmit = (values) => {

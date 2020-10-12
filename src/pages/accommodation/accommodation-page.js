@@ -11,6 +11,7 @@ import {
 import { Loader, Stars, decorate } from 'matsumoto/src/simple';
 import Gallery from 'matsumoto/src/components/gallery';
 import UI from 'stores/shuri-ui-store';
+import EntitiesStore from 'stores/shuri-entities-store';
 import LocationsStore from 'stores/shuri-locations-store';
 import DialogModal from 'parts/dialog-modal';
 import FieldTime from 'components/form/field-time';
@@ -39,6 +40,64 @@ const CHECKIN_TIME_OPTIONS = [
     { value: '16:00', text: '16:00' }
 ]
 
+const DEFAULT_ACCOMMODATION = {
+    name: {
+        [UI.editorLanguage]: ''
+    },
+    address: {
+        [UI.editorLanguage]: ''
+    },
+    description: {
+        [UI.editorLanguage]: {
+            description: ''
+        }
+    },
+    checkInTime: '',
+    checkOutTime: '',
+    pictures: {
+        [UI.editorLanguage]: [
+            {
+                source: '',
+                caption: ''
+            }
+        ]
+    },
+    contactInfo: {
+        email: '',
+        phone: '',
+        website: ''
+    },
+    propertyType: '',
+    amenities: {
+        [UI.editorLanguage]: ['']
+    },
+    additionalInfo: {
+        [UI.editorLanguage]: ''
+    },
+    occupancyDefinition: {
+        infant: {
+            lowerBound: 0,
+            upperBound: 3,
+            enabled: true
+        },
+        child: {
+            lowerBound: 4,
+            upperBound: 11,
+            enabled: true
+        },
+        teen: {
+            lowerBound: 12,
+            upperBound: 17,
+            enabled: true
+        },
+        adult: {
+            lowerBound: 18,
+            enabled: true
+        }
+    },
+    locationId: undefined
+};
+
 @observer
 class AccommodationPage extends React.Component {
     state = {
@@ -64,80 +123,19 @@ class AccommodationPage extends React.Component {
     }
 
     loadData = () => {
+        const { id } = this.state;
         LocationsStore.loadLocations();
 
-        if (!this.state.id) {
-            this.setState({
-                accommodation: {
-                    name: {
-                        [UI.editorLanguage]: ''
-                    },
-                    address: {
-                        [UI.editorLanguage]: ''
-                    },
-                    description: {
-                        [UI.editorLanguage]: {
-                            description: ''
-                        }
-                    },
-                    checkInTime: '',
-                    checkOutTime: '',
-                    pictures: {
-                        [UI.editorLanguage]: [
-                            {
-                                source: '',
-                                caption: ''
-                            }
-                        ]
-                    },
-                    contactInfo: {
-                        email: '',
-                        phone: '',
-                        website: ''
-                    },
-                    propertyType: '',
-                    amenities: {
-                        [UI.editorLanguage]: ['']
-                    },
-                    additionalInfo: {
-                        [UI.editorLanguage]: ''
-                    },
-                    occupancyDefinition: {
-                        infant: {
-                            lowerBound: 0,
-                            upperBound: 3,
-                            enabled: true
-                        },
-                        child: {
-                            lowerBound: 4,
-                            upperBound: 11,
-                            enabled: true
-                        },
-                        teen: {
-                            lowerBound: 12,
-                            upperBound: 17,
-                            enabled: true
-                        },
-                        adult: {
-                            lowerBound: 18,
-                            enabled: true
-                        }
-                    },
-                    locationId: undefined
-                }
-            });
-            return;
+        if (!id || EntitiesStore.hasAccommodation(id)) {
+            this.setState({ accommodation: !id ? DEFAULT_ACCOMMODATION : EntitiesStore.getAccommodation(id) });
+        } else {
+            getAccommodation({ urlParams: { id } }).then(this.getAccommodationSuccess);
         }
-
-        getAccommodation({
-            urlParams: {
-                id: this.state.id
-            }
-        }).then(this.getAccommodationSuccess);
     }
 
     getAccommodationSuccess = (accommodation) => {
         this.setState({ accommodation });
+        EntitiesStore.setAccommodation(accommodation);
     }
 
     getLocationOptions = () => {
@@ -210,22 +208,30 @@ class AccommodationPage extends React.Component {
         if (this.state.isRequestingApi) {
             return;
         }
+        const accommodation = this.reformatValues(values);
         this.setRequestingApiStatus();
-        createAccommodation({ body: this.reformatValues(values) })
-            .then(this.setRedirectUrl, this.accommodationActionFail);
+        createAccommodation({ body: accommodation })
+            .then(() => this.accommodationActionSuccess(accommodation), this.accommodationActionFail);
     }
 
     onUpdateSubmit = (values) => {
         if (this.state.isRequestingApi) {
             return;
         }
+        const accommodation = this.reformatValues(values);
         this.setRequestingApiStatus();
         updateAccommodation({
             urlParams: {
                 id: this.state.id
             },
-            body: this.reformatValues(values)
-        }).then(this.setRedirectUrl, this.accommodationActionFail);
+            body: accommodation
+        }).then(() => this.accommodationActionSuccess(accommodation), this.accommodationActionFail);
+    }
+
+    accommodationActionSuccess = (accommodation) => {
+        this.unsetRequestingApiStatus();
+        this.setRedirectUrl();
+        EntitiesStore.setAccommodation(accommodation);
     }
 
     accommodationActionFail = (errorData) => {

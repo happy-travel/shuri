@@ -10,6 +10,7 @@ import FieldDatepicker from 'matsumoto/src/components/complex/field-datepicker';
 import { Loader } from 'matsumoto/src/simple/components/loader';
 import Menu from 'parts/menu';
 import UI from 'stores/shuri-ui-store';
+import EntitiesStore from 'stores/shuri-entities-store';
 import DialogModal from 'parts/dialog-modal';
 import {
     getContract,
@@ -50,12 +51,11 @@ class ContractPage extends React.Component {
 
         getAccommodations().then(this.getAccommodationsSuccess);
 
-        if (!id) {
-            this.setState({ contract: {} });
-            return;
+        if (!id || EntitiesStore.hasContract(id)) {
+            this.setState({ contract: !id ? {} : EntitiesStore.getContract(id) })
+        } else {
+            getContract({ urlParams: { id } }).then(this.getContractSuccess);
         }
-
-        getContract({ urlParams: { id } }).then(this.getContractSuccess);
     }
 
     getAccommodationsSuccess = (accommodationsList) => {
@@ -64,6 +64,7 @@ class ContractPage extends React.Component {
 
     getContractSuccess = (contract) => {
         this.setState({ contract });
+        EntitiesStore.setContract(contract);
     }
 
     setRedirectUrl = () => {
@@ -94,22 +95,30 @@ class ContractPage extends React.Component {
         if (this.state.isRequestingApi) {
             return;
         }
+        const contract = formatValues(values);
         this.setRequestingApiStatus();
-        createContract({ body: formatValues(values) })
-            .then(this.setRedirectUrl, this.contractActionFail);
+        createContract({ body: contract })
+            .then(() => this.contractActionSuccess(contract), this.contractActionFail);
     }
 
     onUpdateSubmit = (values) => {
         if (this.state.isRequestingApi) {
             return;
         }
+        const contract = formatValues(values);
         this.setRequestingApiStatus();
         updateContract({
             urlParams: {
                 id: this.state.id
             },
-            body: formatValues(values)
-        }).then(this.setRedirectUrl, this.contractActionFail);
+            body: contract
+        }).then(() => this.contractActionSuccess(contract), this.contractActionFail);
+    }
+
+    contractActionSuccess = (contract) => {
+        this.unsetRequestingApiStatus();
+        this.setRedirectUrl();
+        EntitiesStore.setContract(contract);
     }
 
     contractActionFail = (errorData) => {

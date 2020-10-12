@@ -11,6 +11,7 @@ import {
 } from 'providers/api';
 import Menu from 'parts/menu';
 import UI from 'stores/shuri-ui-store';
+import EntitiesStore from 'stores/shuri-entities-store';
 
 @observer
 class AvailabilityCalendar extends React.Component {
@@ -36,6 +37,7 @@ class AvailabilityCalendar extends React.Component {
                 this.roomsList.set(String(roomId), `#${roomId}: ${accommodation.name[UI.editorLanguage]}`);
             });
         });
+        EntitiesStore.setContract(contract);
     }
 
     renderRoomsList = () => {

@@ -3,11 +3,17 @@ import { withTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import propTypes from 'prop-types';
 import { computed } from 'mobx';
+import { observer } from 'mobx-react';
+import EntitiesStore from 'stores/shuri-entities-store';
+import UI from 'stores/shuri-ui-store';
 
+@observer
 class Menu extends React.Component {
     @computed
     get menuItems() {
         const { t, match: { params } } = this.props;
+        const accommodationId = params.accommodationId || params.id;
+        const contractId = params.contractId || params.id;
         return [
             {
                 name: t('Accommodations'),
@@ -22,6 +28,18 @@ class Menu extends React.Component {
                 ],
                 link: '/',
                 icon: 'accommodations',
+                info: EntitiesStore.hasAccommodation(accommodationId) ?
+                    {
+                        main: EntitiesStore.getAccommodation(accommodationId).name[UI.editorLanguage],
+                        details: EntitiesStore.getAccommodation(accommodationId).address[UI.editorLanguage],
+                        shownPaths: [
+                            '/accommodation/:id',
+                            '/accommodation/:accommodationId/rooms',
+                            '/accommodation/:accommodationId/room',
+                            '/accommodation/:accommodationId/room/:id'
+                        ]
+                    } :
+                    null,
                 submenu: [
                     {
                         name: t('Create new'),
@@ -42,7 +60,7 @@ class Menu extends React.Component {
                             '/accommodation/:accommodationId/room',
                             '/accommodation/:accommodationId/room/:id'
                         ],
-                        link: `/accommodation/${params.accommodationId || params.id}`,
+                        link: `/accommodation/${accommodationId}`,
                         icon: 'profile'
                     },
                     {
@@ -59,14 +77,26 @@ class Menu extends React.Component {
                             '/accommodation/:accommodationId/room',
                             '/accommodation/:accommodationId/room/:id'
                         ],
-                        link: `/accommodation/${params.accommodationId || params.id}/rooms`,
+                        link: `/accommodation/${accommodationId}/rooms`,
                         icon: 'rooms',
                         submenu: [
                             {
                                 name: t('Create new'),
                                 activePath: '/accommodation/:accommodationId/room',
-                                link: `/accommodation/${params.accommodationId}/room`,
+                                shownPaths: [
+                                    '/accommodation/:accommodationId/rooms',
+                                    '/accommodation/:accommodationId/room'
+                                ],
+                                link: `/accommodation/${accommodationId}/room`,
                                 icon: 'plus'
+                            },
+                            {
+                                name: `${t('Room')} #${params.id}`,
+                                activePath: '/accommodation/:accommodationId/room/:id',
+                                shownPaths: [
+                                    '/accommodation/:accommodationId/room/:id'
+                                ],
+                                link: `/accommodation/${accommodationId}/room/${params.id}`
                             }
                         ]
                     }
@@ -87,6 +117,19 @@ class Menu extends React.Component {
                 link: '/contracts',
                 icon: 'contracts',
                 hasTopBorder: true,
+                info: EntitiesStore.hasContract(contractId) ?
+                    {
+                        main: EntitiesStore.getContract(contractId).name,
+                        details: EntitiesStore.getContract(contractId).description,
+                        shownPaths: [
+                            '/contract/:id',
+                            '/contract/:id/seasons',
+                            '/contract/:id/rates',
+                            '/contract/:contractId/availability/room/:roomId/calendar',
+                            '/contract/:contractId/availability/rooms'
+                        ]
+                    } :
+                    null,
                 submenu: [
                     {
                         name: t('Create new'),
@@ -108,7 +151,7 @@ class Menu extends React.Component {
                             '/contract/:contractId/availability/room/:roomId/calendar',
                             '/contract/:contractId/availability/rooms'
                         ],
-                        link: `/contract/${params.contractId || params.id}`,
+                        link: `/contract/${contractId}`,
                         icon: 'profile'
                     },
                     {
@@ -124,7 +167,7 @@ class Menu extends React.Component {
                         expandedPaths: [
                             '/contract/:contractId/availability/room/:roomId/calendar'
                         ],
-                        link: `/contract/${params.contractId || params.id}/availability/rooms`,
+                        link: `/contract/${contractId}/availability/rooms`,
                         icon: 'calendar',
                         submenu: [
                             {
@@ -133,8 +176,8 @@ class Menu extends React.Component {
                                 shownPaths: [
                                     '/contract/:contractId/availability/room/:roomId/calendar'
                                 ],
-                                link: `/contract/${params.contractId || params.id}` +
-                                    `/availability/${params.roomId}/calendar`
+                                link: `/contract/${contractId}` +
+                                    `/availability/room/${params.roomId}/calendar`
                             }
                         ]
                     },
@@ -148,7 +191,7 @@ class Menu extends React.Component {
                             '/contract/:contractId/availability/room/:roomId/calendar',
                             '/contract/:contractId/availability/rooms'
                         ],
-                        link: `/contract/${params.contractId || params.id}/rates`,
+                        link: `/contract/${contractId}/rates`,
                         icon: 'rates'
                     },
                     {
@@ -161,7 +204,7 @@ class Menu extends React.Component {
                             '/contract/:contractId/availability/room/:roomId/calendar',
                             '/contract/:contractId/availability/rooms'
                         ],
-                        link: `/contract/${params.contractId || params.id}/seasons`,
+                        link: `/contract/${contractId}/seasons`,
                         icon: 'seasons'
                     }
                 ]
@@ -180,6 +223,7 @@ class Menu extends React.Component {
     renderMenuItem = (item) => {
         const { path } = this.props.match;
         const isShown = !item.shownPaths || item.shownPaths.includes(path);
+        const isInfoShown = item.info && (!item.info.shownPaths || item.info.shownPaths.includes(path));
 
         if (!isShown) {
             return null;
@@ -199,6 +243,16 @@ class Menu extends React.Component {
                         <span className="menu-item-text">{item.name}</span>
                     </div>
                 </Link>
+                {isInfoShown ?
+                    <div className="info-item">
+                        <span className="info-text">{item.info.main}</span>
+                        {item.info.details ?
+                            <span className="info-text info-details">{item.info.details}</span> :
+                            null
+                        }
+                    </div> :
+                    null
+                }
                 {isExpanded ? this.renderSubmenu(item.submenu) : null}
             </>
         );
