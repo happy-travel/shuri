@@ -82,6 +82,7 @@ class Menu extends React.Component {
                 ],
                 link: '/contracts',
                 icon: 'contracts',
+                hasTopBorder: true,
                 submenu: [
                     {
                         name: t('Create new'),
@@ -178,10 +179,11 @@ class Menu extends React.Component {
 
         const isActive = item.activePath === path;
         const isExpanded = item.expandedPaths?.includes(path) && Boolean(item.submenu);
+        const itemClassName = 'menu-item' + __class(isActive, 'active') + __class(item.hasTopBorder, 'with-top-border');
         return (
             <>
                 <Link to={item.link} className="default-pointer">
-                    <div className={'menu-item' + __class(isActive, 'active')}>
+                    <div className={itemClassName}>
                         {item.icon ?
                             <span className={`menu-icon ${item.icon}` + __class(isActive, 'active')} /> :
                             null
