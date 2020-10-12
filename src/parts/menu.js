@@ -180,7 +180,7 @@ class Menu extends React.Component {
         const isExpanded = item.expandedPaths?.includes(path) && Boolean(item.submenu);
         return (
             <>
-                <Link to={item.link} className="no-pointer">
+                <Link to={item.link} className="default-pointer">
                     <div className={'menu-item' + __class(isActive, 'active')}>
                         {item.icon ?
                             <span className={`menu-icon ${item.icon}` + __class(isActive, 'active')} /> :
