@@ -130,7 +130,9 @@ class AccommodationPage extends React.Component {
         }
 
         getAccommodation({
-            urlParams: { id: this.state.id }
+            urlParams: {
+                id: this.state.id
+            }
         }).then(this.getAccommodationSuccess);
     }
 
