@@ -3,9 +3,10 @@ import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import Table from 'matsumoto/src/components/table';
 import { dateFormat } from 'matsumoto/src/simple';
+import Menu from 'parts/menu';
 import { getContracts } from 'providers/api';
 
 @observer
@@ -67,15 +68,9 @@ class ContractsList extends React.Component {
         const { t } = this.props;
         return (
             <div className="settings block">
+                <Menu match={this.props.match}/>
                 <section>
                     <h2>
-                        <div className="add-new-button-holder">
-                            <Link to="/contract">
-                                <button className="button small">
-                                    {t('Add new contract')}
-                                </button>
-                            </Link>
-                        </div>
                         <span className="brand">
                             {t('Contracts list')}
                         </span>
@@ -88,7 +83,8 @@ class ContractsList extends React.Component {
 }
 
 ContractsList.propTypes = {
-    t: propTypes.func
+    t: propTypes.func,
+    match: propTypes.object
 };
 
 export default withTranslation()(ContractsList);

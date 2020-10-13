@@ -1,15 +1,16 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import propTypes from 'prop-types';
 import {
     CachedForm, FieldSelect,
     FieldText
 } from 'matsumoto/src/components/form';
-import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import FieldDatepicker from 'matsumoto/src/components/complex/field-datepicker';
 import { Loader } from 'matsumoto/src/simple/components/loader';
+import Menu from 'parts/menu';
 import UI from 'stores/shuri-ui-store';
+import EntitiesStore from 'stores/shuri-entities-store';
 import DialogModal from 'parts/dialog-modal';
 import {
     getContract,
@@ -33,16 +34,28 @@ class ContractPage extends React.Component {
     formik;
 
     componentDidMount() {
+        this.loadData();
+    }
+
+    componentDidUpdate(prevProps) {
+        const prevId = prevProps.match.params.id;
+        const id = this.props.match.params.id;
+
+        if (prevId !== id) {
+            this.setState({ id }, this.loadData);
+        }
+    }
+
+    loadData = () => {
         const { id } = this.state;
 
         getAccommodations().then(this.getAccommodationsSuccess);
 
-        if (!id) {
-            this.setState({ contract: {} });
-            return;
+        if (!id || EntitiesStore.hasContract(id)) {
+            this.setState({ contract: !id ? {} : EntitiesStore.getContract(id) })
+        } else {
+            getContract({ urlParams: { id } }).then(this.getContractSuccess);
         }
-
-        getContract({ urlParams: { id } }).then(this.getContractSuccess);
     }
 
     getAccommodationsSuccess = (accommodationsList) => {
@@ -51,6 +64,7 @@ class ContractPage extends React.Component {
 
     getContractSuccess = (contract) => {
         this.setState({ contract });
+        EntitiesStore.setContract(contract);
     }
 
     setRedirectUrl = () => {
@@ -81,22 +95,30 @@ class ContractPage extends React.Component {
         if (this.state.isRequestingApi) {
             return;
         }
+        const contract = formatValues(values);
         this.setRequestingApiStatus();
-        createContract({ body: formatValues(values) })
-            .then(this.setRedirectUrl, this.contractActionFail);
+        createContract({ body: contract })
+            .then(() => this.contractActionSuccess(contract), this.contractActionFail);
     }
 
     onUpdateSubmit = (values) => {
         if (this.state.isRequestingApi) {
             return;
         }
+        const contract = formatValues(values);
         this.setRequestingApiStatus();
         updateContract({
             urlParams: {
                 id: this.state.id
             },
-            body: formatValues(values)
-        }).then(this.setRedirectUrl, this.contractActionFail);
+            body: contract
+        }).then(() => this.contractActionSuccess(contract), this.contractActionFail);
+    }
+
+    contractActionSuccess = (contract) => {
+        this.unsetRequestingApiStatus();
+        this.setRedirectUrl();
+        EntitiesStore.setContract(contract);
     }
 
     contractActionFail = (errorData) => {
@@ -114,28 +136,6 @@ class ContractPage extends React.Component {
                 id: this.state.id
             }
         }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
-    }
-
-    renderBreadcrumbs = () => {
-        const { t } = this.props;
-        const { id } = this.state;
-        const text = id ?
-            this.state.contract.name || `Contract #${id}`:
-            t('Create contract');
-
-        return (
-            <Breadcrumbs
-                backLink={'/contracts'}
-                items={[
-                    {
-                        text: t('Contracts'),
-                        link: '/contracts'
-                    }, {
-                        text
-                    }
-                ]}
-            />
-        );
     }
 
     renderForm = (formik) => {
@@ -215,10 +215,7 @@ class ContractPage extends React.Component {
     render() {
         const { t } = this.props;
         const { redirectUrl, id, contract, accommodationsList } = this.state;
-
-        if (contract === undefined || accommodationsList === undefined) {
-            return <Loader />
-        }
+        const isLoading = contract === undefined || accommodationsList === undefined;
 
         if (redirectUrl) {
             return <Redirect push to={redirectUrl} />;
@@ -227,51 +224,26 @@ class ContractPage extends React.Component {
         return (
             <>
                 <div className="settings block">
+                    <Menu match={this.props.match} />
                     <section>
-                        {this.renderBreadcrumbs()}
-                        <h2>
-                            {id ?
-                                <div className="add-new-button-holder">
-                                    <Link to={`/contract/${id}/calendar`}>
-                                        <button className="button small">
-                                            {t('Go to seasons')}
-                                        </button>
-                                    </Link>
-                                </div> :
-                                null
-                            }
-                            {id ?
-                                <div className="add-new-button-holder rates-link">
-                                    <Link to={`/contract/${id}/rates`}>
-                                        <button className="button small">
-                                            {t('Go to rates')}
-                                        </button>
-                                    </Link>
-                                </div> :
-                                null
-                            }
-                            {id ?
-                                <div className="add-new-button-holder availability-link">
-                                    <Link to={`/contract/${id}/availability/rooms`}>
-                                        <button className="button small">
-                                            {t('Go to availability')}
-                                        </button>
-                                    </Link>
-                                </div> :
-                                null
-                            }
-                            <span className="brand">
-                                {id ? `Edit contract #${id}` : t('Create new contract')}
-                            </span>
-                        </h2>
-                        {!accommodationsList?.length ?
-                            t('No accommodations found') :
-                            <CachedForm
-                                initialValues={contract}
-                                onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
-                                render={this.renderForm}
-                                enableReinitialize
-                            />
+                        {isLoading ?
+                            <Loader /> :
+                            <>
+                                <h2>
+                                    <span className="brand">
+                                        {id ? `Edit contract #${id}` : t('Create new contract')}
+                                    </span>
+                                </h2>
+                                {!accommodationsList?.length ?
+                                    t('No accommodations found') :
+                                    <CachedForm
+                                        initialValues={contract}
+                                        onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
+                                        render={this.renderForm}
+                                        enableReinitialize
+                                    />
+                                }
+                            </>
                         }
                     </section>
                 </div>

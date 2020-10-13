@@ -5,8 +5,8 @@ import { withTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import propTypes from 'prop-types';
 import { Loader } from 'matsumoto/src/simple';
-import Breadcrumbs from 'matsumoto/src/components/breadcrumbs';
 import { CachedForm } from 'matsumoto/src/components/form';
+import Menu from 'parts/menu';
 import CalendarForm from 'components/calendar';
 import {
     getAvailabilityRestrictions,
@@ -15,6 +15,7 @@ import {
     updateAvailabilityRestrictions
 } from 'providers/api';
 import UI from 'stores/shuri-ui-store';
+import EntitiesStore from 'stores/shuri-entities-store';
 import { convertRestrictionsToForm, convertFormToRestrictions } from 'pages/calendar/utils/converter';
 
 @observer
@@ -65,6 +66,7 @@ class RoomAvailabilityCalendar extends React.Component {
             });
         });
         this.availabilityRestrictions = restrictions;
+        EntitiesStore.setContract(contract);
     }
 
     onSubmit = (values) => {
@@ -79,32 +81,6 @@ class RoomAvailabilityCalendar extends React.Component {
     @action
     updateAvailabilityRestrictionsSuccess = () => {
         this.redirectUrl = `/contract/${this.contractId}/availability/rooms`;
-    }
-
-    renderBreadcrumbs = () => {
-        const { t } = this.props;
-        return (
-            <Breadcrumbs
-                backLink={`/contract/${this.contractId}/availability/rooms`}
-                items={[
-                    {
-                        text: t('Contracts'),
-                        link: '/contracts'
-                    },
-                    {
-                        text: this.contract.name || `Contract #${this.contractId}`,
-                        link: `/contract/${this.contractId}`
-                    },
-                    {
-                        text: t('Rooms'),
-                        link: `/contract/${this.contractId}/availability/rooms`
-                    },
-                    {
-                        text: t('Availability Calendar') + ` - ${this.roomsList.get(this.roomId)}`
-                    }
-                ]}
-            />
-        );
     }
 
     renderCalendar = () => {
@@ -136,23 +112,28 @@ class RoomAvailabilityCalendar extends React.Component {
     }
 
     render() {
-        if (this.contract === undefined) {
-            return <Loader />;
-        }
+        const isLoading = this.contract === undefined;
         if (this.redirectUrl) {
             return <Redirect push to={this.redirectUrl} />;
         }
         return (
             <>
                 <div className="settings block">
+                    <Menu match={this.props.match}/>
                     <section>
-                        {this.renderBreadcrumbs()}
-                        <h2>
-                            <span className="brand">
-                                {this.props.t('Availability Calendar') + ` - ${this.roomsList.get(this.roomId)}`}
-                            </span>
-                        </h2>
-                        {this.renderCalendar()}
+                        {isLoading ?
+                            <Loader /> :
+                            <>
+                                <h2>
+                                    <span className="brand">
+                                        {this.props.t('Availability Calendar') +
+                                        ` - ${this.roomsList.get(this.roomId)}`
+                                        }
+                                    </span>
+                                </h2>
+                                {this.renderCalendar()}
+                            </>
+                        }
                     </section>
                 </div>
             </>
