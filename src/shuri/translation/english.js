@@ -123,7 +123,8 @@ const Translations = {
         'to day': 'to day',
         'Cancellation remove': 'Cancellation remove',
         'Cancellation creation': 'Cancellation creation',
-        'Penalty type': 'Penalty type'
+        'Penalty type': 'Penalty type',
+        'Seasons list': 'Seasons list'
     }
 };
 
