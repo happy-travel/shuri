@@ -202,6 +202,29 @@ function updateAvailabilityRestrictions({ urlParams, body }) {
     });
 }
 
+function getCancellations({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/cancellation-policies`,
+        method: 'GET'
+    });
+}
+
+function createCancellation({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/cancellation-policies`,
+        method: 'POST',
+        body
+    });
+}
+
+function removeCancellation({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/cancellation-policies`,
+        method: 'DELETE',
+        body
+    });
+}
+
 export {
     getAccommodations,
     createAccommodation,
@@ -230,5 +253,8 @@ export {
     createRate,
     removeRate,
     getAvailabilityRestrictions,
-    updateAvailabilityRestrictions
+    updateAvailabilityRestrictions,
+    getCancellations,
+    createCancellation,
+    removeCancellation
 };

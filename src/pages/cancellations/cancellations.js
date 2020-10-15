@@ -1,26 +1,33 @@
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 import { action, computed, observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { withTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
 import { Loader } from 'matsumoto/src/simple';
+import Menu from 'parts/menu';
+import CancellationActionModal from 'pages/cancellations/cancellation-action-modal';
 import UI from 'stores/shuri-ui-store';
 import EntitiesStore from 'stores/shuri-entities-store';
-import RateActionModal from 'pages/seasons-rates/rate-action-modal';
-import Menu from 'parts/menu';
-import { getRates, getSeasons, removeRate, createRate, getContractAccommodations, getContract } from 'providers/api';
 import { getEntitiesTree } from 'utils/ui-utils';
+import {
+    getContract,
+    getContractAccommodations,
+    getCancellations,
+    getSeasons,
+    createCancellation,
+    removeCancellation
+} from 'providers/api';
 
 @observer
-class SeasonsRates extends React.Component {
+class Cancellations extends React.Component {
     contractId = this.props.match.params.id;
     @observable contract;
     @observable seasonsList;
     @observable accommodationsList;
-    @observable rateStub;
-    @observable ratesList;
-    @observable ratesTree;
-    @observable activeRate;
+    @observable cancellationsList;
+    @observable cancellationsTree;
+    @observable cancellationStub;
+    @observable activeCancellationPolicy;
     @observable isRequestingApi = false;
 
     @computed
@@ -63,19 +70,19 @@ class SeasonsRates extends React.Component {
         const requestParams = { urlParams: { id: this.contractId } };
         Promise.all([
             getContract(requestParams),
-            getRates(requestParams),
+            getCancellations(requestParams),
             getSeasons(requestParams),
             getContractAccommodations(requestParams)
         ]).then(this.getDataSuccess);
     }
 
     @action
-    getDataSuccess = ([contract, ratesList, seasonsList, accommodationsList]) => {
+    getDataSuccess = ([contract, cancellationsList, seasonsList, accommodationsList]) => {
         this.contract = contract;
         this.seasonsList = seasonsList;
         this.accommodationsList = accommodationsList;
-        this.ratesList = ratesList;
-        this.ratesTree = getEntitiesTree(this.ratesList, this.seasonsList);
+        this.cancellationsList = cancellationsList;
+        this.cancellationsTree = getEntitiesTree(this.cancellationsList, this.seasonsList);
         EntitiesStore.setContract(contract);
     }
 
@@ -90,25 +97,25 @@ class SeasonsRates extends React.Component {
     }
 
     @action
-    setRateStub = (stub) => {
-        this.rateStub = stub;
+    setCancellationStub = (stub) => {
+        this.cancellationStub = stub;
     }
 
     @action
-    setActiveRate = (rate) => {
-        this.activeRate = rate;
+    setActiveCancellationPolicy = (cancellation, index) => {
+        this.activeCancellationPolicy = { cancellation, index };
     }
 
     @action
     hideModal = () => {
-        this.rateStub = undefined;
-        this.activeRate = undefined;
+        this.activeCancellationPolicy = undefined;
+        this.cancellationStub = undefined;
     }
 
     @action
     onSeasonClick = (seasonId) => {
-        const isExpanded = this.ratesTree.get(seasonId).isExpanded;
-        this.ratesTree.get(seasonId).isExpanded = !isExpanded;
+        const isExpanded = this.cancellationsTree.get(seasonId).isExpanded;
+        this.cancellationsTree.get(seasonId).isExpanded = !isExpanded;
     }
 
     onRemoveClick = () => {
@@ -116,21 +123,21 @@ class SeasonsRates extends React.Component {
             return;
         }
         this.setRequestingApiStatus();
-        removeRate({
+        removeCancellation({
             urlParams: { id: this.contractId },
-            body: [this.activeRate.id]
+            body: [this.activeCancellationPolicy.cancellation.id]
         }).then(this.onRemoveClickSuccess).finally(this.onRemoveClickFinally);
     }
 
     @action
     onRemoveClickSuccess = () => {
-        const { id, seasonId, roomId } = this.activeRate;
-        this.ratesList = this.ratesList.filter((rate) => rate.id !== id);
-        const branch = this.ratesTree.get(seasonId).data.get(roomId);
+        const { cancellation: { seasonId, roomId, id } } = this.activeCancellationPolicy;
+        this.cancellationsList = this.cancellationsList.filter((cancellation) => cancellation.id !== id);
+        const branch = this.cancellationsTree.get(seasonId).data.get(roomId);
         const newBranch = branch.filter((rate) => rate.id !== id)
-        this.ratesTree.get(seasonId).data.set(roomId, newBranch);
+        this.cancellationsTree.get(seasonId).data.set(roomId, newBranch);
         if (newBranch.length === 0) {
-            this.ratesTree.get(seasonId).data.delete(roomId);
+            this.cancellationsTree.get(seasonId).data.delete(roomId);
         }
     }
 
@@ -139,71 +146,74 @@ class SeasonsRates extends React.Component {
         this.unsetRequestingApiStatus();
     }
 
+    @action
     onCreateClick = (values) => {
         if (this.isRequestingApi) {
             return;
         }
-        this.setRequestingApiStatus();
-        createRate({
+        this.setRequestingApiStatus()
+        createCancellation({
             urlParams: {
                 id: this.contractId
             },
-            body: [{ ...values, price: Number(values.price) }]
-        }).then(this.onCreateClickSuccess).finally(this.unsetRequestingApiStatus);
+            body: [reformatValues(values)]
+        }).then(this.onCreateClickSuccess).finally(this.onCreateClickFinally);
     }
 
-    onCreateClickSuccess = ([rate]) => {
-        const { seasonId, roomId } = rate;
-        this.ratesList.push(rate);
-        const branch = this.ratesTree.get(seasonId);
+    onCreateClickSuccess = ([cancellation]) => {
+        const { seasonId, roomId } = cancellation;
+        this.cancellationsList.push(cancellation);
+        const branch = this.cancellationsTree.get(seasonId);
         if (!branch) {
-            this.ratesTree.set(
+            this.cancellationsTree.set(
                 seasonId,
                 {
                     isExpanded: true,
-                    data: new Map([[roomId, [rate]]])
+                    data: new Map([[roomId, [cancellation]]])
                 }
             );
         } else {
             branch.isExpanded = true;
             if (branch.data.has(roomId)) {
-                branch.data.get(roomId).push(rate);
+                branch.data.get(roomId).push(cancellation);
             } else {
-                branch.data.set(roomId, [rate]);
+                branch.data.set(roomId, [cancellation]);
             }
         }
         this.hideModal();
     }
 
-    renderHeader = () => {
-        const { t } = this.props;
-        return (
-            <h2>
-                <span className="brand">
-                    {t('Seasons Rates')}
-                </span>
-            </h2>
-        );
+    onCreateClickFinally = () => {
+        this.hideModal();
+        this.unsetRequestingApiStatus();
     }
 
-    renderRate = (rate) => {
+    renderCancellation = (cancellation) => {
         const { t } = this.props;
-        return (
-            <div className="rate-info" onClick={() => this.setActiveRate(rate)}>
+        return cancellation.policies.map((policy, index) => (
+            <div
+                key={cancellation.id}
+                className="rate-info"
+                onClick={() => this.setActiveCancellationPolicy(cancellation, index)}
+            >
                 <div>
-                    {t(rate.roomType)}
+                    {t(policy.penaltyType)}
                     <span className="bullet" />
-                    {t(rate.boardBasisType)}
+                    {t('Penalty charge') + `: ${policy.penaltyCharge}`}
                 </div>
                 <div>
-                    {rate.currency.toUpperCase()}&nbsp;{rate.price}
+                    {
+                        t('From day') +
+                        ` ${policy.daysPriorToArrival.fromDay} ` +
+                        t('to day') +
+                        ` ${policy.daysPriorToArrival.toDay}`
+                    }
                 </div>
             </div>
-        );
+        ));
     }
 
-    renderRoom = (seasonId, roomId, data) => {
-        const stub = { seasonId, roomId };
+    renderRoomPolicies = (seasonId, roomId, data) => {
         return (
             <>
                 <div key={seasonId + roomId} className="room-info">
@@ -211,10 +221,10 @@ class SeasonsRates extends React.Component {
                         {this.roomsNames.get(roomId)}
                     </div>
                     <div className="rates-container">
-                        {data ? data.map(this.renderRate) : null}
+                        {data ? data.map(this.renderCancellation) : null}
                         <div
                             className="add-icon-container"
-                            onClick={() => this.setRateStub(stub)}
+                            onClick={() => this.setCancellationStub({ seasonId, roomId })}
                         >
                             <span className="icon icon-action-cancel rotate-45-deg" />
                         </div>
@@ -227,15 +237,15 @@ class SeasonsRates extends React.Component {
     renderSeason = (seasonId) => {
         const { t } = this.props;
         const roomIds = Array.from(this.roomsNames.keys());
-        const seasonBranch = this.ratesTree.get(seasonId);
+        const seasonBranch = this.cancellationsTree.get(seasonId);
         const isExpanded = seasonBranch.isExpanded;
         const seasonData = seasonBranch.data;
         const arrowClassName = isExpanded ?
             'icon icon-arrow-expand-rotate' :
             'icon icon-arrow-expand';
-        let numberOfRates = 0;
+        let numberOfCancellations = 0;
         Array.from(seasonData.entries()).forEach(([, roomsArray]) => {
-            numberOfRates += roomsArray.length;
+            numberOfCancellations += roomsArray.length;
         });
 
         return (
@@ -247,11 +257,11 @@ class SeasonsRates extends React.Component {
                 >
                     <span className={arrowClassName} />
                     <span>{this.seasonsNames.get(seasonId)}</span>
-                    <span className="number-of-rates">{__plural(t, numberOfRates, t('rate'))}</span>
+                    <span className="number-of-rates">{__plural(t, numberOfCancellations, t('policy'))}</span>
                 </div>
                 {isExpanded ?
                     <div className="season-info">
-                        {roomIds.map((id) => this.renderRoom(seasonId, id, seasonData.get(id)))}
+                        {roomIds.map((id) => this.renderRoomPolicies(seasonId, id, seasonData.get(id)))}
                     </div> :
                     null
                 }
@@ -261,12 +271,12 @@ class SeasonsRates extends React.Component {
 
     renderSeasons = () => {
         const { t } = this.props;
-        if (this.ratesTree === undefined) {
+        if (this.cancellationsTree === undefined) {
             return <Loader />;
         }
 
-        if (this.ratesTree.size === 0) {
-            return <div>{t('No rates')}</div>;
+        if (this.cancellationsTree.size === 0) {
+            return <div>{t('No cancellations')}</div>;
         }
 
         if (this.roomsNames.size === 0) {
@@ -274,7 +284,7 @@ class SeasonsRates extends React.Component {
         }
 
         return (
-            Array.from(this.ratesTree.keys()).map(this.renderSeason)
+            Array.from(this.cancellationsTree.keys()).map(this.renderSeason)
         );
     }
 
@@ -285,24 +295,29 @@ class SeasonsRates extends React.Component {
             <>
                 <div className="settings block">
                     <Menu match={this.props.match} />
-                        <section>
-                            {isLoading ?
-                                <Loader /> :
-                                <>
-                                    {this.renderHeader()}
-                                    {this.renderSeasons()}
-                                </>
-                            }
-                        </section>
+                    <section>
+                        {isLoading ?
+                            <Loader /> :
+                            <>
+                                <h2>
+                                    <span className="brand">
+                                        {this.props.t('Cancellation Policies')}
+                                    </span>
+                                </h2>
+                                {this.renderSeasons()}
+                            </>
+                        }
+                    </section>
                 </div>
-                {this.activeRate || this.rateStub ?
-                    <RateActionModal
-                        rate={this.activeRate}
-                        rateStub={this.rateStub}
+                {this.activeCancellationPolicy || this.cancellationStub ?
+                    <CancellationActionModal
+                        cancellation={this.activeCancellationPolicy?.cancellation}
+                        policyIndex={this.activeCancellationPolicy?.index}
+                        cancellationStub={this.cancellationStub}
                         roomsOptions={this.roomsOptions}
                         seasonsOptions={this.seasonsOptions}
-                        action={this.activeRate ? this.onRemoveClick : this.onCreateClick}
                         onClose={this.hideModal}
+                        action={this.activeCancellationPolicy ? this.onRemoveClick : this.onCreateClick}
                     /> :
                     null
                 }
@@ -311,9 +326,20 @@ class SeasonsRates extends React.Component {
     }
 }
 
-SeasonsRates.propTypes = {
+function reformatValues(values) {
+    const { roomId, seasonId } = values;
+    delete values.roomId;
+    delete values.seasonId;
+    return {
+        roomId,
+        seasonId,
+        policies: [values]
+    };
+}
+
+Cancellations.propTypes = {
     t: propTypes.func,
     match: propTypes.object
-};
+}
 
-export default withTranslation()(SeasonsRates);
+export default withTranslation()(Cancellations);

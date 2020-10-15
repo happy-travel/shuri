@@ -1,4 +1,4 @@
-function getRatesTree(ratesList, seasonsList) {
+function getEntitiesTree(ratesList, seasonsList) {
     const ratesTree = new Map();
     ratesList.forEach((rate) => {
         const { seasonId, roomId } = rate;
@@ -30,6 +30,6 @@ function getSelectOptions(keys, transformer) {
 }
 
 export {
-    getRatesTree,
+    getEntitiesTree,
     getSelectOptions
 }
