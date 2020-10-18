@@ -1,28 +1,28 @@
-function getEntitiesTree(ratesList, seasonsList) {
-    const ratesTree = new Map();
-    ratesList.forEach((rate) => {
-        const { seasonId, roomId } = rate;
-        const roomsMap = ratesTree.get(seasonId)?.data;
+function getEntitiesTree(entityList, auxiliaryEntityList, keyName = 'seasonId') {
+    const entityTree = new Map();
+    entityList.forEach((entity) => {
+        const { [keyName]: entityKeyName, roomId } = entity;
+        const roomsMap = entityTree.get(entityKeyName)?.data;
         if (!roomsMap) {
-            ratesTree.set(
-                seasonId,
+            entityTree.set(
+                entityKeyName,
                 {
                     isExpanded: false,
-                    data: new Map([[roomId, [rate]]])
+                    data: new Map([[roomId, [entity]]])
                 }
             );
         } else if (!roomsMap.has(roomId)) {
-            roomsMap.set(roomId, [rate]);
+            roomsMap.set(roomId, [entity]);
         } else {
-            roomsMap.get(roomId).push(rate);
+            roomsMap.get(roomId).push(entity);
         }
     });
-    seasonsList.forEach((season) => {
-        if (!ratesTree.has(season.id)) {
-            ratesTree.set(season.id, { isExpanded: false, data: new Map() })
+    auxiliaryEntityList.forEach((auxiliaryEntity) => {
+        if (!entityTree.has(auxiliaryEntity.id)) {
+            entityTree.set(auxiliaryEntity.id, { isExpanded: false, data: new Map() })
         }
     });
-    return ratesTree;
+    return entityTree;
 }
 
 function getSelectOptions(keys, transformer) {

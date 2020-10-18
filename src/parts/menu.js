@@ -113,7 +113,8 @@ class Menu extends React.Component {
                     '/contract/:id/rates',
                     '/contract/:contractId/availability/room/:roomId/calendar',
                     '/contract/:contractId/availability/rooms',
-                    '/contract/:id/cancellations'
+                    '/contract/:id/cancellations',
+                    '/contract/:id/allocations'
                 ],
                 link: '/contracts',
                 icon: 'contracts',
@@ -127,7 +128,9 @@ class Menu extends React.Component {
                             '/contract/:id/seasons',
                             '/contract/:id/rates',
                             '/contract/:contractId/availability/room/:roomId/calendar',
-                            '/contract/:contractId/availability/rooms'
+                            '/contract/:contractId/availability/rooms',
+                            '/contract/:id/cancellations',
+                            '/contract/:id/allocations'
                         ]
                     } :
                     null,
@@ -151,7 +154,8 @@ class Menu extends React.Component {
                             '/contract/:id/rates',
                             '/contract/:contractId/availability/room/:roomId/calendar',
                             '/contract/:contractId/availability/rooms',
-                            '/contract/:id/cancellations'
+                            '/contract/:id/cancellations',
+                            '/contract/:id/allocations'
                         ],
                         link: `/contract/${contractId}`,
                         icon: 'profile'
@@ -165,7 +169,8 @@ class Menu extends React.Component {
                             '/contract/:id/rates',
                             '/contract/:contractId/availability/room/:roomId/calendar',
                             '/contract/:contractId/availability/rooms',
-                            '/contract/:id/cancellations'
+                            '/contract/:id/cancellations',
+                            '/contract/:id/allocations'
                         ],
                         expandedPaths: [
                             '/contract/:contractId/availability/room/:roomId/calendar'
@@ -193,7 +198,8 @@ class Menu extends React.Component {
                             '/contract/:id/rates',
                             '/contract/:contractId/availability/room/:roomId/calendar',
                             '/contract/:contractId/availability/rooms',
-                            '/contract/:id/cancellations'
+                            '/contract/:id/cancellations',
+                            '/contract/:id/allocations'
                         ],
                         link: `/contract/${contractId}/rates`,
                         icon: 'rates'
@@ -207,7 +213,8 @@ class Menu extends React.Component {
                             '/contract/:id/rates',
                             '/contract/:contractId/availability/room/:roomId/calendar',
                             '/contract/:contractId/availability/rooms',
-                            '/contract/:id/cancellations'
+                            '/contract/:id/cancellations',
+                            '/contract/:id/allocations'
                         ],
                         link: `/contract/${contractId}/seasons`,
                         icon: 'seasons'
@@ -221,10 +228,26 @@ class Menu extends React.Component {
                             '/contract/:id/rates',
                             '/contract/:contractId/availability/room/:roomId/calendar',
                             '/contract/:contractId/availability/rooms',
-                            '/contract/:id/cancellations'
+                            '/contract/:id/cancellations',
+                            '/contract/:id/allocations'
                         ],
                         link: `/contract/${contractId}/cancellations`,
                         icon: 'cancellations'
+                    },
+                    {
+                        name: t('Allocations'),
+                        activePath: '/contract/:id/allocations',
+                        shownPaths: [
+                            '/contract/:id',
+                            '/contract/:id/seasons',
+                            '/contract/:id/rates',
+                            '/contract/:contractId/availability/room/:roomId/calendar',
+                            '/contract/:contractId/availability/rooms',
+                            '/contract/:id/cancellations',
+                            '/contract/:id/allocations'
+                        ],
+                        link: `/contract/${contractId}/allocations`,
+                        icon: 'allocations'
                     }
                 ]
             }
