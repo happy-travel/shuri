@@ -273,9 +273,7 @@ class SeasonsRates extends React.Component {
             return <div>{t('No rooms added')}</div>;
         }
 
-        return (
-            Array.from(this.ratesTree.keys()).map(this.renderSeason)
-        );
+        return Array.from(this.ratesTree.keys()).map(this.renderSeason);
     }
 
     render() {

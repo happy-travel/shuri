@@ -15,6 +15,7 @@ import SeasonsRates from 'pages/seasons-rates/seasons-rates';
 import AvailabilityCalendar from 'pages/availability/availability-calendar'
 import RoomAvailabilityCalendar from 'pages/availability/room-availability-calendar';
 import Cancellations from 'pages/cancellations/cancellations';
+import AllocationRequirements from 'pages/allocation-requirements/allocation-requirements';
 
 const Routes = (props) => {
     const { t } = props;
@@ -94,6 +95,11 @@ const Routes = (props) => {
                 path="/contract/:id/cancellations"
                 title={t('Cancellation Policies')}
                 component={Cancellations}
+            />
+            <Route
+                path="/contract/:id/allocations"
+                title={t('Allocation Requirements')}
+                component={AllocationRequirements}
             />
             <Route
                 title={t('Page Not Found')}

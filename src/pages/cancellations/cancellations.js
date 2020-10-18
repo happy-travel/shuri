@@ -283,9 +283,7 @@ class Cancellations extends React.Component {
             return <div>{t('No rooms added')}</div>;
         }
 
-        return (
-            Array.from(this.cancellationsTree.keys()).map(this.renderSeason)
-        );
+        return Array.from(this.cancellationsTree.keys()).map(this.renderSeason);
     }
 
     render() {

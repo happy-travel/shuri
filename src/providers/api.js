@@ -225,6 +225,28 @@ function removeCancellation({ urlParams, body }) {
     });
 }
 
+function getAllocationRequirements({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/allocation-requirements`
+    });
+}
+
+function createAllocationRequirement({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/allocation-requirements`,
+        method: 'POST',
+        body
+    });
+}
+
+function removeAllocationRequirement({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/allocation-requirements`,
+        method: 'DELETE',
+        body
+    });
+}
+
 export {
     getAccommodations,
     createAccommodation,
@@ -256,5 +278,8 @@ export {
     updateAvailabilityRestrictions,
     getCancellations,
     createCancellation,
-    removeCancellation
+    removeCancellation,
+    getAllocationRequirements,
+    createAllocationRequirement,
+    removeAllocationRequirement
 };

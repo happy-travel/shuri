@@ -124,7 +124,26 @@ const Translations = {
         'Cancellation remove': 'Cancellation remove',
         'Cancellation creation': 'Cancellation creation',
         'Penalty type': 'Penalty type',
-        'Seasons list': 'Seasons list'
+        'Seasons list': 'Seasons list',
+        'Allocations': 'Allocations',
+        'Allocation Requirements': 'Allocation Requirements',
+        'requirement': 'requirement',
+        'requirement_plural': 'requirements',
+        'release day': 'release day',
+        'release day_plural': 'release days',
+        'allotment': 'allotment',
+        'allotment_plural': 'allotments',
+        'Release days are not defined': 'Release days are not defined',
+        'Minimum length of stay is': 'Minimum length of stay is',
+        'Minimum length of stay is not defined': 'Minimum length of stay is not defined',
+        'day': 'day',
+        'day_plural': 'days',
+        'Allotments are not defined': 'Allotments are not defined',
+        'Requirement remove': 'Requirement remove',
+        'Requirement creation': 'Requirement creation',
+        'Season range': 'Season range',
+        'Release days': 'Release days',
+        'Minimum length of stay': 'Minimum length of stay'
     }
 };
 
