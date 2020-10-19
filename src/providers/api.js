@@ -1,7 +1,9 @@
 import settings from 'settings';
 import apiPromise from 'lib/api';
+import UI from 'stores/shuri-ui-store';
 
-const API_BASE_PATH = `${settings.dc_url}api/1.0`;
+const LANGUAGE = UI.editorLanguage || settings.default_culture;
+const API_BASE_PATH = `${settings.dc_url}${LANGUAGE}/api/1.0`;
 const CONTRACTS_PATH = '/management/contracts';
 const ACCOMMODATIONS_PATH = '/management/contracts/accommodations';
 
