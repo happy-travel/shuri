@@ -143,7 +143,19 @@ const Translations = {
         'Requirement creation': 'Requirement creation',
         'Season range': 'Season range',
         'Release days': 'Release days',
-        'Minimum length of stay': 'Minimum length of stay'
+        'Minimum length of stay': 'Minimum length of stay',
+        'Promotional Offers': 'Promotional Offers',
+        'Booking code is': 'Booking code is',
+        'Discount is': 'Discount is',
+        'Promo offers': 'Promo offers',
+        'Validity dates': 'Validity dates',
+        'Discount percent': 'Discount percent',
+        'Booking code': 'Booking code',
+        'Remarks': 'Remarks',
+        'Enter remarks': 'Enter remarks',
+        'Book by': 'Book by',
+        'Promo offer remove': 'Promo offer remove',
+        'Promo offer creation': 'Promo offer creation'
     }
 };
 
