@@ -247,6 +247,28 @@ function removeAllocationRequirement({ urlParams, body }) {
     });
 }
 
+function getPromotionalOffers({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/promotional-offers`
+    });
+}
+
+function createPromotionalOffer({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/promotional-offers`,
+        method: 'POST',
+        body
+    });
+}
+
+function removePromotionalOffer({ urlParams, body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.id}/promotional-offers`,
+        method: 'DELETE',
+        body
+    });
+}
+
 export {
     getAccommodations,
     createAccommodation,
@@ -281,5 +303,8 @@ export {
     removeCancellation,
     getAllocationRequirements,
     createAllocationRequirement,
-    removeAllocationRequirement
+    removeAllocationRequirement,
+    getPromotionalOffers,
+    createPromotionalOffer,
+    removePromotionalOffer
 };

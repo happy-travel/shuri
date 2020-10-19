@@ -229,24 +229,22 @@ class AllocationRequirements extends React.Component {
 
     renderRoomRequirements = (seasonRangeId, roomId, data) => {
         return (
-            <>
-                <div key={seasonRangeId + roomId} className="room-info">
-                    <div className="room-name">
-                        {this.roomsNames.get(roomId)}
-                    </div>
-                    <div className="rates-container">
-                        {data ?
-                            data.map(this.renderRequirement) :
-                            <div
-                                className="add-icon-container"
-                                onClick={() => this.setRequirementStub({ seasonRangeId, roomId })}
-                            >
-                                <span className="icon icon-action-cancel rotate-45-deg" />
-                            </div>
-                        }
-                    </div>
+            <div key={seasonRangeId + roomId} className="room-info">
+                <div className="room-name">
+                    {this.roomsNames.get(roomId)}
                 </div>
-            </>
+                <div className="rates-container">
+                    {data ?
+                        data.map(this.renderRequirement) :
+                        <div
+                            className="add-icon-container"
+                            onClick={() => this.setRequirementStub({ seasonRangeId, roomId })}
+                        >
+                            <span className="icon icon-action-cancel rotate-45-deg" />
+                        </div>
+                    }
+                </div>
+            </div>
         )
     }
 
@@ -287,7 +285,7 @@ class AllocationRequirements extends React.Component {
         );
     }
 
-    renderContracts = () => {
+    renderSeasonsRanges = () => {
         const { t } = this.props;
         if (this.allocationsTree === undefined) {
             return <Loader />;
@@ -320,7 +318,7 @@ class AllocationRequirements extends React.Component {
                                         {this.props.t('Allocation Requirements')}
                                     </span>
                                 </h2>
-                                {this.renderContracts()}
+                                {this.renderSeasonsRanges()}
                             </>
                         }
                     </section>
