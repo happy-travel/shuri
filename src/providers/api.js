@@ -271,6 +271,21 @@ function removePromotionalOffer({ urlParams, body }) {
     });
 }
 
+function getContractManager() {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/contract-manager`,
+        method: 'GET'
+    });
+}
+
+function registerContractManager({ body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/contract-manager`,
+        method: 'POST',
+        body
+    });
+}
+
 export {
     getAccommodations,
     createAccommodation,
@@ -308,5 +323,7 @@ export {
     removeAllocationRequirement,
     getPromotionalOffers,
     createPromotionalOffer,
-    removePromotionalOffer
+    removePromotionalOffer,
+    getContractManager,
+    registerContractManager
 };
