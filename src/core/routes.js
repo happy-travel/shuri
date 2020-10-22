@@ -17,6 +17,7 @@ import RoomAvailabilityCalendar from 'pages/availability/room-availability-calen
 import Cancellations from 'pages/cancellations/cancellations';
 import AllocationRequirements from 'pages/allocation-requirements/allocation-requirements';
 import PromoOffers from 'pages/promo-offers/promo-offers';
+import RegistrationManager from 'pages/account/registration-manager';
 
 const Routes = (props) => {
     const { t } = props;
@@ -106,6 +107,12 @@ const Routes = (props) => {
                 path="/contract/:id/promo-offers"
                 title={t('Promotional Offers')}
                 component={PromoOffers}
+            />
+            <Route
+                exact
+                path="/signup/manager"
+                title="Sign Up"
+                component={RegistrationManager}
             />
             <Route
                 title={t('Page Not Found')}

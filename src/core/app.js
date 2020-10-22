@@ -33,11 +33,14 @@ const App = () => {
                             { canShowContent ?
                                 <>
                                     <div className="block-wrapper">
-                                        <Route component={ Header } />
+                                        <Switch>
+                                            <Route path="/signup/*" exact component={null}/>
+                                            <Route component={ Header }/>
+                                        </Switch>
                                         <TopAlert />
                                         <Routes />
                                     </div>
-                                    <Route component={ Footer } />
+                                    <Footer />
                                 </> :
                                 <Loader page />
                             }

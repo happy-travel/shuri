@@ -9,7 +9,7 @@ let settings = {
     edo_url: process.env.EDO_URL || dev.EDO_URL,
     edo_v1: '/api/1.0',
     identity_url: process.env.IDENTITY_URL || dev.IDENTITY_URL,
-    identity_scope: 'edo openid email',
+    identity_scope: 'hiroshima edo openid email',
     identity_client_id: 'shuri',
     dc_url: process.env.DC_URL,
     auth_callback_host: window.location.origin,
