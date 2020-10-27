@@ -167,9 +167,13 @@ const Translations = {
         'waiting': 'In the queue',
         'upload-success': 'Uploaded',
         'UNKNOWN_ERROR': 'Unknown error',
-        'All the photos were successfully uploaded': 'All the photos were successfully uploaded',
         'Some photos were uploaded': 'Some photos were uploaded',
-        'The photo was removed': 'The photo was removed'
+        'The photo was removed': 'The photo was removed',
+        'Documents': 'Documents',
+        'No documents uploaded.': 'No documents uploaded.',
+        'Upload documents': 'Upload documents',
+        'Some files were uploaded': 'Some files were uploaded',
+        'Downloading': 'Downloading'
     }
 };
 
