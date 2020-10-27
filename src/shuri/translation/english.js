@@ -172,7 +172,8 @@ const Translations = {
         'Documents': 'Documents',
         'No documents uploaded.': 'No documents uploaded.',
         'Upload documents': 'Upload documents',
-        'Some files were uploaded': 'Some files were uploaded'
+        'Some files were uploaded': 'Some files were uploaded',
+        'Removing document': 'Removing document'
     }
 };
 
