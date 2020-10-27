@@ -21,8 +21,6 @@ import UploadManager from 'managers/upload-manager';
 import { UPLOAD_ABORTED } from 'utils/error-utils'
 
 const MAX_PHOTO_SIZE = 50 * 1024 * 1024;
-const IMAGE_WIDTH = 195;
-const IMAGE_HEIGHT = 176;
 
 @observer
 class AccommodationPhotosPage extends React.Component {
@@ -140,8 +138,6 @@ class AccommodationPhotosPage extends React.Component {
                 </div>
                 <img
                     className="image"
-                    width={IMAGE_WIDTH}
-                    height={IMAGE_HEIGHT}
                     src={photo.smallImageURL}
                 />
             </a>
