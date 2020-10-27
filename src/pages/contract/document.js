@@ -4,12 +4,14 @@ import { withTranslation } from 'react-i18next';
 import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
 import { getContractDocument, removeContractDocument } from 'providers/api';
+import DialogModal from '../../parts/dialog-modal';
 
 @observer
 class Document extends React.Component {
     @observable downloadedFile;
     @observable isDownloading = false;
     @observable isRemoving = false;
+    @observable isRemoveModalShown = false;
     downloadElementRef = React.createRef();
 
     @action
@@ -21,6 +23,16 @@ class Document extends React.Component {
     @action
     clickDownloadLinkSuccess = () => {
         this.downloadedFile = undefined;
+    }
+
+    @action
+    showRemoveModal = () => {
+        this.isRemoveModalShown = true;
+    }
+
+    @action
+    hideRemoveModal = () => {
+        this.isRemoveModalShown = false;
     }
 
     @action
@@ -69,26 +81,37 @@ class Document extends React.Component {
     }
 
     render() {
-        const { document } = this.props;
+        const { t, document } = this.props;
         return (
-            <div className="document-container">
-                <div
-                    className={'document transparent-with-border' + __class(this.isDownloading, 'disabled')}
-                    onClick={this.isDownloading ? undefined : () => this.onDownloadClick(document)}
-                >
-                    {document.name}
+            <>
+                <div className="document-container">
+                    <div
+                        className={'document transparent-with-border' + __class(this.isDownloading, 'disabled')}
+                        onClick={this.isDownloading ? undefined : () => this.onDownloadClick(document)}
+                    >
+                        {document.name}
+                    </div>
+                    <a
+                        className="hidden-link"
+                        ref={this.downloadElementRef}
+                        href={this.downloadedFile?.url}
+                        download={this.downloadedFile?.name}
+                    />
+                    <span
+                        className="icon remove"
+                        onClick={this.showRemoveModal }
+                    />
                 </div>
-                <a
-                    className="hidden-link"
-                    ref={this.downloadElementRef}
-                    href={this.downloadedFile?.url}
-                    download={this.downloadedFile?.name}
-                />
-                <span
-                    className="icon remove"
-                    onClick={this.isRemoving ? undefined : this.onRemoveClick}
-                />
-            </div>
+                {this.isRemoveModalShown ?
+                    <DialogModal
+                        title={t('Removing document')}
+                        text={t('Are you sure you want to proceed?')}
+                        onNoClick={this.hideRemoveModal}
+                        onYesClick={this.isRemoving ? undefined : this.onRemoveClick}
+                    /> :
+                    null
+                }
+            </>
         );
     }
 }
