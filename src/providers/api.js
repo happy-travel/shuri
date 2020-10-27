@@ -286,7 +286,22 @@ function registerContractManager({ body }) {
     });
 }
 
+function getAccommodationPhotos({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${ACCOMMODATIONS_PATH}/${urlParams.id}/photo`
+    });
+}
+
+function removeAccommodationPhoto({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${ACCOMMODATIONS_PATH}/${urlParams.accommodationId}/photo/${urlParams.photoId}`,
+        method: 'DELETE'
+    });
+}
+
 export {
+    API_BASE_PATH,
+    ACCOMMODATIONS_PATH,
     getAccommodations,
     createAccommodation,
     getAccommodation,
@@ -325,5 +340,7 @@ export {
     createPromotionalOffer,
     removePromotionalOffer,
     getContractManager,
-    registerContractManager
+    registerContractManager,
+    getAccommodationPhotos,
+    removeAccommodationPhoto
 };

@@ -1,0 +1,71 @@
+.accommodation-photos
+    .photos-header
+        margin-bottom: 16px !important
+
+    .photos-gallery
+        margin-top: 16px
+        display: grid
+        grid-template-columns: repeat(auto-fill, 200px)
+        justify-content: space-between
+
+    .dropzone
+        cursor: pointer
+        display: flex
+        align-items: center
+        justify-content: center
+        width: 195px
+        height: 176px
+        background: linear-gradient(180deg, #d8dadc 0%, #c4c4c4 100%)
+        border-radius: 4px
+        transition: background-color 0.15s linear
+
+        &:hover
+            background: linear-gradient(180deg, #cfcfd3 0%, #ababab 100%)
+
+    .icon
+        &.camera
+            width: 29px
+            height: 24px
+            background: url("./icons/camera.svg") center no-repeat
+
+        &.remove
+            width: 15px
+            height: 16px
+            mask: url("./icons/remove.svg") center no-repeat
+            background: #f15667
+
+    .photo-container
+        text-decoration: none
+        display: inline-block
+        margin-bottom: 20px
+        border-radius: 4px
+        background: #e6e6e6
+        width: 195px
+        height: 176px
+        position: relative
+
+        .image
+            border-radius: 4px
+
+        &:hover
+            & .controls
+                display: flex
+
+        .controls
+            display: none
+            position: absolute
+            width: 30px
+            height: 25px
+            left: 10px
+            top: 10px
+            border-radius: 30px
+            background: #fff
+            align-items: center
+            justify-content: center
+
+            &.disabled
+                pointer-events: none
+                opacity: .4
+
+            &:hover
+                background: #e6e6e6

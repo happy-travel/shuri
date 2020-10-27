@@ -18,6 +18,7 @@ import Cancellations from 'pages/cancellations/cancellations';
 import AllocationRequirements from 'pages/allocation-requirements/allocation-requirements';
 import PromoOffers from 'pages/promo-offers/promo-offers';
 import RegistrationManager from 'pages/account/registration-manager';
+import AccommodationPhotosPage from 'pages/accommodation-photos/accommodation-photos-page';
 
 const Routes = (props) => {
     const { t } = props;
@@ -44,6 +45,11 @@ const Routes = (props) => {
                 path="/accommodation/:accommodationId/rooms"
                 title={t('Rooms')}
                 component={RoomsList}
+            />
+            <Route
+                path="/accommodation/:id/photos"
+                title={t('Accommodation Photos')}
+                component={AccommodationPhotosPage}
             />
             <Route
                 exact
