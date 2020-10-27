@@ -33,13 +33,13 @@ class UploadModal extends React.Component {
 
         return (
             <div className="upload-item" key={item.file.name}>
-                <div className="upload-item-description">
-                    <span className="upload-item-name">{item.file.name}</span>
-                    <span className="upload-item-size">
+                <div className="description">
+                    <span className="name">{item.file.name}</span>
+                    <span className="size">
                         {getSizeString(item.file.size) + ' MB'}
                     </span>
                 </div>
-                <div className={`upload-item-status ${status}`}>
+                <div className={`status ${status}`}>
                     {status === 'uploading' ?
                         <ProgressLine
                             done={item.loadedBytes}
