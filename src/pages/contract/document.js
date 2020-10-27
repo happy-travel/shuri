@@ -3,8 +3,8 @@ import { action, observable } from 'mobx';
 import { withTranslation } from 'react-i18next';
 import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
+import DialogModal from 'parts/dialog-modal';
 import { getContractDocument, removeContractDocument } from 'providers/api';
-import DialogModal from '../../parts/dialog-modal';
 
 @observer
 class Document extends React.Component {
