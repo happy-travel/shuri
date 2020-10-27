@@ -63,11 +63,7 @@ class AccommodationPhotosPage extends React.Component {
     }
 
     uploadFiles = () => {
-        this.uploadManager.uploadFiles().then(this.uploadFilesSuccess, this.uploadFilesFail);
-    }
-
-    uploadFilesSuccess = () => {
-        this.onUploadFinish(this.props.t('All the photos were successfully uploaded'));
+        this.uploadManager.uploadFiles().then(this.onUploadFinish, this.uploadFilesFail);
     }
 
     uploadFilesFail = (error) => {
@@ -80,7 +76,11 @@ class AccommodationPhotosPage extends React.Component {
         if (this.uploadManager?.didUploadFiles) {
             getAccommodationPhotos({ urlParams: { id: this.id } })
                 .then(this.getPhotosSuccess)
-                .then(() => View.setTopAlertText(message));
+                .then(() => {
+                    if (message) {
+                        View.setTopAlertText(message);
+                    }
+                });
         }
         this.uploadManager = undefined;
     }
