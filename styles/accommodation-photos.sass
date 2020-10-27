@@ -34,25 +34,24 @@
             mask: url("./icons/remove.svg") center no-repeat
             background: #f15667
 
-    .photo
-        &-container
-            text-decoration: none
-            display: inline-block
-            margin-bottom: 20px
+    .photo-container
+        text-decoration: none
+        display: inline-block
+        margin-bottom: 20px
+        border-radius: 4px
+        background: #e6e6e6
+        width: 195px
+        height: 176px
+        position: relative
+
+        .image
             border-radius: 4px
-            background: #e6e6e6
-            width: 195px
-            height: 176px
-            position: relative
 
-            .image
-                border-radius: 4px
+        &:hover
+            & .controls
+                display: flex
 
-            &:hover
-                .photo-controls
-                    display: flex
-
-        &-controls
+        .controls
             display: none
             position: absolute
             width: 30px

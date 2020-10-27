@@ -133,7 +133,7 @@ class AccommodationPhotosPage extends React.Component {
                 rel="noreferrer"
             >
                 <div
-                    className={'photo-controls' + __class(this.isRequestingApi, 'disabled')}
+                    className={'controls' + __class(this.isRequestingApi, 'disabled')}
                     onClick={!this.isRequestingApi ? (event) => this.onPhotoRemoveClick(event, photo.id) : undefined}
                 >
                     <span className="icon remove" />
