@@ -77,6 +77,7 @@ class Document extends React.Component {
     @action
     removeContractDocumentSuccess = () => {
         this.isRemoving = false;
+        this.hideRemoveModal();
         this.props.onRemove();
     }
 
