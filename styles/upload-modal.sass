@@ -1,0 +1,45 @@
+.upload-modal
+    width: 400px
+    max-height: 500px
+    overflow-y: auto
+    padding: 0 8px
+    margin-top: -30px
+
+    .upload-item
+        display: flex
+        padding: 11px 0
+
+        &-description
+            display: flex
+            flex-direction: column
+            text-align: left
+            overflow: hidden
+            justify-content: center
+            max-width: 210px
+
+        &-name
+            overflow: hidden
+            text-overflow: ellipsis
+
+        &-size
+            color: #ddd
+            margin-top: 3px
+
+        &-status
+            display: flex
+            align-items: center
+            margin-left: auto
+            max-width: 150px
+            text-align: right
+
+            &.uploading
+                width: 150px
+
+            &.upload-success
+                color: #1e8aff
+
+            &.waiting
+                color: #ddd
+
+            &.upload-fail
+                color: #f15667

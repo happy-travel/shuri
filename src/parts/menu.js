@@ -22,6 +22,7 @@ class Menu extends React.Component {
                     '/',
                     '/accommodation',
                     '/accommodation/:id',
+                    '/accommodation/:id/photos',
                     '/accommodation/:accommodationId/rooms',
                     '/accommodation/:accommodationId/room',
                     '/accommodation/:accommodationId/room/:id'
@@ -34,6 +35,7 @@ class Menu extends React.Component {
                         details: EntitiesStore.getAccommodation(accommodationId).address[UI.editorLanguage],
                         shownPaths: [
                             '/accommodation/:id',
+                            '/accommodation/:id/photos',
                             '/accommodation/:accommodationId/rooms',
                             '/accommodation/:accommodationId/room',
                             '/accommodation/:accommodationId/room/:id'
@@ -56,12 +58,26 @@ class Menu extends React.Component {
                         activePath: '/accommodation/:id',
                         shownPaths: [
                             '/accommodation/:id',
+                            '/accommodation/:id/photos',
                             '/accommodation/:accommodationId/rooms',
                             '/accommodation/:accommodationId/room',
                             '/accommodation/:accommodationId/room/:id'
                         ],
                         link: `/accommodation/${accommodationId}`,
                         icon: 'profile'
+                    },
+                    {
+                        name: t('Photos'),
+                        activePath: '/accommodation/:id/photos',
+                        shownPaths: [
+                            '/accommodation/:id',
+                            '/accommodation/:id/photos',
+                            '/accommodation/:accommodationId/rooms',
+                            '/accommodation/:accommodationId/room',
+                            '/accommodation/:accommodationId/room/:id'
+                        ],
+                        link: `/accommodation/${accommodationId}/photos`,
+                        icon: 'photos'
                     },
                     {
                         name: t('Rooms'),
@@ -73,6 +89,7 @@ class Menu extends React.Component {
                         ],
                         shownPaths: [
                             '/accommodation/:id',
+                            '/accommodation/:id/photos',
                             '/accommodation/:accommodationId/rooms',
                             '/accommodation/:accommodationId/room',
                             '/accommodation/:accommodationId/room/:id'
