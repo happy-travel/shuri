@@ -1,0 +1,38 @@
+.document-container
+    display: flex
+    align-items: center
+    margin-bottom: 10px
+
+    .document
+        padding: 10px 15px
+        color: #979797
+        border: 1px solid #d8dadc
+        font-weight: 700
+        border-radius: 4px
+        cursor: pointer
+        width: fit-content
+        max-width: 500px
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+
+        &.disabled
+            pointer-events: none
+
+        &:hover
+            border-color: #f9a51a
+            color: #f9a51a
+
+        .hidden-link
+            display: none
+
+    .icon.remove
+        margin-left: 5px
+        width: 15px
+        height: 16px
+        mask: url("./icons/remove.svg") center no-repeat
+        background: #d8dadc
+        cursor: pointer
+
+        &:hover
+            background: #f15667

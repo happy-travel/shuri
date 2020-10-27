@@ -299,9 +299,23 @@ function removeAccommodationPhoto({ urlParams }) {
     });
 }
 
+function getContractDocument({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.contractId}/file/${urlParams.documentId}`
+    });
+}
+
+function removeContractDocument({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.contractId}/file/${urlParams.documentId}`,
+        method: 'DELETE'
+    });
+}
+
 export {
     API_BASE_PATH,
     ACCOMMODATIONS_PATH,
+    CONTRACTS_PATH,
     getAccommodations,
     createAccommodation,
     getAccommodation,
@@ -342,5 +356,7 @@ export {
     getContractManager,
     registerContractManager,
     getAccommodationPhotos,
-    removeAccommodationPhoto
+    removeAccommodationPhoto,
+    getContractDocument,
+    removeContractDocument
 };
