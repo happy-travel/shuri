@@ -283,14 +283,18 @@ class ContractPage extends React.Component {
         const isDocumentsListEmpty = documents?.length === 0;
         return (
             <div className="documents">
-                <h3>{t('Documents')}</h3>
+                <h2>
+                    <span className="brand">
+                        {t('Documents')}
+                    </span>
+                </h2>
                 {isDocumentsListEmpty ? t('No documents uploaded.') : documents.map(this.renderDocument)}
                 <Dropzone
                     className="dropzone"
                     maxSize={MAX_DOCUMENT_SIZE}
                     onDrop={this.onDrop}
                 >
-                    <button className="button small">
+                    <button className="button upload-documents-button">
                         {t('Upload documents')}
                     </button>
                 </Dropzone>

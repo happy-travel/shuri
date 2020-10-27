@@ -76,7 +76,7 @@ class Document extends React.Component {
                     className={'document transparent-with-border' + __class(this.isDownloading, 'disabled')}
                     onClick={this.isDownloading ? undefined : () => this.onDownloadClick(document)}
                 >
-                    {(this.isDownloading ? `${this.props.t('Downloading')} ` : '') + document.name}
+                    {document.name}
                 </div>
                 <a
                     className="hidden-link"
