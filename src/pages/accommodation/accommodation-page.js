@@ -9,7 +9,6 @@ import {
     FieldSelect
 } from 'matsumoto/src/components/form';
 import { Loader, Stars, decorate } from 'matsumoto/src/simple';
-import Gallery from 'matsumoto/src/components/gallery';
 import UI from 'stores/shuri-ui-store';
 import EntitiesStore from 'stores/shuri-entities-store';
 import LocationsStore from 'stores/shuri-locations-store';
@@ -426,17 +425,6 @@ class AccommodationPage extends React.Component {
 
                 <AgeRanges formik={formik} />
 
-                <div className="row align-items-center justify-content-space-between">
-                    <h3>{t('Pictures for accommodation')}</h3>
-                    <button className="button small" type="button" onClick={this.onAddPictureClick}>
-                        {t('Add new picture')}
-                    </button>
-                </div>
-                {this.renderPictureRows(formik)}
-                <Gallery
-                    pictures={this.state.accommodation.pictures[UI.editorLanguage].filter((picture) => picture.source)}
-                />
-
                 <div className="row controls">
                     <div className="field">
                         <div className="inner">
@@ -460,42 +448,6 @@ class AccommodationPage extends React.Component {
                     }
                 </div>
             </div>
-        );
-    }
-
-    renderPictureRows = (formik) => {
-        const pictures = this.state.accommodation.pictures[UI.editorLanguage];
-        return (
-            pictures.map((_picture, index) => (
-                <div className="row position-relative" key={index}>
-                    {pictures.length > 1 ?
-                        <span
-                            className="icon icon-action-cancel remove-picture-icon"
-                            onClick={() => this.onRemovePictureClick(index)}
-                        /> :
-                        null}
-                    <FieldText
-                        formik={formik}
-                        onChange={(event) => this.onChangePictureField(event, index, 'source')}
-                        onClear={() => this.onClearPictureField(index, 'source')}
-                        clearable
-                        id={`pictures.${UI.editorLanguage}.${index}.source`}
-                        label={'Picture source link'}
-                        placeholder={'https://domain/image.jpg'}
-                        required={index === 0}
-                    />
-                    <FieldText
-                        formik={formik}
-                        onChange={(event) => this.onChangePictureField(event, index, 'caption')}
-                        onClear={() => this.onClearPictureField(index, 'caption')}
-                        clearable
-                        id={`pictures.${UI.editorLanguage}.${index}.caption`}
-                        label={'Picture caption'}
-                        placeholder={'Enter picture text description'}
-                        required={index === 0}
-                    />
-                </div>
-            ))
         );
     }
 
