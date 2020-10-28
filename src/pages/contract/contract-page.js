@@ -6,9 +6,13 @@ import {
     CachedForm, FieldSelect,
     FieldText
 } from 'matsumoto/src/components/form';
+import View from 'matsumoto/src/stores/view-store';
 import FieldDatepicker from 'matsumoto/src/components/complex/field-datepicker';
 import { Loader } from 'matsumoto/src/simple/components/loader';
+import Document from 'pages/contract/document';
 import Menu from 'parts/menu';
+import Dropzone from 'parts/uploads/dropzone';
+import UploadModal from 'parts/uploads/upload-modal';
 import UI from 'stores/shuri-ui-store';
 import EntitiesStore from 'stores/shuri-entities-store';
 import DialogModal from 'parts/dialog-modal';
@@ -17,10 +21,15 @@ import {
     createContract,
     updateContract,
     removeContract,
-    getAccommodations
+    getAccommodations,
+    API_BASE_PATH,
+    CONTRACTS_PATH
 } from 'providers/api';
-import { parseBackendErrors } from 'utils/error-utils';
+import UploadManager from 'managers/upload-manager';
+import { parseBackendErrors, UPLOAD_ABORTED } from 'utils/error-utils';
 import { formatDate } from 'utils/date-utils';
+
+const MAX_DOCUMENT_SIZE = 100 * 1024 * 1024;
 
 class ContractPage extends React.Component {
     state = {
@@ -29,9 +38,15 @@ class ContractPage extends React.Component {
         id: this.props.match.params.id,
         redirectUrl: undefined,
         isRequestingApi: false,
-        isRemoveModalShown: false
+        isRemoveModalShown: false,
+        uploadManager: undefined,
+        downloadedFile: undefined
     };
     formik;
+
+    get uploadUrl() {
+        return `${API_BASE_PATH}${CONTRACTS_PATH}/${this.state.id}/file`;
+    }
 
     componentDidMount() {
         this.loadData();
@@ -77,6 +92,30 @@ class ContractPage extends React.Component {
 
     unsetRequestingApiStatus = () => {
         this.setState({ isRequestingApi: false });
+    }
+
+    uploadFiles = () => {
+        this.state.uploadManager.uploadFiles().then(this.onUploadFinish, this.uploadFilesFail);
+    }
+
+    uploadFilesFail = (error) => {
+        if (error?.data.errorId === UPLOAD_ABORTED) {
+            this.onUploadFinish(this.props.t('Some files were uploaded'));
+        }
+    }
+
+    onUploadFinish = (message) => {
+        const { uploadManager } = this.state;
+        if (uploadManager?.didUploadFiles) {
+            getContract({ urlParams: { id: this.state.id } })
+                .then(this.getContractSuccess)
+                .then(() => {
+                    if (message) {
+                        View.setTopAlertText(message);
+                    }
+                });
+        }
+        this.setState({ uploadManager: undefined });
     }
 
     onOpenRemoveModal = () => {
@@ -136,6 +175,22 @@ class ContractPage extends React.Component {
                 id: this.state.id
             }
         }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
+    }
+
+    onDrop = (files) => {
+        this.setState({ uploadManager: new UploadManager(files, this.uploadUrl) });
+    }
+
+    onCloseModal = () => {
+        this.onUploadFinish(this.props.t('Some files were uploaded'));
+    }
+
+    onAbort = () => {
+        setTimeout(this.state.uploadManager.abort());
+    }
+
+    onDocumentRemove = () => {
+        getContract({ urlParams: { id: this.state.id } }).then(this.getContractSuccess);
     }
 
     renderForm = (formik) => {
@@ -212,6 +267,56 @@ class ContractPage extends React.Component {
         );
     }
 
+    renderDocument = (document) => {
+        return (
+            <Document
+                document={document}
+                contractId={this.state.id}
+                onRemove={() => this.onDocumentRemove(document)}
+            />
+        );
+    }
+
+    renderDocuments = () => {
+        const { t } = this.props;
+        const { documents } = this.state.contract;
+        const isDocumentsListEmpty = documents?.length === 0;
+        return (
+            <div className="documents">
+                <h2>
+                    <span className="brand">
+                        {t('Documents')}
+                    </span>
+                </h2>
+                {isDocumentsListEmpty ? t('No documents uploaded.') : documents.map(this.renderDocument)}
+                <Dropzone
+                    className="dropzone"
+                    maxSize={MAX_DOCUMENT_SIZE}
+                    onDrop={this.onDrop}
+                >
+                    <button className="button upload-documents-button">
+                        {t('Upload documents')}
+                    </button>
+                </Dropzone>
+            </div>
+        );
+    }
+
+    renderUploadModal = () => {
+        const { uploadManager } = this.state;
+        if (!uploadManager) {
+            return null;
+        }
+
+        return (
+            <UploadModal
+                uploadManager={uploadManager}
+                uploadFiles={this.uploadFiles}
+                onCloseClick={uploadManager.isResolved ? this.onCloseModal : this.onAbort}
+            />
+        );
+    }
+
     render() {
         const { t } = this.props;
         const { redirectUrl, id, contract, accommodationsList } = this.state;
@@ -243,6 +348,8 @@ class ContractPage extends React.Component {
                                         enableReinitialize
                                     />
                                 }
+                                {id ? this.renderDocuments() : null}
+                                {this.renderUploadModal()}
                             </>
                         }
                     </section>

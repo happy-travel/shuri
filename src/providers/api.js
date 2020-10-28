@@ -286,7 +286,36 @@ function registerContractManager({ body }) {
     });
 }
 
+function getAccommodationPhotos({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${ACCOMMODATIONS_PATH}/${urlParams.id}/photo`
+    });
+}
+
+function removeAccommodationPhoto({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${ACCOMMODATIONS_PATH}/${urlParams.accommodationId}/photo/${urlParams.photoId}`,
+        method: 'DELETE'
+    });
+}
+
+function getContractDocument({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.contractId}/file/${urlParams.documentId}`
+    });
+}
+
+function removeContractDocument({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}${CONTRACTS_PATH}/${urlParams.contractId}/file/${urlParams.documentId}`,
+        method: 'DELETE'
+    });
+}
+
 export {
+    API_BASE_PATH,
+    ACCOMMODATIONS_PATH,
+    CONTRACTS_PATH,
     getAccommodations,
     createAccommodation,
     getAccommodation,
@@ -325,5 +354,9 @@ export {
     createPromotionalOffer,
     removePromotionalOffer,
     getContractManager,
-    registerContractManager
+    registerContractManager,
+    getAccommodationPhotos,
+    removeAccommodationPhoto,
+    getContractDocument,
+    removeContractDocument
 };

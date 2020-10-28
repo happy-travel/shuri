@@ -153,7 +153,25 @@ const Translations = {
         'Enter remarks': 'Enter remarks',
         'Book by': 'Book by',
         'Promo offer remove': 'Promo offer remove',
-        'Promo offer creation': 'Promo offer creation'
+        'Promo offer creation': 'Promo offer creation',
+        'Photos': 'Photos',
+        'Accommodation Photos': 'Accommodation Photos',
+        'Property type': 'Property type',
+        'photo': 'photo',
+        'photo_plural': 'photos',
+        'Files upload': 'Files upload',
+        'If you close this window, the data will be lost. Are you sure you want to continue?':
+            'If you close this window, the data will be lost. Are you sure you want to continue?',
+        'waiting': 'In the queue',
+        'upload-success': 'Uploaded',
+        'UNKNOWN_ERROR': 'Unknown error',
+        'Some photos were uploaded': 'Some photos were uploaded',
+        'The photo was removed': 'The photo was removed',
+        'Documents': 'Documents',
+        'No documents uploaded.': 'No documents uploaded.',
+        'Upload documents': 'Upload documents',
+        'Some files were uploaded': 'Some files were uploaded',
+        'Removing document': 'Removing document'
     }
 };
 
