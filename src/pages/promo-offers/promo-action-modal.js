@@ -73,8 +73,8 @@ class OfferActionModal extends React.Component {
                         formik={formik}
                         disabled={this.disabled}
                         clearable
-                        id={`remarks.${UI.editorLanguage}`}
-                        label={t('Remarks')}
+                        id={`description.${UI.editorLanguage}`}
+                        label={t('Description')}
                         placeholder={t('Enter remarks')}
                     />
                 </div>
