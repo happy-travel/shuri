@@ -338,12 +338,12 @@ class AccommodationPage extends React.Component {
                         id="rating"
                         label={t('Star Rating')}
                         options={[
-                            { value: 'notRated', text: 'Unrated' },
-                            { value: 'oneStar', text: <span>{t('Economy')}  <Stars count="1" /></span> },
-                            { value: 'twoStars', text: <span>{t('Budget')}   <Stars count="2" /></span> },
-                            { value: 'threeStars', text: <span>{t('Standard')} <Stars count="3" /></span> },
-                            { value: 'fourStars', text: <span>{t('Superior')} <Stars count="4" /></span> },
-                            { value: 'fiveStars', text: <span>{t('Luxury')}   <Stars count="5" /></span> }
+                            { value: 'NotRated', text: 'Unrated' },
+                            { value: 'OneStar', text: <span>{t('Economy')}  <Stars count="1" /></span> },
+                            { value: 'TwoStars', text: <span>{t('Budget')}   <Stars count="2" /></span> },
+                            { value: 'ThreeStars', text: <span>{t('Standard')} <Stars count="3" /></span> },
+                            { value: 'FourStars', text: <span>{t('Superior')} <Stars count="4" /></span> },
+                            { value: 'FiveStars', text: <span>{t('Luxury')}   <Stars count="5" /></span> }
                         ]}
                     />
                 </div>
@@ -397,9 +397,9 @@ class AccommodationPage extends React.Component {
                         label="Property Type"
                         placeholder="Choose property type"
                         options={[
-                            { value: 'any', text: 'Any' },
-                            { value: 'hotels', text: 'Hotels' },
-                            { value: 'apartments', text: 'Apartments' }
+                            { value: 'Any', text: 'Any' },
+                            { value: 'Hotels', text: 'Hotels' },
+                            { value: 'Apartments', text: 'Apartments' }
                         ]}
                     />
                 </div>
