@@ -153,6 +153,12 @@ class AccommodationPage extends React.Component {
         if (values?.contactInfo?.phone) {
             values.contactInfo.phone = decorate.removeNonDigits(values.contactInfo.phone);
         }
+        if (values?.coordinates?.latitude === '') {
+            delete values.coordinates.latitude;
+        }
+        if (values?.coordinates?.longitude === '') {
+            delete values.coordinates.longitude;
+        }
         return {
             ...values,
             occupancyDefinition: agesReformat(values.occupancyDefinition)
@@ -243,31 +249,6 @@ class AccommodationPage extends React.Component {
             }
         })
         this.forceUpdate();
-    }
-
-    onAddPictureClick = () => {
-        this.setPictures([
-            ...this.state.accommodation.pictures[UI.editorLanguage],
-            { source: '', caption: '' }
-        ]);
-    }
-
-    onRemovePictureClick = (index) => {
-        this.setPictures(
-            this.state.accommodation.pictures[UI.editorLanguage].filter((picture, order) => order !== index)
-        );
-    }
-
-    onChangePictureField = (event, index, field) => {
-        const pictures = this.state.accommodation.pictures[UI.editorLanguage];
-        pictures[index][field] = event.target.value;
-        this.setPictures(pictures);
-    }
-
-    onClearPictureField = (index, field) => {
-        const pictures = this.state.accommodation.pictures[UI.editorLanguage];
-        pictures[index][field] = '';
-        this.setPictures(pictures);
     }
 
     renderForm = (formik) => {
