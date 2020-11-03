@@ -19,7 +19,7 @@ const range = (group, alwaysVisible) => {
 const filterSelectedOnly = (arr = [], formik) => arr.filter((v, index) => [
     formik.values.occupancyDefinition.infant?.enabled,
     formik.values.occupancyDefinition.child?.enabled,
-    formik.values.occupancyDefinition.teen?.enabled,
+    formik.values.occupancyDefinition.teenager?.enabled,
     true
 ][index]);
 
@@ -76,9 +76,9 @@ class AgeRanges extends React.Component {
                 />
                 <FieldCheckbox
                     formik={formik}
-                    id={'occupancyDefinition.teen.enabled'}
+                    id={'occupancyDefinition.teenager.enabled'}
                     label={
-                        'Teenage Age Group' + range(formik.values?.occupancyDefinition?.teen)
+                        'Teenage Age Group' + range(formik.values?.occupancyDefinition?.teenager)
                     }
                 />
                 <div className="checkbox on">
@@ -92,7 +92,7 @@ class AgeRanges extends React.Component {
                     ids={filterSelectedOnly([
                         'occupancyDefinition.infant.lowerBound',
                         'occupancyDefinition.child.lowerBound',
-                        'occupancyDefinition.teen.lowerBound',
+                        'occupancyDefinition.teenager.lowerBound',
                         'occupancyDefinition.adult.lowerBound'
                     ], formik)}
                     colors={[

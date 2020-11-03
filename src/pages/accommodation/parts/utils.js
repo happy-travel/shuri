@@ -1,6 +1,6 @@
 export const agesReformat = (definition) => {
     const result = {};
-    const keys = ['infant', 'child', 'teen', 'adult'];
+    const keys = ['infant', 'child', 'teenager', 'adult'];
     let lastEnabled = null;
 
     for (let index = 0; index < keys.length; index++) {
