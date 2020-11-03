@@ -36,7 +36,7 @@ class AccommodationsList extends React.Component {
             },
             {
                 header: t('Property type'),
-                cell: (item) => capitalize(item.propertyType)
+                cell: (item) => capitalize(item.type)
             },
             {
                 header: t('Star Rating'),

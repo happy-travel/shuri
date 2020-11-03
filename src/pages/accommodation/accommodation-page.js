@@ -66,7 +66,7 @@ const DEFAULT_ACCOMMODATION = {
         phone: '',
         website: ''
     },
-    propertyType: '',
+    type: '',
     amenities: {
         [UI.editorLanguage]: ['']
     },
@@ -393,7 +393,7 @@ class AccommodationPage extends React.Component {
                 <div className="row">
                     <FieldSelect
                         formik={formik}
-                        id="propertyType"
+                        id="type"
                         label="Property Type"
                         placeholder="Choose property type"
                         options={[
