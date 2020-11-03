@@ -104,8 +104,8 @@ class RateActionModal extends React.Component {
                         formik={formik}
                         disabled={this.disabled}
                         clearable
-                        id={`details.${UI.editorLanguage}`}
-                        label={t('Details')}
+                        id={`description.${UI.editorLanguage}`}
+                        label={t('Description')}
                         placeholder={t('Enter details on this rate')}
                     />
                 </div>
