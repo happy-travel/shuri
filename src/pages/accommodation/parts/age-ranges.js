@@ -96,12 +96,12 @@ class AgeRanges extends React.Component {
                         'occupancyDefinition.adult.lowerBound'
                     ], formik)}
                     colors={[
-                        '#e4fde1',
+                        '#1267FB',
                         ...filterSelectedOnly([
-                            '#6ba292',
-                            '#ffdc7c',
+                            '#1CBE69',
+                            '#FF9D19',
                             '#ff9b71',
-                            '#dd614a'
+                            '#D8DADC'
                         ], formik)
                     ]}
                 />

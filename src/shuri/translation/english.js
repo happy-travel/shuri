@@ -137,7 +137,6 @@ const Translations = {
         'day': 'day',
         'day_plural': 'days',
         'Allotments are not defined': 'Allotments are not defined',
-        'Requirement remove': 'Requirement remove',
         'Requirement creation': 'Requirement creation',
         'Season range': 'Season range',
         'Release days': 'Release days',

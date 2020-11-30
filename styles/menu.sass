@@ -1,20 +1,21 @@
 .menu
-    margin-top: 80px
-    min-width: 250px
+    padding: 80px 50px 0
+    min-width: 330px
     box-sizing: border-box
-    padding-right: 30px
+    background: #fafbfc
+    min-height: calc(100vh - 70px)
 
 .menu-item
     display: flex
     cursor: pointer
     align-items: center
-    font-size: 15px
+    font-size: 14px
     padding: 12px
 
     &.active
         cursor: default
         pointer-events: none
-        background: #f5f9fa
+        background: #ebecf0
 
     &:hover
         background: #f7f7f7
@@ -49,45 +50,48 @@
         color: #a4aab3
 
 .menu-icon
-    width: 22px
-    height: 22px
-    background: #595959
-
-    &.active
-        background: #ff9d19
+    //width: 17px
+    //height: 16px
+    width: 24px
+    height: 24px
+    background-position: center
+    background-repeat: no-repeat
 
     &.accommodations
-        mask: url("./icons/accommodations.svg") center no-repeat
+        //width: 19px
+        background-image: url("./icons/accommodations.svg")
 
     &.plus
-        mask: url("./icons/plus.svg") center no-repeat
+        //width: 14px
+        background-image: url("./icons/plus.svg")
 
     &.profile
-        mask: url("./icons/profile.svg") center no-repeat
+        background-image: url("./icons/profile.svg")
 
     &.rooms
-        mask: url("./icons/rooms.svg") center no-repeat
+        background-image: url("./icons/rooms.svg")
 
     &.contracts
-        mask: url("./icons/contracts.svg") center no-repeat
+        //width: 19px
+        background-image: url("./icons/contracts.svg")
 
     &.calendar
-        mask: url("./icons/calendar.svg") center no-repeat
+        background-image: url("./icons/calendar.svg")
 
     &.rates
-        mask: url("./icons/rates.svg") center no-repeat
+        background-image: url("./icons/rates.svg")
 
     &.seasons
-        mask: url("./icons/seasons.svg") center no-repeat
+        background-image: url("./icons/seasons.svg")
 
     &.cancellations
-        mask: url("./icons/cancellations.svg") center no-repeat
+        background-image: url("./icons/cancellations.svg")
 
     &.allocations
-        mask: url("./icons/allocations.svg") center no-repeat
+        background-image: url("./icons/allocations.svg")
 
     &.promo-offers
-        mask: url("./icons/promo-offers.svg") center no-repeat
+        background-image: url("./icons/promo-offers.svg")
 
     &.photos
-        mask: url("./icons/photos.svg") center no-repeat
+        background-image: url("./icons/photos.svg")

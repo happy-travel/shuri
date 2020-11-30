@@ -33,19 +33,26 @@ button[disabled]
     display: flex
     justify-content: space-between
 
-.seasons-remove-icon
-    cursor: pointer
-
 .dropdown.select
     overflow: hidden auto
 
+footer
+    margin-top: 0
+
 .settings.block
     display: flex
-    width: 1100px
-    margin: 0 auto 0 auto
+    min-width: 1100px
+    max-width: 1600px
+    margin: 0
 
 .settings.block section
     position: relative
+    margin: 0
+    width: 100%
+    max-width: none
+
+.settings.block > section
+    padding: 0 50px 35px
 
 .settings.block .breadcrumbs
     position: absolute
@@ -90,14 +97,8 @@ h3
     &::after
         content: '•'
 
-.rotate-45-deg
-    transform: rotate(45deg)
-
 .shuri-user-menu
     pointer-events: none
-
-.table .the-table
-    table-layout: fixed
 
 .default-pointer
     cursor: default !important
@@ -110,3 +111,14 @@ h3
 
 .no-margin
     margin: unset !important
+
+.icon
+    &.icon-expand, &.icon-expand-rotate
+        background-image: url("./icons/expand.svg")
+    &.icon-expand
+        transform: rotate(180deg)
+    &.icon-add
+        background-image: url("./icons/add.svg")
+        width: 60px
+        height: 60px
+

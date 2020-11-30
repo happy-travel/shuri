@@ -8,8 +8,11 @@
                 text-align: center
             table
                 width: 100%
-                border-spacing: 5px
+                border-spacing: 0
+                border-collapse: collapse
+                border: 1px solid #eee
                 user-select: none
+                table-layout: fixed
             td
                 padding: 10px
                 width: 14.3% !important
@@ -18,23 +21,36 @@
                 border: 0 !important
             th
                 text-align: left
-                padding: 0 8px 6px
+                padding: 6px 10px
+                line-height: 28px
+                font-weight: 500
+                font-size: 16px
+                color: #979797
             td
                 background: #fbfbfb
             .cell
                 border: 1px solid #eee !important
-                margin: 5px
+                margin: 0
                 background: #fff
                 cursor: pointer
-                padding: 4px 8px
+                padding: 10px
+                height: 80px
+                strong
+                    font-weight: 500
                 &:hover
                     background: #FFFAF3
                 &.changed
-                    border-left-color: #333 !important
+                    // border-left-color: #333 !important
                     strong
-                        font-weight: 400
+                        font-weight: 700
+                        color: $color-brand
                 &.selected
-                    border-color: $color-brand !important
+                    background: #F5F9FA !important
+                &-container
+                    display: flex
+                    height: 100%
+                    flex-direction: column
+                    justify-content: space-between
             .value
                 font-size: 11px
     .selector-wrapper

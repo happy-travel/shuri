@@ -12,6 +12,11 @@ import Menu from 'parts/menu';
 
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
+const SEARCHES = (item) => [
+    item.name[UIStore.editorLanguage],
+    item.address[UIStore.editorLanguage]
+];
+
 @observer
 class AccommodationsList extends React.Component {
     @observable accommodationsList = null;
@@ -60,11 +65,6 @@ class AccommodationsList extends React.Component {
         this.accommodationsList = list;
     }
 
-    @action
-    onPaginationClick = ({ pageIndex }) => {
-        this.tablePageIndex = pageIndex;
-    }
-
     renderContent = () => {
         return (
             <Table
@@ -73,6 +73,7 @@ class AccommodationsList extends React.Component {
                 textEmptyResult={'No accommodations found'}
                 textEmptyList={'No accommodations added'}
                 onRowClick={(item) => this.redirect = `/accommodation/${item.id}`}
+                searches={SEARCHES}
             />
         );
     }
@@ -84,7 +85,7 @@ class AccommodationsList extends React.Component {
 
         const { t } = this.props;
         return (
-            <div className="settings block">
+            <div className="settings block accommodations">
                 <Menu match={this.props.match} />
                 <section>
                     <h2>

@@ -86,9 +86,11 @@ class CalendarForm extends React.Component {
                 }
                 onClick={(e) => this.dayClick(e, formik, id)}
             >
-                <strong>{day.getDate()}</strong>
-                <div className="value">
-                    {possibleValues[formik.values[String(id)]]}
+                <div className="cell-container">
+                    <strong>{day.getDate()}</strong>
+                    <div className="value">
+                        {possibleValues[formik.values[String(id)]]}
+                    </div>
                 </div>
             </td>
         );

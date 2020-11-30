@@ -79,7 +79,7 @@ class RequirementActionModal extends React.Component {
 
     render() {
         const { t, requirement } = this.props;
-        const modalTitle = requirement ? t('Requirement remove') : t('Requirement creation');
+        const modalTitle = requirement ? t('Requirement') : t('Requirement creation');
 
         return (
             <Modal

@@ -133,7 +133,7 @@ class SeasonsList extends React.Component {
                             <span>{season.name}</span>
                             <span
                                 onClick={() => this.setRemovingSeason(season)}
-                                className="icon icon-action-cancel seasons-remove-icon"
+                                className="icon icon-close"
                             />
                         </div>
                     ))}

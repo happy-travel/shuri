@@ -2,6 +2,8 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
+import { action, observable } from 'mobx';
+import { observer } from 'mobx-react';
 import {
     CachedForm,
     FieldText
@@ -25,15 +27,14 @@ const DEFAULT_ROOM = {
     pictures: {}
 };
 
+@observer
 class RoomPage extends React.Component {
-    state = {
-        room: undefined,
-        id: this.props.match.params.id,
-        accommodationId: this.props.match.params.accommodationId,
-        redirectUrl: undefined,
-        isRequestingApi: false,
-        isRemoveModalShown: false
-    };
+    @observable room;
+    @observable id = this.props.match.params.id;
+    @observable accommodationId = this.props.match.params.accommodationId;
+    @observable redirectUrl;
+    @observable isRequestingApi = false;
+    @observable isRemoveModalShown = false;
 
     componentDidMount() {
         this.loadData();
@@ -44,22 +45,24 @@ class RoomPage extends React.Component {
         const id = this.props.match.params.id;
 
         if (prevId !== id) {
-            this.setState({ id }, this.loadData);
+            this.id = id;
+            this.loadData();
         }
     }
 
+    @action
     loadData = () => {
-        const { id, accommodationId } = this.state;
+        getAccommodation({ urlParams: { id: this.accommodationId } }).then(this.getAccommodationSuccess);
 
-        getAccommodation({ urlParams: { id: accommodationId } }).then(this.getAccommodationSuccess);
-
-        if (!id || EntitiesStore.hasRoom(accommodationId, id)) {
-            this.setState({ room: !id ? DEFAULT_ROOM : EntitiesStore.getRoom(accommodationId, id) });
+        if (!this.id) {
+            this.room = DEFAULT_ROOM;
+        } else if (EntitiesStore.hasRoom(this.accommodationId, this.id)) {
+            this.room = EntitiesStore.getRoom(this.accommodationId, this.id);
         } else {
             getAccommodationRoom({
                 urlParams: {
-                    accommodationId,
-                    roomId: id
+                    accommodationId: this.accommodationId,
+                    roomId: this.id
                 }
             }).then(this.getAccommodationRoomSuccess);
         }
@@ -69,21 +72,25 @@ class RoomPage extends React.Component {
         EntitiesStore.setAccommodation(accommodation);
     }
 
+    @action
     getAccommodationRoomSuccess = (room) => {
-        this.setState({ room });
-        EntitiesStore.setRoom(this.state.accommodationId, room);
+        this.room = room;
+        EntitiesStore.setRoom(this.accommodationId, room);
     }
 
+    @action
     setRedirectUrl = () => {
-        this.setState({ redirectUrl: `/accommodation/${this.state.accommodationId}/rooms` });
+        this.redirectUrl = `/accommodation/${this.accommodationId}/rooms`;
     }
 
+    @action
     setRequestingApiStatus = () => {
-        this.setState({ isRequestingApi: true });
+        this.isRequestingApi = true;
     }
 
+    @action
     unsetRequestingApiStatus = () => {
-        this.setState({ isRequestingApi: false });
+        this.isRequestingApi = false;
     }
 
     reformatValues = (values) => {
@@ -101,50 +108,48 @@ class RoomPage extends React.Component {
         return values;
     }
 
+    @action
     onOpenRemoveModal = () => {
-        this.setState({
-            isRemoveModalShown: true
-        });
+        this.isRemoveModalShown = true;
     }
 
+    @action
     onCloseRemoveModal = () => {
-        this.setState({
-            isRemoveModalShown: false
-        });
+        this.isRemoveModalShown = false;
     }
 
     onRoomRemove = () => {
         this.setRequestingApiStatus();
         removeAccommodationRoom({
             urlParams: {
-                accommodationId: this.state.accommodationId,
-                roomId: this.state.id
+                accommodationId: this.accommodationId,
+                roomId: this.id
             }
         }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
     }
 
     onCreateSubmit = (values) => {
-        if (this.state.isRequestingApi) {
+        if (this.isRequestingApi) {
             return;
         }
         this.setRequestingApiStatus();
         createAccommodationRoom({
             urlParams: {
-                accommodationId: this.state.accommodationId
+                accommodationId: this.accommodationId
             },
             body: [this.reformatValues(values)]
         }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
     }
 
     onUpdateSubmit = (values) => {
-        if (this.state.isRequestingApi) {
+        if (this.isRequestingApi) {
             return;
         }
         this.setRequestingApiStatus();
         updateAccommodationRoom({
             urlParams: {
-                accommodationId: this.state.accommodationId,
-                roomId: this.state.id
+                accommodationId: this.accommodationId,
+                roomId: this.id
             },
             body: this.reformatValues(values)
         }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
@@ -152,7 +157,6 @@ class RoomPage extends React.Component {
 
     renderForm = (formik) => {
         const { t } = this.props;
-        const { id } = this.state;
         return (
             <div className="form app-settings">
                 <div className="row">
@@ -176,9 +180,9 @@ class RoomPage extends React.Component {
                                 type="submit"
                                 className="button"
                             >
-                                {id ? t('Save changes') : 'Create room'}
+                                {this.id ? t('Save changes') : 'Create room'}
                             </button>
-                            {id ?
+                            {this.id ?
                                 <button
                                     type="button"
                                     onClick={this.onOpenRemoveModal}
@@ -197,11 +201,10 @@ class RoomPage extends React.Component {
 
     render() {
         const { t } = this.props;
-        const { redirectUrl, id } = this.state;
-        const isLoading = this.state.room === undefined;
+        const isLoading = this.room === undefined;
 
-        if (redirectUrl) {
-            return <Redirect push to={redirectUrl} />;
+        if (this.redirectUrl) {
+            return <Redirect push to={this.redirectUrl} />;
         }
 
         return (
@@ -214,12 +217,12 @@ class RoomPage extends React.Component {
                             <>
                                 <h2>
                                     <span className="brand">
-                                        {id ? `Edit room #${id}` : 'Create new room'}
+                                        {this.id ? `Edit room #${this.id}` : 'Create new room'}
                                     </span>
                                 </h2>
                                 <CachedForm
-                                    initialValues={this.state.room}
-                                    onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
+                                    initialValues={this.room}
+                                    onSubmit={this.id ? this.onUpdateSubmit : this.onCreateSubmit}
                                     render={this.renderForm}
                                     enableReinitialize
                                 />
@@ -227,12 +230,12 @@ class RoomPage extends React.Component {
                         }
                     </section>
                 </div>
-                {this.state.isRemoveModalShown ?
+                {this.isRemoveModalShown ?
                     <DialogModal
                         title={t('Removing room')}
                         text={t('Are you sure you want to proceed?')}
                         onNoClick={this.onCloseRemoveModal}
-                        onYesClick={!this.state.isRequestingApi ? this.onRoomRemove : undefined}
+                        onYesClick={!this.isRequestingApi ? this.onRoomRemove : undefined}
                     /> :
                     null
                 }

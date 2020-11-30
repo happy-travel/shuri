@@ -320,7 +320,7 @@ class Menu extends React.Component {
                 <Link to={item.link} className="default-pointer">
                     <div className={itemClassName}>
                         {item.icon ?
-                            <span className={`menu-icon ${item.icon}` + __class(isActive, 'active')} /> :
+                            <span className={`menu-icon ${item.icon}`} /> :
                             null
                         }
                         <span className="menu-item-text">{item.name}</span>

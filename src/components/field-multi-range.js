@@ -64,7 +64,7 @@ class FieldMultiRange extends React.Component {
                             {...props}
                             style={{
                                 ...props.style,
-                                height: '8px',
+                                height: '2px',
                                 width: '100%',
                                 background: getTrackBackground({
                                     values: values,

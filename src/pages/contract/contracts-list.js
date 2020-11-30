@@ -7,11 +7,13 @@ import { Redirect } from 'react-router-dom';
 import Table from 'matsumoto/src/components/table';
 import { dateFormat } from 'matsumoto/src/simple';
 import Menu from 'parts/menu';
-import { getContracts } from 'providers/api';
+import { getContracts, getAccommodations } from 'providers/api';
+import UI from 'stores/shuri-ui-store';
 
 @observer
 class ContractsList extends React.Component {
     @observable contractsList = null;
+    @observable accommodationsList = null;
     @observable redirect;
 
     constructor(props) {
@@ -24,7 +26,11 @@ class ContractsList extends React.Component {
                 cell: 'id'
             },
             {
-                header: t('Name'),
+                header: t('Accommodation'),
+                cell: 'accommodationName'
+            },
+            {
+                header: t('Contract'),
                 cell: 'name'
             },
             {
@@ -40,12 +46,25 @@ class ContractsList extends React.Component {
     }
 
     componentDidMount() {
-        getContracts().then(this.getContractsSuccess);
+        Promise.all([
+            getContracts(),
+            getAccommodations()
+        ]).then(this.getDataSuccess);
     }
 
     @action
-    getContractsSuccess = (list) => {
-        this.contractsList = list;
+    getDataSuccess = ([contractsList = [], accommodationsList]) => {
+        contractsList.forEach((contract) => {
+            contract.accommodationName = 'None';
+            if (contract.accommodationId >= 0) {
+                accommodationsList.forEach((accommodation) => {
+                    if (contract.accommodationId === accommodation.id) {
+                        contract.accommodationName = accommodation.name[UI.editorLanguage];
+                    }
+                })
+            }
+        });
+        this.contractsList = contractsList;
     }
 
     renderContent = () => {
@@ -55,7 +74,7 @@ class ContractsList extends React.Component {
                 columns={this.tableColumns}
                 textEmptyResult={'No contracts found'}
                 textEmptyList={'No contracts added'}
-                onRowClick={(item) => this.redirect = `/contract/${item.id}`}
+                onRowClick={(item) => this.redirect = item.accommodationName !== 'None' ? `/contract/${item.id}` : null}
             />
         );
     }
@@ -67,7 +86,7 @@ class ContractsList extends React.Component {
 
         const { t } = this.props;
         return (
-            <div className="settings block">
+            <div className="settings block contracts">
                 <Menu match={this.props.match}/>
                 <section>
                     <h2>
