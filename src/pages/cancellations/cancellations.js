@@ -226,7 +226,7 @@ class Cancellations extends React.Component {
                             className="add-icon-container"
                             onClick={() => this.setCancellationStub({ seasonId, roomId })}
                         >
-                            <span className="icon icon-action-cancel rotate-45-deg" />
+                            <span className="icon icon-add" />
                         </div>
                     </div>
                 </div>
@@ -241,8 +241,8 @@ class Cancellations extends React.Component {
         const isExpanded = seasonBranch.isExpanded;
         const seasonData = seasonBranch.data;
         const arrowClassName = isExpanded ?
-            'icon icon-arrow-expand-rotate' :
-            'icon icon-arrow-expand';
+            'icon icon-expand-rotate' :
+            'icon icon-expand';
         let numberOfCancellations = 0;
         Array.from(seasonData.entries()).forEach(([, roomsArray]) => {
             numberOfCancellations += roomsArray.length;
@@ -255,8 +255,8 @@ class Cancellations extends React.Component {
                     className={'season-header' + __class(isExpanded, 'expanded')}
                     onClick={() => this.onSeasonClick(seasonId)}
                 >
-                    <span className={arrowClassName} />
                     <span>{this.seasonsNames.get(seasonId)}</span>
+                    <span className={arrowClassName} />
                     <span className="number-of-rates">{__plural(t, numberOfCancellations, t('policy'))}</span>
                 </div>
                 {isExpanded ?

@@ -240,7 +240,7 @@ class AllocationRequirements extends React.Component {
                             className="add-icon-container"
                             onClick={() => this.setRequirementStub({ seasonRangeId, roomId })}
                         >
-                            <span className="icon icon-action-cancel rotate-45-deg" />
+                            <span className="icon icon-add" />
                         </div>
                     }
                 </div>
@@ -255,8 +255,8 @@ class AllocationRequirements extends React.Component {
         const isExpanded = seasonRangeBranch.isExpanded;
         const seasonRangeData = seasonRangeBranch.data;
         const arrowClassName = isExpanded ?
-            'icon icon-arrow-expand-rotate' :
-            'icon icon-arrow-expand';
+            'icon icon-expand-rotate' :
+            'icon icon-expand';
         let numberOfAllocationRequirements = 0;
         Array.from(seasonRangeData.entries()).forEach(([, roomsArray]) => {
             numberOfAllocationRequirements += roomsArray.length;
@@ -269,8 +269,8 @@ class AllocationRequirements extends React.Component {
                     className={'season-header' + __class(isExpanded, 'expanded')}
                     onClick={() => this.onSeasonRangeClick(seasonRangeId)}
                 >
-                    <span className={arrowClassName} />
                     <span>{this.seasonsRangesNames.get(seasonRangeId)}</span>
+                    <span className={arrowClassName} />
                     <span className="number-of-rates">
                         {__plural(t, numberOfAllocationRequirements, t('requirement'))}
                     </span>

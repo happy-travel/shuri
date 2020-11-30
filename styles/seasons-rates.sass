@@ -3,18 +3,16 @@
         padding: 4px
         margin-bottom: 10px
         border: 1px solid #ededed
-        border-radius: 4px
+        border-left: 0
+        border-right: 0
 
     &-header
-        padding: 4px 26px 4px 0
+        padding: 15px 26px
         cursor: pointer
         position: relative
 
-        &.expanded
-            padding-bottom: 8px
-
         .icon
-            margin: 0 4px
+            margin: 2px 11px -2px
 
 .room-info
     display: flex
@@ -25,8 +23,8 @@
 .room-name
     padding: 5px
     overflow: hidden
-    min-width: 250px
-    max-width: 250px
+    min-width: 350px
+    max-width: 350px
     word-break: break-word
 
 .rates-container
@@ -34,7 +32,7 @@
     padding: 0 10px
     display: flex
 
-.rate-info, .add-icon-container
+.rate-info
     margin: 5px
     padding: 8px
     border: 1px solid #bbbbbb
@@ -47,6 +45,7 @@
 .add-icon-container
     align-items: center
     display: flex
+    cursor: pointer
 
 .remove-icon
     cursor: pointer

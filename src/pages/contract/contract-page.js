@@ -1,6 +1,8 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
+import { action, observable } from 'mobx';
+import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
 import {
     CachedForm, FieldSelect,
@@ -31,21 +33,20 @@ import { formatDate } from 'utils/date-utils';
 
 const MAX_DOCUMENT_SIZE = 100 * 1024 * 1024;
 
+@observer
 class ContractPage extends React.Component {
-    state = {
-        contract: undefined,
-        accommodationsList: undefined,
-        id: this.props.match.params.id,
-        redirectUrl: undefined,
-        isRequestingApi: false,
-        isRemoveModalShown: false,
-        uploadManager: undefined,
-        downloadedFile: undefined
-    };
-    formik;
+    @observable contract;
+    @observable accommodationsList;
+    @observable id = this.props.match.params.id;
+    @observable redirectUrl;
+    @observable isRequestingApi = false;
+    @observable isRemoveModalShown = false;
+    @observable uploadManager;
+    @observable downloadedFile;
+    @observable formik;
 
     get uploadUrl() {
-        return `${API_BASE_PATH}${CONTRACTS_PATH}/${this.state.id}/file`;
+        return `${API_BASE_PATH}${CONTRACTS_PATH}/${this.id}/file`;
     }
 
     componentDidMount() {
@@ -57,45 +58,52 @@ class ContractPage extends React.Component {
         const id = this.props.match.params.id;
 
         if (prevId !== id) {
-            this.setState({ id }, this.loadData);
+            this.id = id;
+            this.loadData();
         }
     }
 
+    @action
     loadData = () => {
-        const { id } = this.state;
-
         getAccommodations().then(this.getAccommodationsSuccess);
 
-        if (!id || EntitiesStore.hasContract(id)) {
-            this.setState({ contract: !id ? {} : EntitiesStore.getContract(id) })
+        if (!this.id || EntitiesStore.hasContract(this.id)) {
+            this.contract = !this.id ? {} : EntitiesStore.getContract(this.id);
         } else {
-            getContract({ urlParams: { id } }).then(this.getContractSuccess);
+            getContract({
+                urlParams: { id: this.id }
+            }).then(this.getContractSuccess);
         }
     }
 
+    @action
     getAccommodationsSuccess = (accommodationsList) => {
-        this.setState({ accommodationsList });
+        this.accommodationsList = accommodationsList;
     }
 
+    @action
     getContractSuccess = (contract) => {
-        this.setState({ contract });
+        this.contract = contract;
         EntitiesStore.setContract(contract);
     }
 
+    @action
     setRedirectUrl = () => {
-        this.setState({ redirectUrl: '/contracts' });
+        this.redirectUrl = '/contracts';
     }
 
+    @action
     setRequestingApiStatus = () => {
-        this.setState({ isRequestingApi: true });
+        this.isRequestingApi = true;
     }
 
+    @action
     unsetRequestingApiStatus = () => {
-        this.setState({ isRequestingApi: false });
+        this.isRequestingApi = false;
     }
 
     uploadFiles = () => {
-        this.state.uploadManager.uploadFiles().then(this.onUploadFinish, this.uploadFilesFail);
+        this.uploadManager.uploadFiles().then(this.onUploadFinish, this.uploadFilesFail);
     }
 
     uploadFilesFail = (error) => {
@@ -104,10 +112,10 @@ class ContractPage extends React.Component {
         }
     }
 
+    @action
     onUploadFinish = (message) => {
-        const { uploadManager } = this.state;
-        if (uploadManager?.didUploadFiles) {
-            getContract({ urlParams: { id: this.state.id } })
+        if (this.uploadManager?.didUploadFiles) {
+            getContract({ urlParams: { id: this.id } })
                 .then(this.getContractSuccess)
                 .then(() => {
                     if (message) {
@@ -115,23 +123,21 @@ class ContractPage extends React.Component {
                     }
                 });
         }
-        this.setState({ uploadManager: undefined });
+        this.uploadManager = undefined;
     }
 
+    @action
     onOpenRemoveModal = () => {
-        this.setState({
-            isRemoveModalShown: true
-        });
+        this.isRemoveModalShown = true;
     }
 
+    @action
     onCloseRemoveModal = () => {
-        this.setState({
-            isRemoveModalShown: false
-        });
+        this.isRemoveModalShown = false;
     }
 
     onCreateSubmit = (values) => {
-        if (this.state.isRequestingApi) {
+        if (this.isRequestingApi) {
             return;
         }
         const contract = formatValues(values);
@@ -141,14 +147,14 @@ class ContractPage extends React.Component {
     }
 
     onUpdateSubmit = (values) => {
-        if (this.state.isRequestingApi) {
+        if (this.isRequestingApi) {
             return;
         }
         const contract = formatValues(values);
         this.setRequestingApiStatus();
         updateContract({
             urlParams: {
-                id: this.state.id
+                id: this.id
             },
             body: contract
         }).then(() => this.contractActionSuccess(contract), this.contractActionFail);
@@ -169,16 +175,16 @@ class ContractPage extends React.Component {
     }
 
     onContractRemove = () => {
-        this.setState({ isRequestingApi: true });
+        this.isRequestingApi = true;
         removeContract({
             urlParams: {
-                id: this.state.id
+                id: this.id
             }
         }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
     }
 
     onDrop = (files) => {
-        this.setState({ uploadManager: new UploadManager(files, this.uploadUrl) });
+        this.uploadManager = new UploadManager(files, this.uploadUrl);
     }
 
     onCloseModal = () => {
@@ -186,16 +192,16 @@ class ContractPage extends React.Component {
     }
 
     onAbort = () => {
-        setTimeout(this.state.uploadManager.abort());
+        setTimeout(this.uploadManager.abort());
     }
 
     onDocumentRemove = () => {
-        getContract({ urlParams: { id: this.state.id } }).then(this.getContractSuccess);
+        getContract({ urlParams: { id: this.id } }).then(this.getContractSuccess);
     }
 
+    @action
     renderForm = (formik) => {
         const { t } = this.props;
-        const { id } = this.state;
         this.formik = formik;
         return (
             <div className="form app-settings">
@@ -224,7 +230,7 @@ class ContractPage extends React.Component {
                         label={t('Accommodation')}
                         placeholder="Select contract accommodation"
                         options={
-                            this.state.accommodationsList?.map((item) => ({
+                            this.accommodationsList?.map((item) => ({
                                 value: item.id,
                                 text: item.name[UI.editorLanguage]
                             }))
@@ -248,9 +254,9 @@ class ContractPage extends React.Component {
                                 type="submit"
                                 className="button"
                             >
-                                {id ? t('Save changes') : t('Create')}
+                                {this.id ? t('Save changes') : t('Create')}
                             </button>
-                            {id ?
+                            {this.id ?
                                 <button
                                     type="button"
                                     onClick={this.onOpenRemoveModal}
@@ -271,7 +277,7 @@ class ContractPage extends React.Component {
         return (
             <Document
                 document={document}
-                contractId={this.state.id}
+                contractId={this.id}
                 onRemove={() => this.onDocumentRemove(document)}
             />
         );
@@ -279,7 +285,7 @@ class ContractPage extends React.Component {
 
     renderDocuments = () => {
         const { t } = this.props;
-        const { documents } = this.state.contract;
+        const { documents } = this.contract;
         const isDocumentsListEmpty = documents?.length === 0;
         return (
             <div className="documents">
@@ -303,27 +309,25 @@ class ContractPage extends React.Component {
     }
 
     renderUploadModal = () => {
-        const { uploadManager } = this.state;
-        if (!uploadManager) {
+        if (!this.uploadManager) {
             return null;
         }
 
         return (
             <UploadModal
-                uploadManager={uploadManager}
+                uploadManager={this.uploadManager}
                 uploadFiles={this.uploadFiles}
-                onCloseClick={uploadManager.isResolved ? this.onCloseModal : this.onAbort}
+                onCloseClick={this.uploadManager.isResolved ? this.onCloseModal : this.onAbort}
             />
         );
     }
 
     render() {
         const { t } = this.props;
-        const { redirectUrl, id, contract, accommodationsList } = this.state;
-        const isLoading = contract === undefined || accommodationsList === undefined;
+        const isLoading = this.contract === undefined || this.accommodationsList === undefined;
 
-        if (redirectUrl) {
-            return <Redirect push to={redirectUrl} />;
+        if (this.redirectUrl) {
+            return <Redirect push to={this.redirectUrl} />;
         }
 
         return (
@@ -336,30 +340,30 @@ class ContractPage extends React.Component {
                             <>
                                 <h2>
                                     <span className="brand">
-                                        {id ? `Edit contract #${id}` : t('Create new contract')}
+                                        {this.id ? `Edit contract #${this.id}` : t('Create new contract')}
                                     </span>
                                 </h2>
-                                {!accommodationsList?.length ?
+                                {!this.accommodationsList?.length ?
                                     t('No accommodations found') :
                                     <CachedForm
-                                        initialValues={contract}
-                                        onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
+                                        initialValues={this.contract}
+                                        onSubmit={this.id ? this.onUpdateSubmit : this.onCreateSubmit}
                                         render={this.renderForm}
                                         enableReinitialize
                                     />
                                 }
-                                {id ? this.renderDocuments() : null}
+                                {this.id ? this.renderDocuments() : null}
                                 {this.renderUploadModal()}
                             </>
                         }
                     </section>
                 </div>
-                {this.state.isRemoveModalShown ?
+                {this.isRemoveModalShown ?
                     <DialogModal
                         title={t('Removing contract')}
                         text={t('Are you sure you want to proceed?')}
                         onNoClick={this.onCloseRemoveModal}
-                        onYesClick={!this.state.isRequestingApi ? this.onContractRemove : undefined}
+                        onYesClick={!this.isRequestingApi ? this.onContractRemove : undefined}
                     /> :
                     null
                 }

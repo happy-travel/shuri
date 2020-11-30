@@ -178,7 +178,7 @@ class PromoOffers extends React.Component {
                         className="add-icon-container"
                         onClick={() => this.setOfferStub({ roomId })}
                     >
-                        <span className="icon icon-action-cancel rotate-45-deg" />
+                        <span className="icon icon-add" />
                     </div>
                 </div>
             </div>

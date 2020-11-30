@@ -1,12 +1,14 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
+import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import propTypes from 'prop-types';
 import {
     CachedForm,
     FieldText,
-    FieldSelect
+    FieldSelect,
+    FieldTextarea
 } from 'matsumoto/src/components/form';
 import { Loader, Stars, decorate } from 'matsumoto/src/simple';
 import UI from 'stores/shuri-ui-store';
@@ -53,14 +55,6 @@ const DEFAULT_ACCOMMODATION = {
     },
     checkInTime: '',
     checkOutTime: '',
-    pictures: {
-        [UI.editorLanguage]: [
-            {
-                source: '',
-                caption: ''
-            }
-        ]
-    },
     contactInfo: {
         email: '',
         phone: '',
@@ -99,14 +93,12 @@ const DEFAULT_ACCOMMODATION = {
 
 @observer
 class AccommodationPage extends React.Component {
-    state = {
-        accommodation: undefined,
-        id: this.props.match.params.id,
-        redirectUrl: undefined,
-        isRemoveModalShown: false,
-        isRequestingApi: false
-    };
-    formik;
+    @observable accommodation;
+    @observable id = this.props.match.params.id;
+    @observable redirectUrl = undefined;
+    @observable isRemoveModalShown = false;
+    @observable isRequestingApi = false;
+    @observable formik;
 
     componentDidMount() {
         this.loadData();
@@ -117,23 +109,28 @@ class AccommodationPage extends React.Component {
         const id = this.props.match.params.id;
 
         if (prevId !== id) {
-            this.setState({ id }, this.loadData);
+            this.id = id;
+            this.loadData();
         }
     }
 
+    @action
     loadData = () => {
-        const { id } = this.state;
+        const id = this.id;
         LocationsStore.loadLocations();
 
-        if (!id || EntitiesStore.hasAccommodation(id)) {
-            this.setState({ accommodation: !id ? DEFAULT_ACCOMMODATION : EntitiesStore.getAccommodation(id) });
+        if (!id) {
+            this.accommodation = DEFAULT_ACCOMMODATION;
+        } else if (EntitiesStore.hasAccommodation(id)) {
+            this.accommodation = EntitiesStore.getAccommodation(id);
         } else {
             getAccommodation({ urlParams: { id } }).then(this.getAccommodationSuccess);
         }
     }
 
+    @action
     getAccommodationSuccess = (accommodation) => {
-        this.setState({ accommodation });
+        this.accommodation = accommodation;
         EntitiesStore.setAccommodation(accommodation);
     }
 
@@ -165,52 +162,41 @@ class AccommodationPage extends React.Component {
         };
     }
 
+    @action
     setRedirectUrl = () => {
-        this.setState({ redirectUrl: '/' });
+        this.redirectUrl = '/';
     }
 
+    @action
     setRequestingApiStatus = () => {
-        this.setState({ isRequestingApi: true });
+        this.isRequestingApi = true;
     }
 
+    @action
     unsetRequestingApiStatus = () => {
-        this.setState({ isRequestingApi: false });
+        this.isRequestingApi = false;
     }
 
-    setPictures = (pictures) => {
-        this.setState({
-            accommodation: {
-                ...this.formik.values,
-                pictures: {
-                    [UI.editorLanguage]: pictures
-                }
-            }
-        });
-    }
-
+    @action
     onOpenRemoveModal = () => {
-        this.setState({
-            isRemoveModalShown: true
-        });
+        this.isRemoveModalShown = true;
     }
 
     onCloseRemoveModal = () => {
-        this.setState({
-            isRemoveModalShown: false
-        });
+        this.isRemoveModalShown = false;
     }
 
     onAccommodationRemove = () => {
         this.setRequestingApiStatus();
         removeAccommodation({
             urlParams: {
-                id: this.state.id
+                id: this.id
             }
         }).then(this.setRedirectUrl, this.unsetRequestingApiStatus);
     }
 
     onCreateSubmit = (values) => {
-        if (this.state.isRequestingApi) {
+        if (this.isRequestingApi) {
             return;
         }
         const accommodation = this.reformatValues(values);
@@ -220,14 +206,14 @@ class AccommodationPage extends React.Component {
     }
 
     onUpdateSubmit = (values) => {
-        if (this.state.isRequestingApi) {
+        if (this.isRequestingApi) {
             return;
         }
         const accommodation = this.reformatValues(values);
         this.setRequestingApiStatus();
         updateAccommodation({
             urlParams: {
-                id: this.state.id
+                id: this.id
             },
             body: accommodation
         }).then(() => this.accommodationActionSuccess(accommodation), this.accommodationActionFail);
@@ -251,14 +237,12 @@ class AccommodationPage extends React.Component {
         this.forceUpdate();
     }
 
+    @action
     renderForm = (formik) => {
         const { t } = this.props;
-        const { id } = this.state;
         this.formik = formik;
         return (
             <div className="form app-settings">
-                { /* TODO: pictures */ }
-                { /* TODO: amenities */ }
                 <div className="row">
                     <FieldText
                         formik={formik}
@@ -296,7 +280,7 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldText
+                    <FieldTextarea
                         formik={formik}
                         clearable
                         id={`description.${UI.editorLanguage}.description`}
@@ -410,14 +394,14 @@ class AccommodationPage extends React.Component {
                     <div className="field">
                         <div className="inner">
                             <button type="submit" className="button">
-                                {id ?
+                                {this.id ?
                                     'Save changes' :
                                     'Create accommodation'
                                 }
                             </button>
                         </div>
                     </div>
-                    {id ?
+                    {this.id ?
                         <button
                             type="button"
                             onClick={this.onOpenRemoveModal}
@@ -434,11 +418,10 @@ class AccommodationPage extends React.Component {
 
     render() {
         const { t } = this.props;
-        const { redirectUrl, id, accommodation } = this.state;
-        const isLoading = accommodation === undefined;
+        const isLoading = this.accommodation === undefined;
 
-        if (redirectUrl) {
-            return <Redirect push to={redirectUrl} />;
+        if (this.redirectUrl) {
+            return <Redirect push to={this.redirectUrl} />;
         }
 
         return (
@@ -452,15 +435,15 @@ class AccommodationPage extends React.Component {
                             <>
                                 <h2>
                                     <span className="brand">
-                                    {id ?
-                                        `Edit ${accommodation.name[UI.editorLanguage]}` :
+                                    {this.id ?
+                                        `Edit ${this.accommodation.name[UI.editorLanguage]}` :
                                         t('Create new accommodation')
                                     }
                                     </span>
                                 </h2>
                                 <CachedForm
-                                    initialValues={accommodation}
-                                    onSubmit={id ? this.onUpdateSubmit : this.onCreateSubmit}
+                                    initialValues={this.accommodation}
+                                    onSubmit={this.id ? this.onUpdateSubmit : this.onCreateSubmit}
                                     render={this.renderForm}
                                     enableReinitialize
                                 />
@@ -468,12 +451,12 @@ class AccommodationPage extends React.Component {
                         }
                     </section>
                 </div>
-                {this.state.isRemoveModalShown ?
+                {this.isRemoveModalShown ?
                     <DialogModal
                         title={t('Removing accommodation')}
                         text={t('Are you sure you want to proceed?')}
                         onNoClick={this.onCloseRemoveModal}
-                        onYesClick={!this.state.isRequestingApi ? this.onAccommodationRemove : undefined}
+                        onYesClick={!this.isRequestingApi ? this.onAccommodationRemove : undefined}
                     /> :
                     null
                 }

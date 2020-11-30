@@ -1,4 +1,5 @@
 import React from 'react';
+import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
@@ -12,27 +13,22 @@ import { registrationManagerValidator } from './registration-manager-validator';
 
 @observer
 class RegistrationManager extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            redirectToIndexPage: false,
-            initialValues: {
-                title: '',
-                firstName: '',
-                lastName: '',
-                position: '',
-                phone: '',
-                fax: ''
-            }
-        };
-        this.submit = this.submit.bind(this);
-    }
+    @observable redirectToIndexPage = false;
+    @observable initialValues = {
+        title: '',
+        firstName: '',
+        lastName: '',
+        position: '',
+        phone: '',
+        fax: ''
+    };
 
-    submit(values) {
+    @action
+    submit = (values) => {
         registerContractManager({ body: values }).then(
             (user) => {
                 userAuthSetToStorage(user);
-                this.setState({ redirectToIndexPage: true });
+                this.redirectToIndexPage = true;
             }
         );
     }
@@ -40,7 +36,7 @@ class RegistrationManager extends React.Component {
     render() {
         let { t } = useTranslation();
 
-        if (this.state.redirectToIndexPage) {
+        if (this.redirectToIndexPage) {
             return <Redirect push to="/"/>;
         }
 
@@ -75,7 +71,7 @@ class RegistrationManager extends React.Component {
                         </p>
 
                         <CachedForm
-                            initialValues={this.state.initialValues}
+                            initialValues={this.initialValues}
                             enableReinitialize
                             validationSchema={registrationManagerValidator}
                             onSubmit={this.submit}

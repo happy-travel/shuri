@@ -1,0 +1,25 @@
+.contracts.block
+    .the-table
+        tr
+            $cols: (1: 10%, 2: 30%, 3: 30%, 4: 15%, 5: 15%)
+            @each $id, $col in $cols
+                td:nth-child(#{$id})
+                    width: $col !important
+
+.accommodations.block
+    .table
+        margin-top: -105px
+    .the-table
+        tr
+            $cols: (1: 5%, 2: 25%, 3: 40%, 4: 15%, 5: 15%)
+            @each $id, $col in $cols
+                td:nth-child(#{$id})
+                    width: $col !important
+
+.rooms.block
+    .the-table
+        tr
+            $cols: (1: 10%, 2: 30%, 3: 60%)
+            @each $id, $col in $cols
+                td:nth-child(#{$id})
+                    width: $col !important

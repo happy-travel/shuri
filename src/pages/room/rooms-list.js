@@ -130,7 +130,7 @@ class RoomsList extends React.Component {
         const { t } = this.props;
         return (
             <>
-                <div className="settings block">
+                <div className="settings block rooms">
                     <Menu match={this.props.match}/>
                     <section>
                         {isLoading ?
