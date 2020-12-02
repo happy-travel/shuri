@@ -2,10 +2,6 @@
     margin-top: -30px
     .calendar
         .month
-            h2
-                margin: 30px 0 20px
-                text-transform: none
-                text-align: center
             table
                 width: 100%
                 border-spacing: 0
@@ -53,33 +49,25 @@
                     justify-content: space-between
             .value
                 font-size: 11px
-    .selector-wrapper
-        z-index: 1
-        position: sticky
-        top: 20px
-        transform: translateX(-50%)
-        width: 500px
-        height: 100px
-        padding: 5px 15px 15px 15px
-        background: #ffffff
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2)
-        border-radius: 10px
-        margin: -80px 0 -20px 443px
-        button
-            float: right
-            margin-top: 10px
-            position: relative
-            z-index: 1
+    .top-controls
+        display: flex
+        justify-content: space-between
+        margin-bottom: 25px
+        & > div
+            width: 188px
+        .clear-wrapper
+            margin-top: 50px
+            margin-right: 233px
+            text-align: right
 
-    .submit-wrapper
-        z-index: 1
-        position: sticky
-        bottom: 20px
-        transform: translateX(-50%)
-        width: 350px
-        height: 64px
-        padding: 10px
-        background: #ffffff
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2)
-        border-radius: 10px
-        margin: 20px 0 -84px 443px
+    .main-section
+        display: flex
+        .month
+            width: calc(100% - 233px)
+
+        .right-controls
+            margin-left: 25px
+            width: 208px
+            .field
+                margin: 0 0 20px
+
