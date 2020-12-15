@@ -288,7 +288,7 @@ function registerContractManager({ body }) {
 
 function getAccommodationPhotos({ urlParams }) {
     return apiPromise({
-        url: `${API_BASE_PATH}${ACCOMMODATIONS_PATH}/${urlParams.id}/photo`
+        url: `${API_BASE_PATH}${ACCOMMODATIONS_PATH}/${urlParams.id}/photos`
     });
 }
 
