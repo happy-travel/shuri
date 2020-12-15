@@ -49,16 +49,22 @@ const DEFAULT_ACCOMMODATION = {
         [UI.editorLanguage]: ''
     },
     description: {
-        [UI.editorLanguage]: {
+        en: {
+            description: ''
+        },
+        ar: {
+            description: ''
+        },
+        ru: {
             description: ''
         }
     },
     checkInTime: '',
     checkOutTime: '',
     contactInfo: {
-        email: '',
-        phone: '',
-        website: ''
+        emails: [''],
+        phones: [''],
+        websites: ['']
     },
     type: '',
     amenities: {
@@ -147,15 +153,9 @@ class AccommodationPage extends React.Component {
     }
 
     reformatValues = (values) => {
-        if (values?.contactInfo?.phone) {
-            values.contactInfo.phone = decorate.removeNonDigits(values.contactInfo.phone);
-        }
-        if (values?.coordinates?.latitude === '') {
-            delete values.coordinates.latitude;
-        }
-        if (values?.coordinates?.longitude === '') {
-            delete values.coordinates.longitude;
-        }
+        values.contactInfo.phones = [decorate.removeNonDigits(values.contactInfo.phone)];
+        values.contactInfo.websites = [values.contactInfo.website];
+        values.contactInfo.emails = [values.contactInfo.email];
         return {
             ...values,
             occupancyDefinition: agesReformat(values.occupancyDefinition)
@@ -279,16 +279,21 @@ class AccommodationPage extends React.Component {
                         placeholder={'Longitude'}
                     />
                 </div>
-                <div className="row">
-                    <FieldTextarea
-                        formik={formik}
-                        clearable
-                        id={`description.${UI.editorLanguage}.description`}
-                        label={'Accommodation Description'}
-                        placeholder={'Enter Accommodation Description'}
-                        required
-                    />
-                </div>
+                {['en','ar','ru'].map((lang) => (
+                    <div
+                        className="row"
+                        key={lang}
+                    >
+                        <FieldTextarea
+                            formik={formik}
+                            clearable
+                            id={`description.${lang}.description`}
+                            label={`Accommodation Description (${lang.toUpperCase()})`}
+                            placeholder={'Enter Accommodation Description'}
+                            required
+                        />
+                    </div>
+                ))}
                 <div className="row">
                     <FieldSelect
                         formik={formik}
@@ -353,6 +358,7 @@ class AccommodationPage extends React.Component {
                         id="contactInfo.website"
                         label={'Website'}
                         placeholder={'Enter Website'}
+                        required
                     />
                 </div>
                 <div className="row">
@@ -443,6 +449,15 @@ class AccommodationPage extends React.Component {
                                 </h2>
                                 <CachedForm
                                     initialValues={this.accommodation}
+                                    valuesOverwrite={(form) => {
+                                        if (!form.contactInfo) {
+                                            form.contactInfo = [];
+                                        }
+                                        form.contactInfo.email = form.contactInfo.emails?.[0];
+                                        form.contactInfo.phone = form.contactInfo.phones?.[0];
+                                        form.contactInfo.website = form.contactInfo.websites?.[0];
+                                        return form;
+                                    }}
                                     onSubmit={this.id ? this.onUpdateSubmit : this.onCreateSubmit}
                                     render={this.renderForm}
                                     enableReinitialize
