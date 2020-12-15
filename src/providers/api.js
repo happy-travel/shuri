@@ -273,14 +273,14 @@ function removePromotionalOffer({ urlParams, body }) {
 
 function getContractManager() {
     return apiPromise({
-        url: `${API_BASE_PATH}/management/contract-manager`,
+        url: `${API_BASE_PATH}/management/manager`,
         method: 'GET'
     });
 }
 
 function registerContractManager({ body }) {
     return apiPromise({
-        url: `${API_BASE_PATH}/management/contract-manager`,
+        url: `${API_BASE_PATH}/management/manager`,
         method: 'POST',
         body
     });

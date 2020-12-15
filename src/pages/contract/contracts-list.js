@@ -64,7 +64,8 @@ class ContractsList extends React.Component {
                 })
             }
         });
-        this.contractsList = contractsList;
+        this.contractsList = contractsList
+            .filter((contract) => contract.accommodationName !== 'None');
     }
 
     renderContent = () => {
