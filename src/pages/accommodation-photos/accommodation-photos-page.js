@@ -113,7 +113,6 @@ class AccommodationPhotosPage extends React.Component {
     @action
     removeAccommodationPhotoSuccess = (photoId) => {
         this.photos = this.photos.filter((photo) => photo.id !== photoId);
-        View.setTopAlertText(this.props.t('The photo was removed'))
     }
 
     @action

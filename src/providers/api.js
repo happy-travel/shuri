@@ -294,7 +294,7 @@ function getAccommodationPhotos({ urlParams }) {
 
 function removeAccommodationPhoto({ urlParams }) {
     return apiPromise({
-        url: `${API_BASE_PATH}${ACCOMMODATIONS_PATH}/${urlParams.accommodationId}/photo/${urlParams.photoId}`,
+        url: `${API_BASE_PATH}${ACCOMMODATIONS_PATH}/${urlParams.accommodationId}/photos/${urlParams.photoId}`,
         method: 'DELETE'
     });
 }
