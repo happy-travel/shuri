@@ -42,7 +42,7 @@ class AllocationRequirements extends React.Component {
             const seasonName = this.seasonsNames.get(range.seasonId);
             const startDate = formatDateToString(range.startDate);
             const endDate = formatDateToString(range.endDate);
-            return [range.id, `${seasonName} (${startDate} - ${endDate})`]
+            return [range.id, `${seasonName} (${startDate} — ${endDate})`]
         }));
     }
 
@@ -299,7 +299,13 @@ class AllocationRequirements extends React.Component {
             return <div>{t('No rooms added')}</div>;
         }
 
-        return Array.from(this.allocationsTree.keys()).map(this.renderSeasonRange);
+        const result = Array.from(this.allocationsTree.keys());
+        const seasonsRangesStartDates = {};
+        this.seasonsRangesList.forEach((range) => {
+            seasonsRangesStartDates[range.id] = new Date(range.startDate);
+        });
+        result.sort((a,b) => seasonsRangesStartDates[a] - seasonsRangesStartDates[b]);
+        return result.map(this.renderSeasonRange);
     }
 
     render() {

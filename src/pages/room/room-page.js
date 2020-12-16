@@ -12,6 +12,7 @@ import Menu from 'parts/menu';
 import UI from 'stores/shuri-ui-store';
 import EntitiesStore from 'stores/shuri-entities-store';
 import DialogModal from 'parts/dialog-modal';
+import Amenities from 'components/amenities';
 import {
     createAccommodationRoom, getAccommodation,
     getAccommodationRoom,
@@ -56,8 +57,6 @@ class RoomPage extends React.Component {
 
         if (!this.id) {
             this.room = DEFAULT_ROOM;
-        } else if (EntitiesStore.hasRoom(this.accommodationId, this.id)) {
-            this.room = EntitiesStore.getRoom(this.accommodationId, this.id);
         } else {
             getAccommodationRoom({
                 urlParams: {
@@ -171,6 +170,14 @@ class RoomPage extends React.Component {
                         id={`description.${UI.editorLanguage}`}
                         label="Description"
                         placeholder="Enter room description"
+                    />
+                </div>
+                <div className="row">
+                    <Amenities
+                        formik={formik}
+                        id={`amenities.${UI.editorLanguage}`}
+                        label="Amenities"
+                        placeholder="Add new amenity"
                     />
                 </div>
                 <div className="row controls">

@@ -114,7 +114,7 @@ class AgeRanges extends React.Component {
                 </div>
             </div>
         );
-    }
+    }getAllAmenities
 }
 
 AgeRanges.propTypes = {
