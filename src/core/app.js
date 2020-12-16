@@ -11,7 +11,6 @@ import AuthDefault from 'matsumoto/src/core/auth/default';
 import AuthLogout from 'matsumoto/src/core/auth/logout';
 import Footer from 'matsumoto/src/parts/footer';
 import TopAlert from 'matsumoto/src/parts/top-alert';
-import Modal from 'matsumoto/src/parts/modal';
 import { Loader } from 'matsumoto/src/simple';
 import { Authorized } from 'matsumoto/src/core/auth';
 import i18n from 'core/i18n';
@@ -47,7 +46,6 @@ const App = () => {
                         </Route>
                     </Switch>
                 </div>
-                <Modal />
 
                 <ScrollToTop />
             </BrowserRouter>
