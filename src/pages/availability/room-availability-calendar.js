@@ -61,8 +61,8 @@ class RoomAvailabilityCalendar extends React.Component {
         this.roomsList = new Map();
         this.contract = contract;
         accommodationsList.forEach((accommodation) => {
-            accommodation.roomIds?.forEach((roomId) => {
-                this.roomsList.set(String(roomId), `#${roomId}: ${accommodation.name[UI.editorLanguage]}`);
+            accommodation.rooms?.forEach((room) => {
+                this.roomsList.set(String(room.id), `${room.id}. ${room.name[UI.editorLanguage]}`);
             });
         });
         this.availabilityRestrictions = restrictions;

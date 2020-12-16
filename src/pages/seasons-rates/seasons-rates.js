@@ -40,8 +40,8 @@ class SeasonsRates extends React.Component {
     get roomsNames() {
         const roomsNames = new Map();
         this.accommodationsList.forEach((accommodation) => {
-            accommodation.roomIds?.forEach((roomId) => {
-                roomsNames.set(roomId, `${accommodation.name[UI.editorLanguage]} (room #${roomId})`);
+            accommodation.rooms?.forEach((room) => {
+                roomsNames.set(room.id, `${room.id}. ${room.name[UI.editorLanguage]}`);
             });
         });
         return roomsNames;
