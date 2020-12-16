@@ -312,6 +312,13 @@ function removeContractDocument({ urlParams }) {
     });
 }
 
+function getAllAmenities() {
+    return apiPromise({
+        url: `${API_BASE_PATH}/amenities`,
+        method: 'GET'
+    });
+}
+
 export {
     API_BASE_PATH,
     ACCOMMODATIONS_PATH,
@@ -358,5 +365,6 @@ export {
     getAccommodationPhotos,
     removeAccommodationPhoto,
     getContractDocument,
-    removeContractDocument
+    removeContractDocument,
+    getAllAmenities
 };

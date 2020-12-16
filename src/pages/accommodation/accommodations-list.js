@@ -10,7 +10,7 @@ import UIStore from 'stores/shuri-ui-store';
 import { getAccommodations } from 'providers/api';
 import Menu from 'parts/menu';
 
-const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const capitalize = (s) => typeof s === 'string' ? s.charAt(0).toUpperCase() + s.slice(1) : 'Unknown';
 
 const SEARCHES = (item) => [
     item.name[UIStore.editorLanguage],

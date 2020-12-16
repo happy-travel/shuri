@@ -23,6 +23,7 @@ import {
     updateAccommodation
 } from 'providers/api';
 import AgeRanges from './parts/age-ranges';
+import Amenities from 'components/amenities';
 import { agesReformat } from './parts/utils';
 import Menu from 'parts/menu';
 import { parseBackendErrors } from 'utils/error-utils';
@@ -156,6 +157,12 @@ class AccommodationPage extends React.Component {
         values.contactInfo.phones = [decorate.removeNonDigits(values.contactInfo.phone)];
         values.contactInfo.websites = [values.contactInfo.website];
         values.contactInfo.emails = [values.contactInfo.email];
+        if (!values.description.ru.description) {
+            values.description.ru.description = values.description.en.description;
+        }
+        if (!values.description.ar.description) {
+            values.description.ar.description = values.description.en.description;
+        }
         return {
             ...values,
             occupancyDefinition: agesReformat(values.occupancyDefinition)
@@ -279,21 +286,18 @@ class AccommodationPage extends React.Component {
                         placeholder={'Longitude'}
                     />
                 </div>
-                {['en','ar','ru'].map((lang) => (
-                    <div
-                        className="row"
-                        key={lang}
-                    >
+                {/* ['en','ar','ru'].map((lang) => ( */}
+                    <div className="row">
                         <FieldTextarea
                             formik={formik}
                             clearable
-                            id={`description.${lang}.description`}
-                            label={`Accommodation Description (${lang.toUpperCase()})`}
-                            placeholder={'Enter Accommodation Description'}
+                            id="description.en.description"
+                            label="Accommodation Description"
+                            placeholder="Enter Accommodation Description"
                             required
                         />
                     </div>
-                ))}
+                {/*))*/}
                 <div className="row">
                     <FieldSelect
                         formik={formik}
@@ -384,13 +388,19 @@ class AccommodationPage extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <FieldText
+                    <Amenities
                         formik={formik}
-                        clearable
-                        id={`amenities.${UI.editorLanguage}.0`}
-                        label={'Amenities'}
-                        placeholder={'Amenities'}
-                        required
+                        id={`amenities.${UI.editorLanguage}`}
+                        label="Amenities"
+                        placeholder="Add new amenity"
+                    />
+                </div>
+                <div className="row">
+                    <Amenities
+                        formik={formik}
+                        id={`leisureAndSports.${UI.editorLanguage}`}
+                        label="Leisure And Sports"
+                        placeholder="Add new Leisure or Sport"
                     />
                 </div>
 

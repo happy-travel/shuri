@@ -28,7 +28,10 @@
     "react-table": "7.0.0-rc.15",
     "react-tooltip": "4.1.2",
     "uuid": "3.3.2",
-    "yup": "0.29.1"
+    "yup": "0.29.1",
+    "react-tag-input": "6.5.1",
+    "react-dnd": "5.0.0",
+    "react-dnd-html5-backend": "3.0.2"
   },
   "devDependencies": {
     "@babel/core": "7.4.3",
