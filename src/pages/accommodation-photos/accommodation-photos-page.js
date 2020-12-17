@@ -42,11 +42,7 @@ class AccommodationPhotosPage extends React.Component {
     getData = () => {
         const requestParams = { urlParams: { id: this.id } };
         getAccommodationPhotos(requestParams).then(this.getPhotosSuccess);
-        if (EntitiesStore.hasAccommodation(this.id)) {
-            this.accommodation = EntitiesStore.getAccommodation(this.id);
-        } else {
-            getAccommodation(requestParams).then(this.getAccommodationSuccess);
-        }
+        getAccommodation(requestParams).then(this.getAccommodationSuccess);
     }
 
     @action
