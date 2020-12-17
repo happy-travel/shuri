@@ -278,9 +278,24 @@ function getContractManager() {
     });
 }
 
+function getServiceSuppliers() {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/manager/service-suppliers`,
+        method: 'GET'
+    });
+}
+
 function registerContractManager({ body }) {
     return apiPromise({
-        url: `${API_BASE_PATH}/management/manager`,
+        url: `${API_BASE_PATH}/management/manager/register`,
+        method: 'POST',
+        body
+    });
+}
+
+function registerContractManagerMaster({ body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/manager/register-master`,
         method: 'POST',
         body
     });
@@ -361,7 +376,9 @@ export {
     createPromotionalOffer,
     removePromotionalOffer,
     getContractManager,
+    getServiceSuppliers,
     registerContractManager,
+    registerContractManagerMaster,
     getAccommodationPhotos,
     removeAccommodationPhoto,
     getContractDocument,

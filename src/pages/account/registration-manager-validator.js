@@ -9,6 +9,9 @@ export const registrationManagerValidator = Yup.object().shape({
         .required('Required'),
     title: Yup.string()
         .required('Required'),
+    phone: Yup.string()
+        .max(30, 'Too long')
+        .required('Required'),
     position: Yup.string()
         .required('Required')
 });

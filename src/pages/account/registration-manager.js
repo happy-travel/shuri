@@ -1,6 +1,7 @@
 import React from 'react';
 import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
+import { getInvite, forgetInvite } from 'core/auth/invite';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import { FieldText, FieldSelect } from 'components/form';
@@ -10,10 +11,33 @@ import ActionSteps from 'components/action-steps';
 import { CachedForm } from 'components/form';
 import { registerContractManager } from 'providers/api';
 import { registrationManagerValidator } from './registration-manager-validator';
+import View from 'matsumoto/src/stores/view-store';
+import store from 'stores/auth-store';
+
+// temporary import. change whenever invites implemented
+import { API } from 'core';
+
+export const finishAgentRegistration = () => {
+    API.get({
+        url: API.AGENT,
+        success: (user) => {
+            userAuthSetToStorage(user);
+            if (user?.email) {
+                store.setUser(user);
+            }
+        }
+    });
+
+    forgetInvite();
+    store.setRegistrationUserForm({});
+    store.setRegistrationCounterpartyForm({});
+};
 
 @observer
 class RegistrationManager extends React.Component {
     @observable redirectToIndexPage = false;
+    @observable redirectToThirdStep = false;
+    @observable invitationCode = '';
     @observable initialValues = {
         title: '',
         firstName: '',
@@ -23,21 +47,65 @@ class RegistrationManager extends React.Component {
         fax: ''
     };
 
+    componentDidMount() {
+        let invitationCode = getInvite();
+        if (invitationCode) {
+            API.get({
+                url: API.AGENT_INVITE_DATA(invitationCode),
+                success: (data) => {
+                    this.invitationCode = invitationCode;
+                    this.initialValues = data?.registrationInfo;
+                }
+            });
+        }
+    }
+
     @action
     submit = (values) => {
-        registerContractManager({ body: values }).then(
-            (user) => {
-                userAuthSetToStorage(user);
-                this.redirectToIndexPage = true;
-            }
-        );
+        store.setRegistrationUserForm(values);
+        if (this.invitationCode) {
+            /* todo body:
+                {
+                    registrationInfo: {
+                        ...values,
+                        email: this.state.initialValues.email
+                    },
+                    invitationCode: this.state.invitationCode
+                }
+             */
+            registerContractManager({ body: values }).then(
+                () => {
+                    finishAgentRegistration();
+                    this.redirectToIndexPage = true;
+                },
+                (error) => {
+                    View.setTopAlertText(error?.title || error?.detail);
+                    if (error && !(error?.title || error?.detail)) {
+                        this.setState({
+                            redirectToIndexPage: true
+                        });
+                    }
+                }
+            );
+        } else if (!this.redirectToThirdStep) {
+            this.redirectToThirdStep = true;
+        }
     }
 
     render() {
         let { t } = useTranslation();
 
+        if (this.redirectToThirdStep) {
+            return <Redirect push to="/signup/service-supplier"/>;
+        }
+
         if (this.redirectToIndexPage) {
             return <Redirect push to="/"/>;
+        }
+
+        const actionSteps = [t('Log In Information'), t('Manager Information')];
+        if (!this.invitationCode) {
+            actionSteps.push(t('Service Supplier Information'));
         }
 
         return (
@@ -59,7 +127,7 @@ class RegistrationManager extends React.Component {
                             }
                         ]}/>
                         <ActionSteps
-                            items={[t('Log In Information'), t('Manager Information')]}
+                            items={actionSteps}
                             current={1}
                             addClass="action-steps-another-bg"
                         />
@@ -126,6 +194,7 @@ class RegistrationManager extends React.Component {
                                             label={t('Phone')}
                                             placeholder={t('Phone')}
                                             numeric
+                                            required
                                         />
                                     </div>
                                     <div className="row">
@@ -141,7 +210,9 @@ class RegistrationManager extends React.Component {
                                         <div className="field">
                                             <div className="inner">
                                                 <button type="submit" className="button">
-                                                    {t('Finish Registration')}
+                                                    { this.invitationCode ?
+                                                        t('Finish Registration') :
+                                                        t('Continue Registration')}
                                                 </button>
                                             </div>
                                         </div>

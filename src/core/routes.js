@@ -18,7 +18,9 @@ import Cancellations from 'pages/cancellations/cancellations';
 import AllocationRequirements from 'pages/allocation-requirements/allocation-requirements';
 import PromoOffers from 'pages/promo-offers/promo-offers';
 import RegistrationManager from 'pages/account/registration-manager';
+import RegistrationServiceSupplier from 'pages/account/registration-service-supplier';
 import AccommodationPhotosPage from 'pages/accommodation-photos/accommodation-photos-page';
+import CommonSettings from 'pages/settings/invitation-send';
 
 const Routes = (props) => {
     const { t } = props;
@@ -119,6 +121,18 @@ const Routes = (props) => {
                 path="/signup/manager"
                 title="Sign Up"
                 component={RegistrationManager}
+            />
+            <Route
+                exact
+                path="/signup/service-supplier"
+                title="Sign Up"
+                component={RegistrationServiceSupplier}
+            />
+            <Route
+                exact
+                path="/settings"
+                title="Settings"
+                component={CommonSettings}
             />
             <Route
                 title={t('Page Not Found')}

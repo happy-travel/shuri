@@ -1,13 +1,18 @@
 import Authorize from 'core/auth/authorize';
 import { isSignUpRoutes } from 'core/auth';
 import { API } from 'core';
+import { initInvite } from 'core/auth/invite';
 import dropdownToggler from 'components/form/dropdown/toggler';
 
 import UI from 'stores/ui-store';
 import authStore from 'stores/auth-store';
-import { getContractManager } from 'providers/api'
+import {
+    getContractManager,
+    getServiceSuppliers
+} from 'providers/api'
 
 export const initApplication = () => {
+    initInvite();
     dropdownToggler();
 };
 
@@ -18,6 +23,9 @@ export const initUser = () => {
                 if (result?.email) {
                     authStore.setUser(result);
                 }
+                getServiceSuppliers().then(
+                    (data) => authStore.setCounterpartyInfo(data)
+                )
             },
             (response) => {
                 if (response.status === 401 || response.status === 403) {
