@@ -8,7 +8,8 @@ import {
     CachedForm,
     FieldText,
     FieldSelect,
-    FieldTextarea
+    FieldTextarea,
+    FieldSwitch
 } from 'matsumoto/src/components/form';
 import { Loader, Stars, decorate } from 'matsumoto/src/simple';
 import UI from 'stores/shuri-ui-store';
@@ -95,7 +96,10 @@ const DEFAULT_ACCOMMODATION = {
             enabled: true
         }
     },
-    locationId: undefined
+    locationId: undefined,
+    buildYear: '',
+    floor: '',
+    status: 'Inactive'
 };
 
 @observer
@@ -128,8 +132,6 @@ class AccommodationPage extends React.Component {
 
         if (!id) {
             this.accommodation = DEFAULT_ACCOMMODATION;
-        } else if (EntitiesStore.hasAccommodation(id)) {
-            this.accommodation = EntitiesStore.getAccommodation(id);
         } else {
             getAccommodation({ urlParams: { id } }).then(this.getAccommodationSuccess);
         }
@@ -137,6 +139,7 @@ class AccommodationPage extends React.Component {
 
     @action
     getAccommodationSuccess = (accommodation) => {
+        accommodation.status = accommodation.status === 'Active';
         this.accommodation = accommodation;
         EntitiesStore.setAccommodation(accommodation);
     }
@@ -163,6 +166,7 @@ class AccommodationPage extends React.Component {
         if (!values.description.ar.description) {
             values.description.ar.description = values.description.en.description;
         }
+        values.status = values.status ? 'Active' : 'Inactive';
         return {
             ...values,
             occupancyDefinition: agesReformat(values.occupancyDefinition)
@@ -250,6 +254,12 @@ class AccommodationPage extends React.Component {
         this.formik = formik;
         return (
             <div className="form app-settings">
+                <div className="row">
+                    <FieldSwitch formik={formik}
+                                 id="status"
+                                 label="Active Accommodation"
+                    />
+                </div>
                 <div className="row">
                     <FieldText
                         formik={formik}
@@ -377,9 +387,24 @@ class AccommodationPage extends React.Component {
                             { value: 'Apartments', text: 'Apartments' }
                         ]}
                     />
+
+                    <FieldText
+                        formik={formik}
+                        clearable
+                        id="floor"
+                        label="Number of floors"
+                        placeholder="Enter"
+                    />
+                    <FieldText
+                        formik={formik}
+                        clearable
+                        id="buildYear"
+                        label="Build year"
+                        placeholder="Enter"
+                    />
                 </div>
                 <div className="row">
-                    <FieldText
+                    <FieldTextarea
                         formik={formik}
                         clearable
                         id={`additionalInfo.${UI.editorLanguage}`}
@@ -401,6 +426,18 @@ class AccommodationPage extends React.Component {
                         id={`leisureAndSports.${UI.editorLanguage}`}
                         label="Leisure And Sports"
                         placeholder="Add new Leisure or Sport"
+                    />
+                </div>
+                <div className="row">
+                    <FieldSelect
+                        formik={formik}
+                        id="rateOptions.singleAdultAndChildBookings"
+                        label="Single Adult And Child Bookings Rate Option"
+                        placeholder="Choose property type"
+                        options={[
+                            { value: 'ApplyAdultRate', text: 'Apply Adult Rate' },
+                            { value: 'ApplyAdultAndChildRate', text: 'Apply Adult And Child Rate' }
+                        ]}
                     />
                 </div>
 
