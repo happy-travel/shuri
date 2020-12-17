@@ -147,7 +147,7 @@ class AccommodationPhotosPage extends React.Component {
         return (
             <Dropzone
                 className="dropzone"
-                accept=".jpeg,.jpg,image/jpeg"
+                accept=".png,.jpeg,.jpg,image/jpeg,image/png"
                 maxSize={MAX_PHOTO_SIZE}
                 onDrop={this.onDrop}
             >
