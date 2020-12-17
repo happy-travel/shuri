@@ -69,7 +69,10 @@ const DEFAULT_ACCOMMODATION = {
     },
     type: '',
     amenities: {
-        [UI.editorLanguage]: ['']
+        [UI.editorLanguage]: []
+    },
+    leisureAndSports: {
+        [UI.editorLanguage]: []
     },
     additionalInfo: {
         [UI.editorLanguage]: ''
