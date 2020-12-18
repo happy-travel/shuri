@@ -23,9 +23,9 @@ class UserMenu extends React.Component {
                         </div>
                         <div
                             className="company"
-                            {...calcTitleFor(authStore.counterpartyInfo?.name)}
+                            {...calcTitleFor(authStore.counterpartyInfo[0]?.name)}
                         >
-                            {authStore.counterpartyInfo?.name}
+                            {authStore.counterpartyInfo[0]?.name}
                         </div>
                     </div>
                 </Link>

@@ -21,6 +21,7 @@ import RegistrationManager from 'pages/account/registration-manager';
 import RegistrationServiceSupplier from 'pages/account/registration-service-supplier';
 import AccommodationPhotosPage from 'pages/accommodation-photos/accommodation-photos-page';
 import CommonSettings from 'pages/settings/invitation-send';
+import AcceptInvite from 'matsumoto/src/pages/account/accept-invite';
 
 const Routes = (props) => {
     const { t } = props;
@@ -127,6 +128,11 @@ const Routes = (props) => {
                 path="/signup/service-supplier"
                 title="Sign Up"
                 component={RegistrationServiceSupplier}
+            />
+            <Route
+                path="/signup/invite/:email/:code"
+                title="Sign Up"
+                component={AcceptInvite}
             />
             <Route
                 exact

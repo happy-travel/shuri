@@ -334,6 +334,29 @@ function getAllAmenities() {
     });
 }
 
+function getInvitationData({ urlParams }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/manager/invitations/${urlParams.invitationCode}`,
+        method: 'GET'
+    });
+}
+
+function invitationSend({ body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/manager/invitations/send`,
+        method: 'POST',
+        body
+    });
+}
+
+function invitationGenerate({ body }) {
+    return apiPromise({
+        url: `${API_BASE_PATH}/management/manager/invitations/generate`,
+        method: 'POST',
+        body
+    });
+}
+
 export {
     API_BASE_PATH,
     ACCOMMODATIONS_PATH,
@@ -383,5 +406,8 @@ export {
     removeAccommodationPhoto,
     getContractDocument,
     removeContractDocument,
-    getAllAmenities
+    getAllAmenities,
+    getInvitationData,
+    invitationSend,
+    invitationGenerate
 };

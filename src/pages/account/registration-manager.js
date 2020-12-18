@@ -9,22 +9,20 @@ import { userAuthSetToStorage } from 'core/auth';
 import Breadcrumbs from 'components/breadcrumbs';
 import ActionSteps from 'components/action-steps';
 import { CachedForm } from 'components/form';
-import { registerContractManager } from 'providers/api';
+import {
+    registerContractManager,
+    getInvitationData,
+    getContractManager
+} from 'providers/api';
 import { registrationManagerValidator } from './registration-manager-validator';
 import View from 'matsumoto/src/stores/view-store';
 import store from 'stores/auth-store';
 
-// temporary import. change whenever invites implemented
-import { API } from 'core';
-
 export const finishAgentRegistration = () => {
-    API.get({
-        url: API.AGENT,
-        success: (user) => {
-            userAuthSetToStorage(user);
-            if (user?.email) {
-                store.setUser(user);
-            }
+    getContractManager().then((user) => {
+        userAuthSetToStorage(user);
+        if (user?.email) {
+            store.setUser(user);
         }
     });
 
@@ -50,12 +48,13 @@ class RegistrationManager extends React.Component {
     componentDidMount() {
         let invitationCode = getInvite();
         if (invitationCode) {
-            API.get({
-                url: API.AGENT_INVITE_DATA(invitationCode),
-                success: (data) => {
-                    this.invitationCode = invitationCode;
-                    this.initialValues = data?.registrationInfo;
+            getInvitationData({
+                urlParams: {
+                    invitationCode
                 }
+            }).then((data) => {
+                this.invitationCode = invitationCode;
+                this.initialValues = data;
             });
         }
     }

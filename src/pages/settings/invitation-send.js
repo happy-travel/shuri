@@ -1,7 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
-import { API } from 'core';
 
 import { Loader } from 'simple';
 import { copyToClipboard } from 'simple/logic';
@@ -9,10 +8,13 @@ import { CachedForm, FORM_NAMES, FieldText } from 'components/form';
 import { registrationUserValidatorWithEmail } from 'components/form/validation';
 import FormUserData from 'parts/form-user-data';
 import SettingsHeader from './parts/settings-header';
+import {
+    invitationSend,
+    invitationGenerate
+} from 'providers/api';
 
 import UI from 'stores/ui-store';
-import authStore from 'stores/auth-store';
-import Notifications from 'stores/notifications-store';
+import View from 'stores/view-store';
 
 @observer
 class InvitationSendPage extends React.Component {
@@ -26,36 +28,25 @@ class InvitationSendPage extends React.Component {
         this.reset = this.reset.bind(this);
     }
 
-    submit(values) {
+    submit(body) {
         this.setState({ success: null });
-        API.post({
-            // todo: change methods
-            url: values.send ? API.AGENT_INVITE_SEND : API.AGENT_INVITE_GENERATE,
-            body: {
-                email: values.email,
-                agencyId: authStore.activeCounterparty.agencyId,
-                registrationInfo: {
-                    firstName: values.firstName,
-                    lastName: values.lastName,
-                    position: values.position,
-                    title: values.title
-                }
-            },
-            success: (data) => {
+        let route = body.send ? invitationSend : invitationGenerate;
+        route({ body }).then(
+            (data) => {
                 UI.dropFormCache(FORM_NAMES.CreateInviteForm);
                 this.setState({
                     success:
-                        (values.send || !data) ?
+                        (body.send || !data) ?
                             true :
-                            window.location.origin + '/signup/invite/' + values.email + '/' + data,
-                    name: (values.firstName || values.lastName) ? (values.firstName + ' ' + values.lastName) : null
+                            window.location.origin + '/signup/invite/' + body.email + '/' + data,
+                    name: (body.firstName || body.lastName) ? (body.firstName + ' ' + body.lastName) : null
                 });
             },
-            error: (error) => {
+            (error) => {
                 this.setState({ success: false });
-                Notifications.addNotification(error?.title || error?.detail);
+                View.setTopAlertText(error?.title || error?.detail);
             }
-        });
+        );
     }
 
     reset() {

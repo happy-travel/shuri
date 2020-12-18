@@ -12,13 +12,13 @@ import AuthLogout from 'matsumoto/src/core/auth/logout';
 import Footer from 'matsumoto/src/parts/footer';
 import TopAlert from 'matsumoto/src/parts/top-alert';
 import { Loader } from 'matsumoto/src/simple';
-import { Authorized } from 'matsumoto/src/core/auth';
+import { Authorized, isPageAvailableAuthorizedOnly } from 'matsumoto/src/core/auth';
 import i18n from 'core/i18n';
 import Header from 'parts/header';
 import Routes from 'core/routes';
 
 const App = () => {
-    const canShowContent = Authorized();
+    const canShowContent = !isPageAvailableAuthorizedOnly() || Authorized();
     return (
         <I18nextProvider i18n={i18n}>
             <BrowserRouter>
