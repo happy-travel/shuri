@@ -63,16 +63,12 @@ class RegistrationManager extends React.Component {
     submit = (values) => {
         store.setRegistrationUserForm(values);
         if (this.invitationCode) {
-            /* todo body:
-                {
-                    registrationInfo: {
-                        ...values,
-                        email: this.state.initialValues.email
-                    },
-                    invitationCode: this.state.invitationCode
+            registerContractManager({
+                body: {
+                    ...values,
+                    invitationCode: this.invitationCode
                 }
-             */
-            registerContractManager({ body: values }).then(
+            }).then(
                 () => {
                     finishAgentRegistration();
                     this.redirectToIndexPage = true;
