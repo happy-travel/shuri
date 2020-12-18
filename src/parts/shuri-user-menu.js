@@ -21,12 +21,14 @@ class UserMenu extends React.Component {
                                 {userName}
                             </span>
                         </div>
-                        <div
-                            className="company"
-                            {...calcTitleFor(authStore.counterpartyInfo[0]?.name)}
-                        >
-                            {authStore.counterpartyInfo[0]?.name}
-                        </div>
+                        { Boolean(authStore.counterpartyInfo?.length) &&
+                            <div
+                                className="company"
+                                {...calcTitleFor(authStore.counterpartyInfo[0]?.name)}
+                            >
+                                {authStore.counterpartyInfo[0]?.name}
+                            </div>
+                        }
                     </div>
                 </Link>
             </>
