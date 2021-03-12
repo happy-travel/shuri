@@ -18,7 +18,7 @@
     "react": "16.8.6",
     "react-app-polyfill": "1.0.0",
     "react-daterange-picker": "2.0.1",
-    "react-dev-utils": "9.0.0",
+    "react-dev-utils": "11.0.4",
     "react-dom": "16.8.6",
     "react-i18next": "10.9.0",
     "react-infinite-scroll-component": "5.0.4",
