@@ -20,7 +20,7 @@ steps:
     SENTRY_DSN:
       from_secret: SENTRY_DEV_DSN
     DC_URL:
-      from_secret: DC_DEV_URL      
+      from_secret: DC_DEV_URL
     BUILD_VERSION: ${DRONE_COMMIT_SHA:0:7}
   settings:
     registry: registry.happytravel.com
@@ -71,7 +71,7 @@ steps:
   when:
     status: [success, failure]
 
----    
+---
 kind: pipeline
 type: docker
 name: Test
@@ -115,7 +115,7 @@ steps:
     SENTRY_DSN:
       from_secret: SENTRY_PROD_DSN
     DC_URL:
-      from_secret: DC_PROD_URL      
+      from_secret: DC_PROD_URL
     BUILD_VERSION: ${DRONE_COMMIT_SHA:0:7}
   settings:
     registry: registry.happytravel.com
@@ -164,4 +164,4 @@ steps:
     webhook_token:
       from_secret: DISCORD_WEBHOOK_TOKEN
   when:
-    status: [success, failure]  
+    status: [success, failure]
